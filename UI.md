@@ -8,49 +8,49 @@ https://www.figma.com/proto/OTzAoTN3MuCJsL856JVpOH/Dira?node-id=120%3A3343&viewp
 
 ### Wireframes  
 Αρχική Σελίδα
-![](Wireframes\Homepage.png) 
+![Homepage](Wireframes\Homepage.png "Homepage") 
 
 Σελίδα Εγγραφής  
-![](Wireframes\Register.png)  
+![Register](Wireframes\Register.png "Register")  
 
 Σελίδα Σύνδεσης  
-![](Wireframes\Login.png)  
+![Login](Wireframes\Login.png "Login")  
 
 Προβολής Λογαριασμού  
-![](Wireframes\Profile.png)  
+![Profile](Wireframes\Profile.png "Profile")  
 
 Επεξεργασία Λογαριασμού  
-![](Wireframes\Profile-Settings.png)  
+![Profile-Settings](Wireframes\Profile-Settings.png "Profile-Settings")  
 
 Πληροφορίες Πληρωμών  
-![](Wireframes\Billing-Info.png)  
+![Billing-Info](Wireframes\Billing-Info.png "Billing-Info")  
 
 Αλλαγή Πλάνου Τιμών  
-![](Wireframes\Plan-Change.png)
+![Plan-Change](Wireframes\Plan-Change.png "Plan-Change")
 
 Άδειο Project Board  
-![](Wireframes\Homepage-Logged-In-Empty.png)  
+![Homepage-Logged-In-Empty](Wireframes\Homepage-Logged-In-Empty.png "Homepage-Logged-In-Empty")  
 
 Project Board  
-![](Wireframes\Homepage-Logged-In-Project-Board.png)  
+![Project Board](Wireframes\Homepage-Logged-In-Project-Board.png "Project Board")  
 
 Modal Δημιουργίας Project  
-![](Wireframes\Create-Project-Modal.png)  
+![Create-Project-Modal](Wireframes\Create-Project-Modal.png "Create-Project-Modal")  
 
 Project Settings  
-![](Wireframes\Project-Settings.png)  
+![Project-Settings](Wireframes\Project-Settings.png "Project-Settings")  
 
 Άδειο Backlog  
-![](Wireframes\Backlog-Empty.png)  
+![Backlog-Empty](Wireframes\Backlog-Empty.png "Backlog-Empty")  
 
 Backlog  
-![](Wireframes\Backlog.png)  
+![Backlog](Wireframes\Backlog.png "Backlog")  
 
 Δημιουργία/Επεξεργασία Epic  
-![](Wireframes\Create-Edit-Epic.png) 
+![Create-Edit-Epic](Wireframes\Create-Edit-Epic.png "Create-Edit-Epic") 
 
 Sprint Board  
-![](Wireframes\Sprint-Board.png)  
+![Sprint-Board](Wireframes\Sprint-Board.png "Sprint-Board")  
 
 Modal Πλήρης Προβολής Issue  
-![](Wireframes\Issue-Info.png)
+![Issue-Info](Wireframes\Issue-Info.png "Issue-Info")
