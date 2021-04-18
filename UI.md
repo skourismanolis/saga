@@ -3,7 +3,7 @@
 ## User Interface Document  
 
 ### Prototyping  
-Το prototyping των wireframes βρίσκεται στον παρακα΄τω σύνδεσμο:  
+Το prototyping των wireframes βρίσκεται στον παρακάτω σύνδεσμο:  
 https://www.figma.com/proto/OTzAoTN3MuCJsL856JVpOH/Dira?node-id=120%3A3343&viewport=1456%2C628%2C0.0656546801328659&scaling=min-zoom&page-id=1%3A5648  
 
 ### Wireframes  
