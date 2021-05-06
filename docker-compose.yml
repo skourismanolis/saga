@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'saga'
+      MYSQL_ROOT_PASSWORD: 'saga1234'
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    ports:
+      - '3306:3306'
