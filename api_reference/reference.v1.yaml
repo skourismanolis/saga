@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: reference
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /projects/:
+    get:
+      summary: List user projects
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      operationId: get-projects
+    post:
+      summary: Create a new project
+      tags: []
+      responses: {}
+      operationId: post-projects
+      description: ''
+    parameters: []
+  '/projects/{projectId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-projects-projectId
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Update project info
+      operationId: put-projects-projectId
+      responses:
+        '200':
+          description: OK
+  '/projects/{projectId}/members':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    post:
+      summary: Add a new member to the project`
+      tags: []
+      responses: {}
+      operationId: post-projects-projectId-members
+    get:
+      summary: List all members of the project
+      tags: []
+      responses: {}
+      operationId: get-projects-projectId-members
+      description: ''
+    delete:
+      summary: Remove a member from the project
+      operationId: delete-projects-projectId-members
+      responses:
+        '200':
+          description: OK
+components:
+  schemas: {}
+  securitySchemes: {}
