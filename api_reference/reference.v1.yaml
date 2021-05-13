@@ -18,8 +18,19 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
+                  $ref: '#/components/schemas/ProjectShort'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
       operationId: get-projects
+      description: List all the projects the current user is a member of
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: a string to search project names
     post:
       summary: Create a new project
       tags: []
@@ -35,18 +46,88 @@ paths:
         in: path
         required: true
     delete:
-      summary: ''
+      summary: Delete a project
       operationId: delete-projects-projectId
       responses:
         '200':
           description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: You must be a project admin in order to delete the project.
     put:
       summary: Update project info
       operationId: put-projects-projectId
       responses:
         '200':
           description: OK
-  '/projects/{projectId}/members':
+  '/projects/{projectId}/members/':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: List all members of the project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectMember'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-members
+      description: 'List the memebers of the project, including yourself.'
+    delete:
+      summary: Remove a member from the project
+      operationId: delete-projects-projectId-members
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        Remove a member from a project.
+        Project admin only.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type:
+                    - string
+                    - number
+              required:
+                - id
+        description: The id of the user to remove from the project.
+  '/projects/{projectId}/members/admin':
     parameters:
       - schema:
           type: string
@@ -54,22 +135,233 @@ paths:
         in: path
         required: true
     post:
-      summary: Add a new member to the project`
+      summary: Promote a member to project admin
       tags: []
-      responses: {}
-      operationId: post-projects-projectId-members
-    get:
-      summary: List all members of the project
-      tags: []
-      responses: {}
-      operationId: get-projects-projectId-members
-      description: ''
-    delete:
-      summary: Remove a member from the project
-      operationId: delete-projects-projectId-members
       responses:
         '200':
           description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-projects-projectId-members-admin
+      description: |-
+        Promote a member to project admin. 
+        **If the user is already a project admin nothing happens and 200 OK is returned.**
+        The user must be a member of the project.
+        Project admin only.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type:
+                    - string
+                    - number
+              required:
+                - id
+    delete:
+      summary: 'Remove admin privileges '
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-projects-projectId-members-admin
+      description: |-
+        Remove admin privileges from the given project member.
+        Project Admin only.
+        **If there's only one project admin and you try to remove them Error 400 will be returned.**
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type:
+                    - string
+                    - number
+              required:
+                - id
 components:
-  schemas: {}
+  schemas:
+    UserProfile:
+      description: ''
+      type: object
+      title: User Profile
+      x-examples:
+        example-1:
+          id: '1'
+          firstName: string
+          lastName: string
+          proffesion: string
+          birth: 1999/01/29
+          studies: string
+          city: string
+          email: string
+          avatar: null
+      properties:
+        id:
+          type:
+            - string
+            - number
+        firstName:
+          type: string
+        lastName:
+          type: string
+        proffesion:
+          type:
+            - string
+          nullable: true
+        birth:
+          type: string
+          minLength: 1
+          format: date
+        studies:
+          type:
+            - string
+          nullable: true
+        city:
+          type:
+            - string
+          nullable: true
+        email:
+          type: string
+          minLength: 1
+          format: email
+        avatar:
+          type:
+            - string
+          format: uri
+          nullable: true
+      required:
+        - id
+        - firstName
+        - lastName
+        - proffesion
+        - birth
+        - studies
+        - city
+        - email
+        - avatar
+    ProjectMember:
+      description: User representation used in project members list.
+      type: object
+      title: Project Member
+      properties:
+        id:
+          type:
+            - string
+            - number
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        admin:
+          type: boolean
+        avatar:
+          type:
+            - string
+          format: uri
+          nullable: true
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - admin
+        - avatar
+      x-examples:
+        example-1:
+          id: 1
+          firstName: string
+          lastName: string
+          email: user@example.com
+          admin: true
+          avatar: 'http://example.com'
+    ProjectShort:
+      title: Project Short
+      type: object
+      description: Minimal info about a project
+      properties:
+        id:
+          type:
+            - string
+            - number
+        name:
+          type: string
+        members:
+          type:
+            - string
+            - array
+          items:
+            $ref: '#/components/schemas/ProjectMemberShort'
+      required:
+        - id
+        - name
+        - members
+      x-examples:
+        example-1:
+          id: 2
+          name: string
+          members:
+            - id: 1
+              firstName: Manolis
+              lastName: Skouris
+              admin: true
+              avatar: null
+    ProjectMemberShort:
+      title: Project Member Short
+      type: object
+      description: A user profile but without the email
+      x-examples:
+        example-1:
+          id: 1
+          firstName: string
+          lastName: string
+          admin: true
+          avatar: null
+      properties:
+        id:
+          type:
+            - string
+            - integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        admin:
+          type: boolean
+        avatar:
+          type:
+            - string
+          format: uri
+          nullable: true
+      required:
+        - id
+        - firstName
+        - lastName
+        - admin
+        - avatar
   securitySchemes: {}
