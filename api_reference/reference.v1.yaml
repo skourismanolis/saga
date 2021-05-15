@@ -201,6 +201,14 @@ paths:
                     - number
               required:
                 - id
+  /users/:
+    post:
+      summary: Create new user
+      tags:
+        - users
+      responses: {}
+      operationId: post-users
+      description: Creates a new user
 components:
   schemas:
     UserProfile:
@@ -248,6 +256,16 @@ components:
           type: string
           format: uri
           nullable: true
+        username:
+          type: string
+          minLength: 3
+          maxLength: 45
+        plan:
+          type: string
+          enum:
+            - Free
+            - Premium
+            - Host
       required:
         - id
         - name
@@ -258,6 +276,7 @@ components:
         - residence
         - email
         - picture
+        - username
     ProjectMember:
       description: User representation used in project members list.
       type: object
