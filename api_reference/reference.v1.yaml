@@ -280,6 +280,150 @@ paths:
           in: query
           name: search
           description: search
+  '/projects/{projectId}/sprints':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: List the Sprints belonging to a Project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sprint'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-sprints
+      description: ''
+    post:
+      summary: Add a new sprint to a Project
+      operationId: post-projects-projectId-sprints
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+      description: ''
+  '/projects/{projectId}/sprints/{sprintId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: sprintId
+        in: path
+        required: true
+    put:
+      summary: Update an existing sprint
+      operationId: put-projects-projectId-sprints-sprintId
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+      description: Updates the given sprint
+    delete:
+      summary: Delete a sprint
+      operationId: delete-projects-projectId-sprints-sprintId
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Removes the given sprint
+  '/projects/{projectId}/sprints/{sprintId}/issues':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: sprintId
+        in: path
+        required: true
+    post:
+      summary: Add issues to a sprint
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-sprints-sprintId-issues
+      description: 'Add issues to the given sprint. If any of these issues already belong to a sprint, the information will be overwritten.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        description: 'An array of issue codes to add to a sprint. If any of these issues already belong to a sprint, the information will be overwritten.'
 components:
   schemas:
     UserProfile:
@@ -502,4 +646,25 @@ components:
         - deadline
         - priority
         - asignees
+    Sprint:
+      title: Sprint
+      type: object
+      properties:
+        id:
+          type: integer
+        start:
+          type: string
+          format: date-time
+          nullable: true
+        finish:
+          type: string
+          format: date-time
+          nullable: true
+        title:
+          type: string
+      required:
+        - id
+        - start
+        - finish
+        - title
   securitySchemes: {}
