@@ -168,8 +168,9 @@ paths:
                     - number
               required:
                 - id
+        description: The id of the member you want to promote
     delete:
-      summary: 'Remove admin privileges '
+      summary: Remove admin privileges
       tags: []
       responses:
         '200':
@@ -377,4 +378,58 @@ components:
         - surname
         - admin
         - picture
+    IssueShort:
+      title: Issue Short
+      type: object
+      description: A short-ish representation of each issue
+      x-examples: {}
+      properties:
+        code:
+          type: string
+        title:
+          type: string
+        IdLabel:
+          type: integer
+        points:
+          type: integer
+          minimum: 0
+          nullable: true
+        category:
+          type: string
+          enum:
+            - Story
+            - Task
+            - Bug
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum:
+            - Very Low
+            - Low
+            - Neutral
+            - High
+            - Very High
+        asignees:
+          type: array
+          description: List of userIds that are assigned to this issue
+          items:
+            type: integer
+        idSprint:
+          type: integer
+          nullable: true
+        idEpic:
+          type: integer
+          nullable: true
+      required:
+        - code
+        - title
+        - IdLabel
+        - points
+        - category
+        - deadline
+        - priority
+        - asignees
   securitySchemes: {}
