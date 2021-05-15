@@ -223,75 +223,45 @@ components:
           type:
             - string
             - number
-        firstName:
+        name:
           type: string
-        lastName:
+        surname:
           type: string
         proffesion:
-          type:
-            - string
+          type: string
           nullable: true
-        birth:
+        birthDate:
           type: string
           minLength: 1
           format: date
         studies:
-          type:
-            - string
+          type: string
           nullable: true
-        city:
-          type:
-            - string
+        residence:
+          type: string
           nullable: true
         email:
           type: string
           minLength: 1
           format: email
-        avatar:
-          type:
-            - string
+        picture:
+          type: string
           format: uri
           nullable: true
       required:
         - id
-        - firstName
-        - lastName
+        - name
+        - surname
         - proffesion
-        - birth
+        - birthDate
         - studies
-        - city
+        - residence
         - email
-        - avatar
+        - picture
     ProjectMember:
       description: User representation used in project members list.
       type: object
       title: Project Member
-      properties:
-        id:
-          type:
-            - string
-            - number
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-          format: email
-        admin:
-          type: boolean
-        avatar:
-          type:
-            - string
-          format: uri
-          nullable: true
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
-        - admin
-        - avatar
       x-examples:
         example-1:
           id: 1
@@ -300,6 +270,31 @@ components:
           email: user@example.com
           admin: true
           avatar: 'http://example.com'
+      properties:
+        id:
+          type:
+            - string
+            - number
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+          format: email
+        admin:
+          type: boolean
+        picture:
+          type: string
+          format: uri
+          nullable: true
+      required:
+        - id
+        - name
+        - surname
+        - email
+        - admin
+        - picture
     ProjectShort:
       title: Project Short
       type: object
@@ -347,21 +342,20 @@ components:
           type:
             - string
             - integer
-        firstName:
+        name:
           type: string
-        lastName:
+        surname:
           type: string
         admin:
           type: boolean
-        avatar:
-          type:
-            - string
+        picture:
+          type: string
           format: uri
           nullable: true
       required:
         - id
-        - firstName
-        - lastName
+        - name
+        - surname
         - admin
-        - avatar
+        - picture
   securitySchemes: {}
