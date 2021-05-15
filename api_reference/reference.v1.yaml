@@ -210,6 +210,75 @@ paths:
       responses: {}
       operationId: post-users
       description: Creates a new user
+  '/projects/{projectId}/issues':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueShort'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-issues
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: inSprint
+          description: Show only issues that belong to the given sprint
+        - schema:
+            type: array
+          in: query
+          name: label
+          description: Array of label ids. Must belong to the project. Shows only issues with the specified label(s)
+        - schema:
+            type: string
+          in: query
+          name: withSprint
+          description: Includes the `sprint` field in the results
+        - schema:
+            type: string
+          in: query
+          name: withEpic
+          description: Includes the `epic` field in the results
+        - schema:
+            type: integer
+          in: query
+          name: assignee
+          description: User id. Must have access to the project. Shows only issues assigned to the specified user
+        - schema:
+            type: integer
+          in: query
+          name: column
+          description: The id of a column. Show only issues in this column.
+        - schema:
+            type: integer
+          in: query
+          name: inEpic
+          description: The id of an Epic. Show only issues in this epic.
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: search
 components:
   schemas:
     UserProfile:
