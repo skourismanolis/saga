@@ -22,7 +22,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Run Jest
-      uses: stefanoeb/jest-action@1.0.4
-      with:
-        jestArgs: "./sources/api-client/jest.config.js"
+    - name: install modules
+      run: yarn
+    - name: cd to api-client
+      run: cd ./sources/api-client
+    - name: run tests
+      run: yarn test
