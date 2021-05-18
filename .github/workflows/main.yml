@@ -31,6 +31,9 @@ jobs:
     - name: install modules
       run: yarn
       working-directory: ./sources/api-client
+    - name: run tests
+      run: yarn test
+      working-directory: ./sources/api-client
 
   lint-api-client:
     # The type of runner that the job will run on
