@@ -57,4 +57,4 @@ jobs:
       with:
         eslintArgs: '--ignore-path=.gitignore --quiet .'
         annotations: true
-        working-directory: ./sources/api-client
+      working-directory: ./sources/api-client
