@@ -59,12 +59,12 @@ jobs:
       run: npx eslint --output-file eslint_report.json --format json .
       working-directory: ./sources/api-client
       continue-on-error: true
-      - name: Annotate Code Linting Results
-        uses: ataylorme/eslint-annotate-action@1.2.0
-        with:
-          report-json: "eslint_report.json"
-      - name: Upload ESLint report
-        uses: actions/upload-artifact@v2
-        with:
-          name: eslint_report.json
-          path: eslint_report.json
+    - name: Annotate Code Linting Results
+      uses: ataylorme/eslint-annotate-action@1.2.0
+      with:
+        report-json: "eslint_report.json"
+    - name: Upload ESLint report
+      uses: actions/upload-artifact@v2
+      with:
+        name: eslint_report.json
+        path: eslint_report.json
