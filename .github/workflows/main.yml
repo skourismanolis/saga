@@ -27,10 +27,8 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
-    - name: ls
-      run: ls
+    - name: cd to api-client
+      run: cd sources/api-client
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-    - name: cd to api-client
-      run: cd sources/api-client
