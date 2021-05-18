@@ -32,6 +32,8 @@ jobs:
       run: yarn
       working-directory: ./sources/api-client
     - uses: mattallty/jest-github-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         test-command: "yarn test"
         coverage-comment: false
@@ -62,6 +64,7 @@ jobs:
     - name: Annotate Code Linting Results
       uses: ataylorme/eslint-annotate-action@1.2.0
       with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
         report-json: "eslint_report.json"
     - name: Upload ESLint report
       uses: actions/upload-artifact@v2
