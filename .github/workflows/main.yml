@@ -31,13 +31,6 @@ jobs:
     - name: install modules
       run: yarn
       working-directory: ./sources/api-client
-    - uses: mattallty/jest-github-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        test-command: "yarn test"
-        coverage-comment: false
-        working-directory: ./sources/api-client
 
   lint-api-client:
     # The type of runner that the job will run on
@@ -57,17 +50,3 @@ jobs:
     - name: run tests
       run: npx eslint .
       working-directory: ./sources/api-client
-    - name: generate report
-      run: npx eslint --output-file eslint_report.json --format json .
-      working-directory: ./sources/api-client
-      continue-on-error: true
-    - name: Annotate Code Linting Results
-      uses: ataylorme/eslint-annotate-action@1.2.0
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        report-json: "eslint_report.json"
-    - name: Upload ESLint report
-      uses: actions/upload-artifact@v2
-      with:
-        name: eslint_report.json
-        path: eslint_report.json
