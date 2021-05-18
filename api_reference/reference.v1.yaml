@@ -593,6 +593,132 @@ paths:
               items:
                 type: string
         description: 'An array of issue codes to remove from the epic. If some of these issues don''t belong to the given epic, nothing will happen to them.'
+  '/projects/{projectId}/labels':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: List all project labels
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Label'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-labels
+      description: List all labels belonging to the specified project.
+    post:
+      summary: Add a project label
+      operationId: post-projects-projectId-labels
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Label'
+      description: Add a project label
+  '/projects/{projectId}/labels/{labelId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: labelId
+        in: path
+        required: true
+    get:
+      summary: Get a specific label's info
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Label'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-labels-labelId
+      description: Get a specific label's info
+    put:
+      summary: Update a label
+      operationId: put-projects-projectId-labels-labelId
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Update a label
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Label'
+    delete:
+      summary: Delete a label
+      operationId: delete-projects-projectId-labels-labelId
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Delete the given label. All issues with this label will have their label field reset to null.
 components:
   schemas:
     UserProfile:
@@ -858,4 +984,20 @@ components:
         - deadline
         - start
       description: ''
+    Label:
+      title: Label
+      type: object
+      properties:
+        idLabel:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+          pattern: '^#[A-Fa-f0-9]{6}$'
+          description: hex color value
+      required:
+        - idLabel
+        - name
+        - color
   securitySchemes: {}
