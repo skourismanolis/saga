@@ -1,0 +1,23 @@
+{
+  "name": "@dira/api-client",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint . --fix",
+    "mock": "prism mock -dnp ../../api_reference/reference.v1.yaml",
+    "test": "jest",
+    "test-dev": "jest --watch"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {
+    "@stoplight/prism-cli": "^4.2.2",
+    "eslint": "^7.26.0",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.3.0"
+  }
+}
