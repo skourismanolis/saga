@@ -22,10 +22,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v2
-    - name: install modules
-      run: yarn
+    - name: checkout
+      uses: actions/checkout@v2
     - name: ls
       run: ls
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
     - name: cd to api-client
       run: cd sources/api-client
