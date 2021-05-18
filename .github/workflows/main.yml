@@ -26,5 +26,5 @@ jobs:
       run: yarn
     - name: cd to api-client
       run: cd ./sources/api-client
-    - name: run tests
-      run: yarn test
+    - name: pwd
+      run: pwd
