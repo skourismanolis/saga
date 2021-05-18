@@ -460,6 +460,114 @@ paths:
               items:
                 type: string
         description: 'An array of issue codes to add to a sprint. If any of these issues already belong to a sprint, the information will be overwritten.'
+  '/projects/{projectId}/epics':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: List all epics of a project
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Epic'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-epics
+    post:
+      summary: Add a new epic
+      operationId: post-projects-projectId-epics
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  '/projects/{projectId}/epics/{epicId}/issues':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: epicId
+        in: path
+        required: true
+    post:
+      summary: Add issues to an epic
+      operationId: post-projects-projectId-epics-epicId-issues
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        description: 'An array of issue codes to add to an epic. If any of these issues already belong to an epic, the information will be overwritten.'
+      description: 'Add issues to the given epic. If any of these issues already belong to an epic, the information will be overwritten.'
+    delete:
+      summary: Remove issues from an epic
+      operationId: delete-projects-projectId-epics-epicId-issues
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: 'Remove issues from the given epic. If some of these issues don''t belong to the given epic, nothing will happen to them.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        description: 'An array of issue codes to remove from the epic. If some of these issues don''t belong to the given epic, nothing will happen to them.'
 components:
   schemas:
     UserProfile:
@@ -703,4 +811,26 @@ components:
         - start
         - finish
         - title
+    Epic:
+      title: Epic
+      type: object
+      properties:
+        idEpic:
+          type: string
+        title:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        start:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - idEpic
+        - title
+        - deadline
+        - start
+      description: ''
   securitySchemes: {}
