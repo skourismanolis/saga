@@ -1,4 +1,7 @@
-const jestGlobals = require('./jest.config').globals;
+const jestGlobals = require('./jest.config.js').globals;
+
+let globals = {};
+Object.keys(jestGlobals).forEach((global) => (globals[global] = 'readonly'));
 
 module.exports = {
 	plugins: ['prettier'],
@@ -15,7 +18,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			global: Object.keys(jestGlobals),
+			globals,
 			plugins: ['jest'],
 			files: ['**/__tests__/*.{j,t}s?(x)', '**/*.spec.{j,t}s?(x)'],
 			extends: [
