@@ -30,9 +30,6 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-    - name: cd to api-client
-      run: cd sources/api-client
-    - name: pwd
-      run: pwd
     - name: run tests
       run: yarn test
+      working-directory: ./sources/api-client
