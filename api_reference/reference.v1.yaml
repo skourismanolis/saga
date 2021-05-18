@@ -238,15 +238,89 @@ paths:
                     - number
               required:
                 - id
-  /users:
-    post:
-      summary: Create new user
-      tags:
-        - users
-      responses: {}
-      operationId: post-users
-      description: Creates a new user
-    parameters: []
+  '/users/{idUser}':
+    get:
+      summary: Get user by id
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns details about the user with given id
+    put:
+      summary: Put User by id
+      operationId: put-users-idUser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Change some details about user with given id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                surname:
+                  type: string
+                profession:
+                  type: string
+                birthDate:
+                  type: string
+                  format: date
+                studies:
+                  type: string
+                residence:
+                  type: string
+                picture:
+                  type: string
+                plan:
+                  type: string
+                  enum:
+                    - Free
+                    - Premium
+                    - Host
+                newPassword:
+                  type: string
+              required:
+                - password
+        description: |-
+          Change some details about this specific account.
+          Requires password authentication.
   '/projects/{projectId}/issues':
     parameters:
       - schema:
@@ -719,6 +793,82 @@ paths:
         '500':
           description: Internal Server Error
       description: Delete the given label. All issues with this label will have their label field reset to null.
+  /users:
+    post:
+      summary: Create new user
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      operationId: post-users
+      description: Creates a new user using gived credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                surname:
+                  type: string
+                profession:
+                  type: string
+                  nullable: true
+                birthDate:
+                  type: string
+                  format: date
+                studies:
+                  type: string
+                  nullable: true
+                residence:
+                  type: string
+                  nullable: true
+                picture:
+                  type: string
+                  nullable: true
+                plan:
+                  type: string
+                  enum:
+                    - Free
+                    - Premium
+                    - Host
+              required:
+                - username
+                - email
+                - password
+                - name
+                - surname
+                - profession
+                - birthDate
+                - studies
+                - residence
+                - picture
+                - plan
+        description: 'Create a new user with the given details, or returns error if invalid'
+      x-internal: false
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: idUser
+        in: path
+        required: true
 components:
   schemas:
     UserProfile:
@@ -787,6 +937,7 @@ components:
         - email
         - picture
         - username
+        - plan
     ProjectMember:
       description: User representation used in project members list.
       type: object
