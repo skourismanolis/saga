@@ -259,7 +259,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Returns details about the user with given id
+      description: Returns details about the user with given id.
     put:
       summary: Put User by id
       operationId: put-users-idUser
@@ -321,6 +321,34 @@ paths:
         description: |-
           Change some details about this specific account.
           Requires password authentication.
+    delete:
+      summary: Delete User
+      operationId: delete-users-idUser
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        Delete User with given id.
+        Requires password authentication.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+        description: ''
   '/projects/{projectId}/issues':
     parameters:
       - schema:
@@ -796,8 +824,6 @@ paths:
   /users:
     post:
       summary: Create new user
-      tags:
-        - users
       responses:
         '200':
           description: OK
@@ -810,7 +836,9 @@ paths:
         '500':
           description: Internal Server Error
       operationId: post-users
-      description: Creates a new user using gived credentials
+      description: |-
+        Creates a new unverified user using given credentials.
+        Sends verification token to given email.
       requestBody:
         content:
           application/json:
@@ -860,7 +888,7 @@ paths:
                 - residence
                 - picture
                 - plan
-        description: 'Create a new user with the given details, or returns error if invalid'
+        description: ''
       x-internal: false
       parameters: []
     parameters:
@@ -869,6 +897,33 @@ paths:
         name: idUser
         in: path
         required: true
+  '/token/{webToken}':
+    parameters:
+      - schema:
+          type: string
+        name: webToken
+        in: path
+        required: true
+    get:
+      summary: Handle token
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-token-webToken
+      description: |-
+        Handles process indicated by webToken.
+
+        webToken is a json web token that contains a "process" field that shows what action needs to be taken.
+        "process" can be "verification" or "invite".
 components:
   schemas:
     UserProfile:
