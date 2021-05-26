@@ -1,0 +1,16 @@
+// Custom.scss
+$border-radius: 10px;
+
+$theme-colors: (
+  "primary": #564787,
+  "secondary": #FFD972,
+  "danger": #DB5461,
+  "dark": #5a5b59,
+  "light": #f2f2f2,
+  "alert": #fde441,
+  "info": #04BBFA,
+  "success": #14CD6F,
+);
+
+@import '../../../../node_modules/bootstrap/scss/bootstrap';
+@import '../../../../node_modules/bootstrap-vue/src/index.scss';
