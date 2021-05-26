@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`sprint` (
   `idSprint` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `idProject` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
-  `start` DATE NOT NULL,
+  `start` DATE NULL,
   `finish` DATE NULL,
   PRIMARY KEY (`idSprint`),
   CONSTRAINT `fk_sprint_project1`
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   `idProject` INT UNSIGNED NOT NULL,
   `idSprint` INT UNSIGNED NULL,
   `title` VARCHAR(255) NOT NULL,
-  `start` DATE NOT NULL,
+  `start` DATE NULL,
   `deadline` DATE NULL,
   `description` TEXT NULL,
   PRIMARY KEY (`idEpic`),
