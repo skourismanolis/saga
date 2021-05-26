@@ -13,6 +13,7 @@ module.exports = class SagaClient {
 
 	async getProjects() {
 		let { data: projects } = await this.axios.get('/projects');
+
 		return projects.map((proj) => new Project(this, proj));
 	}
 };
