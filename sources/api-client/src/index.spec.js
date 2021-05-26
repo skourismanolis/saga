@@ -1,4 +1,4 @@
-const Project = require('./classes/project');
+const Project = require('./classes/Project');
 const SagaClient = require('./index');
 
 describe('constructs correctly', () => {
