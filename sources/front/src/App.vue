@@ -1,6 +1,9 @@
 <template>
    <div id="app">
-        <Footer/>
+        <router-view/>
+        <div class="footer-container">
+            <Footer />
+        </div>
     </div>
 </template>
 
@@ -22,6 +25,10 @@ export default {
 
 #app {
 	font-family: 'Roboto', sans-serif;
+  
+}
+
+.footer-container{
     background-color: #31245D;
 }
 </style>
