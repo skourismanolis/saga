@@ -1,5 +1,5 @@
 const axios = require('axios');
-const Project = require('./classes/project');
+const Project = require('./classes/Project');
 
 module.exports = class SagaClient {
 	/**

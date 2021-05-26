@@ -1,5 +1,5 @@
 const SagaClient = require('../index');
-const Project = require('./project');
+const Project = require('./Project');
 
 const MOCK_PROJECT = {
 	idProject: 123,
