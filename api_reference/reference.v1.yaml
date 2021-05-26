@@ -828,6 +828,15 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
         '400':
           description: Bad Request
         '401':
@@ -964,6 +973,37 @@ paths:
       description: |
         User login request.
         Requires email and password and returns a json web token in response's body.
+  '/users/{idUser}/payment':
+    parameters:
+      - schema:
+          type: string
+        name: idUser
+        in: path
+        required: true
+    get:
+      summary: Get Payment List
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      operationId: get-users-idUser-payment
+      description: |-
+        Receives all the existing payments and generates missing ones.
+        Authentication for same user required.
 components:
   schemas:
     UserProfile:
@@ -1246,4 +1286,23 @@ components:
         - idLabel
         - name
         - color
+    Payment:
+      title: Payment
+      type: object
+      properties:
+        idPayment:
+          type:
+            - string
+            - number
+        idUser:
+          type:
+            - string
+            - number
+        amount:
+          type: number
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+        timestamp:
+          type: string
+          format: date-time
   securitySchemes: {}
