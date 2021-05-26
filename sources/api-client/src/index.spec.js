@@ -14,7 +14,7 @@ describe('projects', () => {
 		client = new SagaClient({ url: __MOCKURL__ });
 	});
 
-	test('returns projects', async () => {
+	it('returns a project list', async () => {
 		let projects = await client.getProjects();
 		expect(projects).toBeInstanceOf(Array);
 		expect(projects.length).toBeGreaterThan(0);
