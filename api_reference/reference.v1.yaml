@@ -340,6 +340,7 @@ paths:
       description: |-
         Delete User with given id.
         Requires password authentication.
+        Comments and issues by this user will have theis creator id set to 0.
       requestBody:
         content:
           application/json:
@@ -924,6 +925,45 @@ paths:
 
         webToken is a json web token that contains a "process" field that shows what action needs to be taken.
         "process" can be "verification" or "invite".
+  /users/login:
+    post:
+      summary: Login with credentials
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-users-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      description: |
+        User login request.
+        Requires email and password and returns a json web token in response's body.
 components:
   schemas:
     UserProfile:
