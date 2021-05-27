@@ -419,6 +419,28 @@ paths:
           in: query
           name: search
           description: search
+    post:
+      summary: Create new issue
+      operationId: post-projects-projectId-issues
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueShort'
+      description: |-
+        Creates a new issue in the current project.
+        Valid only if user has access to project.
   '/projects/{projectId}/sprints':
     parameters:
       - schema:
@@ -1183,8 +1205,9 @@ components:
           type: string
         title:
           type: string
-        IdLabel:
+        idLabel:
           type: integer
+          nullable: true
         points:
           type: integer
           minimum: 0
@@ -1207,6 +1230,7 @@ components:
             - Neutral
             - High
             - Very High
+          nullable: true
         asignees:
           type: array
           description: List of userIds that are assigned to this issue
@@ -1218,15 +1242,23 @@ components:
         idEpic:
           type: integer
           nullable: true
+        idColumn:
+          type: number
+          nullable: true
+        description:
+          type: string
+          nullable: true
       required:
-        - code
         - title
-        - IdLabel
+        - idLabel
         - points
         - category
         - deadline
         - priority
         - asignees
+        - idSprint
+        - idEpic
+        - description
     Sprint:
       title: Sprint
       type: object
