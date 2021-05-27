@@ -4,7 +4,11 @@
 			<h3 class="align-self-sm-baseline black-text">Καλωσορίσατε στο</h3>
 			<h3 class="align-self-sm-baseline purple-text">Saga!</h3>
 		</div>
-		<button type="button" class="btn btn-primary col-element">
+		<button
+			type="button"
+			class="btn btn-primary col-element"
+			v-on:click="scrollToElement()"
+		>
 			Ξεκίνα τώρα
 			<i class="bi bi-chevron-right align-self-center"></i>
 		</button>
@@ -28,6 +32,16 @@ import RatePlans from '../components/RatePlans.vue';
 export default {
 	components: {
 		RatePlans,
+	},
+	methods: {
+		scrollToElement() {
+			const el = this.$el.querySelector('#rate-plans');
+
+			if (el) {
+				// Use el.scrollIntoView() to instantly scroll to the element
+				el.scrollIntoView({ behavior: 'smooth' });
+			}
+		},
 	},
 };
 </script>
