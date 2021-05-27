@@ -1,5 +1,6 @@
 const SagaClient = require('../index');
 const Project = require('./Project');
+const Member = require('./Member');
 
 let project;
 
@@ -17,11 +18,14 @@ test('project constructor', () => {
 test('members', async () => {
 	let members = await project.getMembers();
 	expect(members.length).toBeGreaterThan(0);
+	members.forEach((member) => expect(member).toBeInstanceOf(Member));
 
 	let admins = await project.getAdmins();
 	let nonAdmins = await project.getNonAdmins();
 	expect(admins.length).toBeGreaterThan(0);
+	admins.forEach((member) => expect(member).toBeInstanceOf(Member));
 	expect(nonAdmins.length).toBeGreaterThan(0);
+	nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
 });
 
 test('updates', async () => {
