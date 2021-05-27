@@ -16,10 +16,21 @@
 				που σου ταιριάζει!
 			</h3>
 		</div>
+		<div class="d-flex justify-content-center" id="rate-plans">
+			<RatePlans />
+		</div>
 	</div>
 </template>
 
-<script></script>
+<script>
+import RatePlans from '../components/RatePlans.vue';
+
+export default {
+	components: {
+		RatePlans,
+	},
+};
+</script>
 
 <style scoped>
 .col-element {
@@ -51,5 +62,10 @@
 	margin-top: 72px;
 	margin-left: 0px;
 	width: 100%;
+}
+
+#rate-plans {
+	margin-top: 36px;
+	margin-bottom: 88px;
 }
 </style>
