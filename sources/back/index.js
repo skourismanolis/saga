@@ -5,7 +5,7 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 
-let { connect, db } = require('./db');
+let { connect /*, db*/ } = require('./db');
 
 app.listen(port, () =>
 	console.log(`App listening at http://localhost:${port}`)
