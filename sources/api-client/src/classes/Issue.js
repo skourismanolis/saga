@@ -45,10 +45,12 @@ module.exports = class Issue extends Base {
 
 	/**
 	 * The time (in milliseconds) left until the deadline. Can be negative.
-	 * @returns {Number}
+	 * If there's no deadline set, it returns null.
+	 * @returns {Number|null}
 	 */
 	dueIn() {
-		return new Date() - this.deadline;
+		if (this.deadline != null) return new Date() - this.deadline;
+		else return null;
 	}
 
 	/**
