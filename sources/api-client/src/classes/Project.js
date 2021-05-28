@@ -1,5 +1,6 @@
 const Base = require('./Base');
 const Label = require('./Label');
+const Issue = require('./Issue');
 const Member = require('./Member');
 const UserRole = require('./UserRoles');
 
@@ -83,6 +84,65 @@ module.exports = class Project extends Base {
 		await this.axios.delete(
 			`/projects/${this._idProject}/labels/${label.id}`
 		);
+	}
+
+	/**
+	 * completely deletes the given issue
+	 * @param {Issue} issue the Issue to delete
+	 */
+	async deleteIssue(issue) {
+		await this.axios.delete(
+			`projects/${this._idProject}/issues/${issue.code}`
+		);
+	}
+
+	/**
+	 * Return Issue using the issue's code
+	 * @param {String} code
+	 */
+	async getIssue(code) {
+		let { data: issue } = this.axios.get(
+			`/projects/${this._idProject}/issues/${code}`
+		);
+		return new Issue(this.client, issue);
+	}
+
+	/**
+	 * Creates an issue on this project with the given values.
+	 * @param {Object} issueConf the values used to create the issue
+	 * @param {String} issueConf.title The title of the issue
+	 * @param {String} issueConf.category One of 'Story', 'Task', 'Bug'
+	 * @param {Number=} issueConf.points Story points
+	 * @param {String=} issueConf.priority One of 'Very Low','Low','Neutral','High','Very High'
+	 * @param {String=} issueConf.description Issue description
+	 * @param {Date=} issueConf.deadline when is this issue due
+	 * @returns {Issue}
+	 */
+	async createIssue({
+		title,
+		category,
+		points,
+		priority,
+		description,
+		deadline,
+	}) {
+		let newIssue = {
+			title,
+			category,
+			points: points || null,
+			priority: priority || null,
+			description: description || null,
+			deadline: deadline || null,
+		};
+
+		let {
+			data: { code },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/issues`,
+			newIssue
+		);
+
+		return await this.getIssue(code);
 	}
 
 	async update({ title, picture }) {
