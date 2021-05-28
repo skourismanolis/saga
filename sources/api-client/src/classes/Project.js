@@ -116,6 +116,7 @@ module.exports = class Project extends Base {
 	 * @param {String=} issueConf.priority One of 'Very Low','Low','Neutral','High','Very High'
 	 * @param {String=} issueConf.description Issue description
 	 * @param {Date=} issueConf.deadline when is this issue due
+	 * @param {Number=} issueConf.label id of the label thie new issue will have
 	 * @returns {Issue}
 	 */
 	async createIssue({
@@ -125,10 +126,12 @@ module.exports = class Project extends Base {
 		priority,
 		description,
 		deadline,
+		label,
 	}) {
 		let newIssue = {
 			title,
 			category,
+			idLabel: label || null,
 			points: points || null,
 			priority: priority || null,
 			description: description || null,
