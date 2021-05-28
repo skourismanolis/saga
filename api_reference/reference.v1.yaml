@@ -552,7 +552,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Removes the given sprint
+      description: Removes the given sprint.
   '/projects/{projectId}/sprints/{sprintId}/issues':
     parameters:
       - schema:
@@ -1232,6 +1232,110 @@ paths:
               required:
                 - name
                 - order
+  '/procects/{projectId}/issues/{code}/comments':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    get:
+      summary: get comments
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-procects-projectId-issues-code-comments
+      description: Get all comments of this issue.
+    post:
+      summary: post new comment
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-procects-projectId-issues-code-comments
+      description: Post new comment on current issue.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentShort'
+  '/procects/{projectId}/issues/{code}/comments/{idComment}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: idComment
+        in: path
+        required: true
+    delete:
+      summary: delete comment by id
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-procects-projectId-issues-code-comments-idComment
+      description: Delete specific comment.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idComment:
+                  type: string
+              required:
+                - idComment
 components:
   schemas:
     UserProfile:
@@ -1606,4 +1710,33 @@ components:
           type: string
         order:
           type: integer
+    CommentShort:
+      title: Comment Short
+      type: object
+      properties:
+        code:
+          type: string
+        content:
+          type: string
+      required:
+        - code
+        - content
+    Comment:
+      title: Comment
+      type: object
+      properties:
+        idComment:
+          type: integer
+        code:
+          type: string
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - idComment
+        - code
+        - content
+        - timestamp
   securitySchemes: {}
