@@ -1,0 +1,103 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  lint-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
+      working-directory: ./sources/front
+    - name: run linter
+      run: npx eslint .
+      working-directory: ./sources/front
+
+  lint-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
+      working-directory: ./sources/cli
+    - name: run linter
+      run: npx eslint .
+      working-directory: ./sources/cli
+
+  lint-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
+      working-directory: ./sources/back
+    - name: run linter
+      run: npx eslint .
+      working-directory: ./sources/back
+
+  lint-api-client:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
+      working-directory: ./sources/api-client
+    - name: run linter
+      run: npx eslint .
+      working-directory: ./sources/api-client
+
+  test-api-client:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - uses: c-hive/gha-yarn-cache@v1
+    - name: install modules
+      run: yarn
+      working-directory: ./sources/api-client
+    - name: run tests
+      run: |
+        yarn mock &
+        yarn test
+      working-directory: ./sources/api-client
