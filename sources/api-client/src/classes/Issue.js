@@ -33,7 +33,7 @@ module.exports = class Issue extends Base {
 		this.points = points;
 		this.priority = priority;
 		this.description = description;
-		this.deadline = new Date(deadline);
+		this.deadline = deadline != null ? new Date(deadline) : null;
 	}
 
 	async getProject() {
