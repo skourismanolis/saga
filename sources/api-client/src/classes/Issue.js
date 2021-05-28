@@ -48,8 +48,8 @@ module.exports = class Issue extends Base {
 	 * @returns {Object[]} array of project Members
 	 */
 	async getAsignees() {
-		let { data: members } = this.axios.get(
-			`/project/${this._idProject}/members`
+		let { data: members } = await this.axios.get(
+			`/projects/${this._idProject}/members`
 		);
 
 		let asignees = members.filter(
