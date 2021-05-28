@@ -6,13 +6,13 @@ module.exports = class Member extends Base {
 	 * @param {SagaClient} client
 	 * @param {Object} member
 	 */
-	constructor(client, { idMember, name, surname, email, admin, picture }) {
+	constructor(client, { idMember, name, surname, email, role, picture }) {
 		super(client);
 		this._idMember = idMember;
 		this.name = name;
 		this.surname = surname;
 		this.email = email || null;
-		this.admin = admin;
+		this.role = role;
 		this.picture = picture || null;
 	}
 };
