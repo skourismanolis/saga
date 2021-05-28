@@ -425,6 +425,13 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idIssue:
+                    type: integer
         '400':
           description: Bad Request
         '401':
@@ -1026,6 +1033,205 @@ paths:
       description: |-
         Receives all the existing payments and generates missing ones.
         Authentication for same user required.
+  '/project/{projectId}/columns':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+    get:
+      summary: get columns
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Column'
+      operationId: get-project-idProject-columns
+      description: Get all columns in project (except from done) in an array.
+    post:
+      summary: new column
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idColumn:
+                    type: integer
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-project-idProject-columns
+      description: Create a new column.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColumnShort'
+  '/projects/{projectId}/issues/{code}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    put:
+      summary: change specific issue's details
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: put-projects-projectId-issues-idIssue
+      description: |-
+        Change details of specific issue.
+        Must have access to project.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuePutPost'
+    get:
+      summary: get specific issue's details
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueShort'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-projectId-issues-idIssue
+      description: |-
+        Get all details of specific issue.
+        Must have access to project.
+    delete:
+      summary: delete specific issue
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-projects-projectId-issues-idIssue
+      description: |-
+        Delete specific issue.
+        Must have access to project.
+  '/project/{projectId}/columns/{idColumn}':
+    parameters:
+      - schema:
+          type: string
+        name: projectId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: idColumn
+        in: path
+        required: true
+    delete:
+      summary: Delete Column
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-project-projectId-columns-idColumn
+      description: Delete a column.
+    put:
+      summary: Change Column
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: put-project-projectId-columns-idColumn
+      description: Change details of a column.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                order:
+                  type: integer
+              required:
+                - name
+                - order
 components:
   schemas:
     UserProfile:
@@ -1045,9 +1251,7 @@ components:
           avatar: null
       properties:
         id:
-          type:
-            - string
-            - number
+          type: integer
         name:
           type: string
         surname:
@@ -1203,24 +1407,23 @@ components:
       properties:
         code:
           type: string
-        title:
-          type: string
+        idEpic:
+          type: integer
+          nullable: true
         idLabel:
           type: integer
           nullable: true
-        points:
+        idSprint:
           type: integer
-          minimum: 0
           nullable: true
         category:
-          type: string
           enum:
             - Story
             - Task
             - Bug
-        deadline:
           type: string
-          format: date-time
+        idColumn:
+          type: integer
           nullable: true
         priority:
           type: string
@@ -1236,29 +1439,75 @@ components:
           description: List of userIds that are assigned to this issue
           items:
             type: integer
-        idSprint:
+        title:
+          type: string
+        points:
           type: integer
-          nullable: true
-        idEpic:
-          type: integer
-          nullable: true
-        idColumn:
-          type: number
+          minimum: 0
+        deadline:
+          type: string
+          format: date-time
           nullable: true
         description:
           type: string
           nullable: true
       required:
-        - title
+        - code
+        - idEpic
         - idLabel
-        - points
+        - idSprint
         - category
-        - deadline
+        - idColumn
         - priority
         - asignees
-        - idSprint
-        - idEpic
+        - title
+        - points
+        - deadline
         - description
+    IssuePutPost:
+      title: Issue Put
+      type: object
+      description: A representation of issue for put request
+      x-examples: {}
+      properties:
+        idLabel:
+          type: integer
+          nullable: true
+        category:
+          enum:
+            - Story
+            - Task
+            - Bug
+          type: string
+        idColumn:
+          type: integer
+          nullable: true
+        priority:
+          type: string
+          enum:
+            - Very Low
+            - Low
+            - Neutral
+            - High
+            - Very High
+          nullable: true
+        asignees:
+          type: array
+          description: List of userIds that are assigned to this issue
+          items:
+            type: integer
+        title:
+          type: string
+        points:
+          type: integer
+          minimum: 0
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        description:
+          type: string
+          nullable: true
     Sprint:
       title: Sprint
       type: object
@@ -1283,9 +1532,10 @@ components:
     Epic:
       title: Epic
       type: object
+      description: ''
       properties:
         idEpic:
-          type: string
+          type: integer
         title:
           type: string
         deadline:
@@ -1301,7 +1551,6 @@ components:
         - title
         - deadline
         - start
-      description: ''
     Label:
       title: Label
       type: object
@@ -1323,13 +1572,9 @@ components:
       type: object
       properties:
         idPayment:
-          type:
-            - string
-            - number
+          type: integer
         idUser:
-          type:
-            - string
-            - number
+          type: integer
         amount:
           type: number
           exclusiveMinimum: false
@@ -1337,4 +1582,28 @@ components:
         timestamp:
           type: string
           format: date-time
+    Column:
+      title: Column
+      type: object
+      description: ''
+      properties:
+        idProject:
+          type: integer
+        name:
+          type: string
+        order:
+          type: integer
+        idColumn:
+          type: integer
+    ColumnShort:
+      title: Column Short
+      type: object
+      description: Column without the id
+      properties:
+        idProject:
+          type: integer
+        name:
+          type: string
+        order:
+          type: integer
   securitySchemes: {}
