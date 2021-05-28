@@ -49,7 +49,7 @@ module.exports = class Issue extends Base {
 	 * @returns {Number|null}
 	 */
 	dueIn() {
-		if (this.deadline != null) return new Date() - this.deadline;
+		if (this.deadline != null) return this.deadline - new Date();
 		else return null;
 	}
 
