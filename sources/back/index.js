@@ -6,8 +6,10 @@ var cors = require('cors');
 app.use(cors());
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const Joi = require('joi');
 
 let { connect, db } = require('./db');
+const schemas = require('./schemas/schemas_export');
 
 app.use('/', (req, res, next) => {
 	const header = req.get('authorization');
@@ -22,7 +24,7 @@ app.use('/', (req, res, next) => {
 	}
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) return res.stats(403).send('Forbidden');
+		if (err) return res.status(403).send('Forbidden');
 		req.user = user;
 		next();
 	});
@@ -35,6 +37,7 @@ app.get('/', async (req, res) => {
 
 app.post('/users/login', async (req, res) => {
 	try {
+		Joi.attempt(req.body, schemas.UserLoginPost);
 		// prettier-ignore
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE email = ?',
