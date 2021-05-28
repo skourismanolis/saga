@@ -1,6 +1,7 @@
 const Base = require('./Base');
 const Label = require('./Label');
 const Member = require('./Member');
+const UserRole = require('./UserRoles');
 
 module.exports = class Project extends Base {
 	/**
@@ -40,7 +41,7 @@ module.exports = class Project extends Base {
 		);
 		return members
 			.map((member) => new Member(this.client, member))
-			.filter((member) => member.admin === true);
+			.filter((member) => member.role === UserRole.ADMIN);
 	}
 
 	async getNonAdmins() {
@@ -49,7 +50,7 @@ module.exports = class Project extends Base {
 		);
 		return members
 			.map((member) => new Member(this.client, member))
-			.filter((member) => member.admin === false);
+			.filter((member) => member.role === UserRole.MEMBER);
 	}
 
 	/**

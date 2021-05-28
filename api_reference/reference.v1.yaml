@@ -1650,7 +1650,7 @@ components:
             - High
             - Very High
           nullable: true
-        asignees:
+        assignees:
           type: array
           description: List of userIds that are assigned to this issue
           items:
@@ -1675,7 +1675,7 @@ components:
         - category
         - idColumn
         - priority
-        - asignees
+        - assignees
         - title
         - points
         - deadline
@@ -1709,7 +1709,7 @@ components:
             - High
             - Very High
           nullable: true
-        asignees:
+        assignees:
           type: array
           description: List of userIds that are assigned to this issue
           items:
@@ -1731,7 +1731,7 @@ components:
         - category
         - idColumn
         - priority
-        - asignees
+        - assignees
         - title
         - points
         - deadline
@@ -1761,7 +1761,7 @@ components:
             - High
             - Very High
           nullable: true
-        asignees:
+        assignees:
           type: array
           description: List of userIds that are assigned to this issue
           items:
@@ -1782,7 +1782,7 @@ components:
         - idLabel
         - category
         - priority
-        - asignees
+        - assignees
         - title
         - points
         - deadline
