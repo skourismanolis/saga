@@ -55,8 +55,8 @@ module.exports = class Issue extends Base {
 	 * Whether this issue is done
 	 * @returns {Boolean}
 	 */
-	isNotDone() {
-		return this.idColumn != null;
+	isDone() {
+		return this._idColumn === null;
 	}
 
 	/**
