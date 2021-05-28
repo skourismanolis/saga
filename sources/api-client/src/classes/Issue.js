@@ -1,4 +1,5 @@
 const Base = require('./Base');
+const Member = require('./Member');
 const Project = require('./Project');
 
 module.exports = class Issue extends Base {
@@ -41,6 +42,18 @@ module.exports = class Issue extends Base {
 			`/projects/${this._idProject}`
 		);
 		return new Project(this.client, project);
+	}
+
+	async getAsignees() {
+		let { data: members } = this.axios.get(
+			`/project/${this._idProject}/members`
+		);
+
+		let asignees = members.filter(
+			(m) => this._assigneeIds.indexOf(m.id) !== -1
+		);
+
+		return asignees.map((a) => new Member(this.client, a));
 	}
 
 	/**
