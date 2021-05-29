@@ -3,6 +3,11 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+
 CREATE DATABASE IF NOT EXISTS `saga` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `saga`;
 
@@ -26,7 +31,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`user` (
   PRIMARY KEY (`idUser`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `saga`.`payment`
 -- -----------------------------------------------------
@@ -43,27 +47,15 @@ CREATE TABLE IF NOT EXISTS `saga`.`payment` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
-
-
 -- -----------------------------------------------------
 -- Table `saga`.`project`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `saga`.`project` (
   `idProject` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `owner` INT UNSIGNED NOT NULL,
   `picture` VARCHAR(45) NULL,
   `title` VARCHAR(255) NULL,
-  PRIMARY KEY (`idProject`),
-  CONSTRAINT `fk_project_user1`
-    FOREIGN KEY (`owner`)
-    REFERENCES `saga`.`user` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`idProject`))
 ENGINE = InnoDB;
-
-
-
 
 -- -----------------------------------------------------
 -- Table `saga`.`label`
@@ -80,9 +72,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`label` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
 
 -- -----------------------------------------------------
 -- Table `saga`.`sprint`
@@ -101,11 +90,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`sprint` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
-
-
-
-
 -- -----------------------------------------------------
 -- Table `saga`.`epic`
 -- -----------------------------------------------------
@@ -118,22 +102,17 @@ CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   `deadline` DATE NULL,
   `description` TEXT NULL,
   PRIMARY KEY (`idEpic`),
-  CONSTRAINT `fk_epic_sprint1`
-    FOREIGN KEY (`idSprint`)
-    REFERENCES `saga`.`sprint` (`idSprint`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_epic_project1`
     FOREIGN KEY (`idProject`)
     REFERENCES `saga`.`project` (`idProject`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_epic_sprint1`
+    FOREIGN KEY (`idSprint`)
+    REFERENCES `saga`.`sprint` (`idSprint`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
-
-
 
 -- -----------------------------------------------------
 -- Table `saga`.`column`
@@ -150,9 +129,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`column` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
 
 -- -----------------------------------------------------
 -- Table `saga`.`issue`
@@ -198,17 +174,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
-
-
-
-
-
-
-
-
-
-
 -- -----------------------------------------------------
 -- Table `saga`.`comment`
 -- -----------------------------------------------------
@@ -224,9 +189,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`comment` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
 
 -- -----------------------------------------------------
 -- Table `saga`.`member`
@@ -248,11 +210,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`member` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
-
-
-
-
 -- -----------------------------------------------------
 -- Table `saga`.`assignee`
 -- -----------------------------------------------------
@@ -271,11 +228,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`assignee` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
-
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
