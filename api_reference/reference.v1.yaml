@@ -1097,6 +1097,27 @@ paths:
       description: |-
         Delete the given label.
         All issues with this label will have their label field reset to null.
+    get:
+      summary: Get a single label
+      operationId: get-projects-idProject-labels-idLabel
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Label'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns a single label.
   '/project/{idProject}/columns':
     parameters:
       - schema:
@@ -1223,6 +1244,27 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ColumnPutPost'
+    get:
+      summary: Get a single Column
+      operationId: get-project-idProject-columns-idColumn
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Column'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns a single column that belongs to the project.
   /users:
     post:
       summary: Create new user
