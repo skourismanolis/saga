@@ -3,6 +3,7 @@ const Project = require('./Project');
 const Member = require('./Member');
 const Label = require('./Label');
 const Issue = require('./Issue');
+const Sprint = require('./Sprint.js');
 const IssueCategory = require('./IssueCategory');
 const IssuePriority = require('./IssuePriority');
 
@@ -75,5 +76,23 @@ describe('issues', () => {
 	it('deletes an issue', async () => {
 		let issue = await project.getIssue('asd');
 		await expect(project.deleteIssue(issue)).resolves.not.toThrow();
+	});
+});
+
+describe('sprints', () => {
+	it('creates a new sprint', async () => {
+		await expect(
+			project.createSprint({ title: 'asdas' })
+		).resolves.toBeInstanceOf(Sprint);
+	});
+
+	it('returns a list of sprints', async () => {
+		let sprints = await project.getSprints();
+		sprints.forEach((s) => expect(s).toBeInstanceOf(Sprint));
+	});
+
+	it('deletes a sprint', async () => {
+		let sprints = await project.getSprints();
+		await expect(project.deleteSprint(sprints[0])).resolves.not.toThrow();
 	});
 });
