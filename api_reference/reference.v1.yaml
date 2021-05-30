@@ -1692,7 +1692,6 @@ components:
             - Neutral
             - High
             - Very High
-          nullable: true
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
@@ -1751,7 +1750,6 @@ components:
             - Neutral
             - High
             - Very High
-          nullable: true
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
@@ -1803,7 +1801,6 @@ components:
             - Neutral
             - High
             - Very High
-          nullable: true
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
