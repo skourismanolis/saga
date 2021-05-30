@@ -7,4 +7,8 @@ module.exports = class Base {
 	get id() {
 		throw 'This must be overriden';
 	}
+
+	toJSON() {
+		throw 'This must be overriden';
+	}
 };
