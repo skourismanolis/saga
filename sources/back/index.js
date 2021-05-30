@@ -7,6 +7,7 @@ app.use(cors());
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+const email_validator = require('email-validator');
 
 let { connect, db } = require('./db');
 const schemas = require('./schemas/schemas_export');
@@ -64,6 +65,60 @@ app.post('/users/login', async (req, res) => {
 			res.status(400).send('Invalid username or password');
 		}
 	} catch (err) {
+		res.status(500).send('Internal Server Error');
+	}
+});
+
+// register
+app.post('/users', async (req, res) => {
+	try {
+		Joi.attempt(req.body, schemas.UserPost);
+
+		if (!email_validator.validate(req.body.email)) {
+			throw new Error('Invalid email.');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('Bad request');
+		return;
+	}
+
+	try {
+		// prettier-ignore
+		const [result] = db.pool.query('SELECT * FROM user WHERE email = ?', [req.body.email]);
+		if (result.length > 0) {
+			throw new Error('Email exists');
+		}
+	} catch (err) {
+		res.status(403).send('Forbidden');
+	}
+
+	try {
+		const salt = await bcrypt.genSalt();
+
+		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+		await db.pool.query(
+			'INSERT INTO user (username,email, password, name, surname, birthDate, verified, plan , profession, picture, studies, residence) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+			[
+				req.body.username,
+				req.body.email,
+				hashedPassword,
+				req.body.name,
+				req.body.surname,
+				req.body.birthDate,
+				0,
+				req.body.plan,
+				req.body.profession,
+				req.body.picture,
+				req.body.studies,
+				req.body.residence,
+			]
+		);
+
+		res.status(200).send('Ok');
+	} catch (err) {
+		console.error(err);
 		res.status(500).send('Internal Server Error');
 	}
 });
