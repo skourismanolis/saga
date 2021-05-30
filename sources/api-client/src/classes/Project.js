@@ -1,8 +1,9 @@
 const Base = require('./Base');
-const Label = require('./Label');
-const Issue = require('./Issue');
-const Member = require('./Member');
-const UserRole = require('./UserRoles');
+/****************************************************************************************/
+/*                                       WARNING                                        *
+/*    Move require's to the end of the file in order to avoid circular references       *
+/*                                                                                      *
+/****************************************************************************************/
 
 module.exports = class Project extends Base {
 	/**
@@ -101,10 +102,10 @@ module.exports = class Project extends Base {
 	 * @param {String} code
 	 */
 	async getIssue(code) {
-		let { data: issue } = this.axios.get(
+		let { data: issue } = await this.axios.get(
 			`/projects/${this._idProject}/issues/${code}`
 		);
-		return new Issue(this.client, issue);
+		return new Issue(this.client, issue, this._idProject);
 	}
 
 	/**
@@ -116,7 +117,7 @@ module.exports = class Project extends Base {
 	 * @param {String=} issueConf.priority One of 'Very Low','Low','Neutral','High','Very High'
 	 * @param {String=} issueConf.description Issue description
 	 * @param {Date=} issueConf.deadline when is this issue due
-	 * @param {Number=} issueConf.label id of the label thie new issue will have
+	 * @param {Number|Null=} issueConf.label the label the new issue will have
 	 * @returns {Issue}
 	 */
 	async createIssue({
@@ -128,14 +129,20 @@ module.exports = class Project extends Base {
 		deadline,
 		label,
 	}) {
+		let labelValue;
+
+		if (label == undefined) labelValue = null;
+		else labelValue = label.id;
+
 		let newIssue = {
 			title,
 			category,
-			idLabel: label || null,
+			idLabel: labelValue,
 			points: points || null,
 			priority: priority || null,
 			description: description || null,
 			deadline: deadline || null,
+			assignees: [],
 		};
 
 		let {
@@ -155,3 +162,8 @@ module.exports = class Project extends Base {
 		});
 	}
 };
+
+const Issue = require('./Issue');
+const Label = require('./Label');
+const Member = require('./Member');
+const UserRole = require('./UserRoles');

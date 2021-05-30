@@ -1,6 +1,6 @@
 const IssueCategory = {
 	TASK: 'Task',
-	EPIC: 'Epic',
+	STORY: 'Story',
 	BUG: 'Bug',
 };
 module.exports = IssueCategory;

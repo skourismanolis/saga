@@ -1,12 +1,14 @@
 const Base = require('./Base');
-const Member = require('./Member');
-const Project = require('./Project');
+/****************************************************************************************/
+/*                                       WARNING                                        *
+/*    Move require's to the end of the file in order to avoid circular references       *
+/*                                                                                      *
+/****************************************************************************************/
 
 module.exports = class Issue extends Base {
 	constructor(
 		client,
 		{
-			idProject,
 			idSprint,
 			idColumn,
 			idEpic,
@@ -19,7 +21,8 @@ module.exports = class Issue extends Base {
 			priority,
 			description,
 			deadline,
-		}
+		},
+		idProject
 	) {
 		super(client);
 		this._idProject = idProject;
@@ -37,26 +40,34 @@ module.exports = class Issue extends Base {
 		this.deadline = deadline != null ? new Date(deadline) : null;
 	}
 
-	async getProject() {
-		let { data: project } = await this.axios.get(
-			`/projects/${this._idProject}`
+	getProject() {
+		return new Project(this.client, this._idProject);
+	}
+
+	/**
+	 * @returns {Object|Null} If the Issue has a Label assigned, it returns it, else it returns null.
+	 */
+	async getLabel() {
+		if (this._idLabel === null) return null;
+		let { data: label } = this.axios.get(
+			`/project/${this._idProject}/labels/${this._idLabel}`
 		);
-		return new Project(this.client, project);
+		return new Label(this.client, label, this._idProject);
 	}
 
 	/**
 	 * @returns {Object[]} array of project Members
 	 */
-	async getAsignees() {
+	async getAssignees() {
 		let { data: members } = await this.axios.get(
 			`/projects/${this._idProject}/members`
 		);
 
-		let asignees = members.filter(
+		let assignees = members.filter(
 			(m) => this._assigneeIds.indexOf(m.id) !== -1
 		);
 
-		return asignees.map((a) => new Member(this.client, a));
+		return assignees.map((a) => new Member(this.client, a));
 	}
 
 	/**
@@ -78,19 +89,42 @@ module.exports = class Issue extends Base {
 	}
 
 	/**
-	 * @param {Object} newIssue omitting any of the properties uses the previous value
+	 * Updates the issue's given values. If you want a value to be null, you should supply null.
+	 * @param {Object} issueConf the values used to create the issue
+	 * @param {String=} issueConf.title The title of the issue
+	 * @param {String=} issueConf.category One of 'Story', 'Task', 'Bug'
+	 * @param {Number=} issueConf.points Story points
+	 * @param {String=} issueConf.priority One of 'Very Low','Low','Neutral','High','Very High'
+	 * @param {String=} issueConf.description Issue description
+	 * @param {Date=} issueConf.deadline when is this issue due
+	 * @param {Number|Null=} issueConf.label the label the new issue will have
 	 */
-	async update({ title, category, points, priority, description, deadline }) {
+	async update({
+		title,
+		category,
+		points,
+		priority,
+		description,
+		deadline,
+		label,
+	}) {
+		let labelValue;
+
+		if (label === undefined) labelValue = this._idLabel;
+		else if (label === null) labelValue = null;
+		else labelValue = label.id;
+
 		let newIssue = {
-			title: title !== null ? title : this.title,
+			title: title != null ? title : this.title,
 			idColumn: this._idColumn,
-			idLabel: this._idLabel,
-			category: category !== null ? category : this.category,
-			points: points !== null ? points : this.points,
-			priority: priority !== null ? priority : this.priority,
+			idLabel: labelValue,
+			category: category != null ? category : this.category,
+			points: points != null ? points : this.points,
+			priority: priority != null ? priority : this.priority,
 			description:
-				description !== description ? description : this.description,
-			deadline: deadline !== null ? deadline : this.deadline,
+				description !== undefined ? description : this.description,
+			deadline: deadline !== undefined ? deadline : this.deadline,
+			assignees: this._assigneeIds,
 		};
 
 		await this.axios.put(
@@ -99,3 +133,7 @@ module.exports = class Issue extends Base {
 		);
 	}
 };
+
+const Label = require('./Label');
+const Member = require('./Member');
+const Project = require('./Project');
