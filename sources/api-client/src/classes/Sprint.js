@@ -11,11 +11,15 @@ module.exports = class Sprint extends Base {
 	constructor(client, { idSprint, start, finish, title, issues }, idProject) {
 		super(client);
 		this._idSprint = idSprint;
-		this.start = start;
-		this.finish = finish;
+		this.start = start != null ? new Date(start) : null;
+		this.finish = finish != null ? new Date(finish) : null;
 		this.title = title;
 		this._issueIds = issues;
 		this._idProject = idProject;
+	}
+
+	get id() {
+		return this._idSprint;
 	}
 
 	/**
@@ -47,11 +51,11 @@ module.exports = class Sprint extends Base {
 	/**
 	 * The time (in milliseconds) left until the deadline. Can be negative.
 	 * If there's no deadline set, it returns null.
-	 * @returns {Number|null}
+	 * @returns {Number|null} milliseconds until the deadline.
 	 */
 	dueIn() {
 		if (this.finish === null) return null;
-		return dayjs().diff(this.finish);
+		return dayjs(this.finish).diff(dayjs());
 	}
 
 	/**
