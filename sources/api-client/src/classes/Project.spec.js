@@ -93,7 +93,6 @@ describe('sprints', () => {
 
 	it('deletes a sprint', async () => {
 		let sprints = await project.getSprints();
-		console.log(sprints[0].id);
 		await expect(project.deleteSprint(sprints[0])).resolves.not.toThrow();
 	});
 });
