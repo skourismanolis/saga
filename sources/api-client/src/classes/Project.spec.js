@@ -1,6 +1,9 @@
 const SagaClient = require('../index');
 const Project = require('./Project');
 const Member = require('./Member');
+const Label = require('./Label');
+const Issue = require('./Issue');
+const IssueCategory = require('./IssueCategory');
 
 let project;
 
@@ -32,4 +35,43 @@ test('updates', async () => {
 	await expect(
 		project.update({ title: 'test', picture: 'http://google.com' })
 	).resolves.toBeUndefined();
+});
+
+describe('labels', () => {
+	it('lists all labels', async () => {
+		let labels = await project.getLabels();
+		labels.forEach((l) => expect(l).toBeInstanceOf(Label));
+	});
+
+	it('creates a new label', async () => {
+		let label = await project.createLabel({
+			name: 'lorem',
+			color: '#123456',
+		});
+		expect(label).toBeInstanceOf(Label);
+	});
+
+	it('deletes existing label', async () => {
+		let label = await project.createLabel({
+			name: 'lorem',
+			color: '#123456',
+		});
+		await expect(project.deleteLabel(label)).resolves.not.toThrow();
+	});
+});
+
+describe('issues', () => {
+	it('creates new issue', async () => {
+		await expect(
+			project.createIssue({
+				title: 'asdsd',
+				category: IssueCategory.STORY,
+				points: 1,
+			})
+		).resolves.toBeInstanceOf(Issue);
+	});
+	it('deletes an issue', async () => {
+		let issue = await project.getIssue('asd');
+		await expect(project.deleteIssue(issue)).resolves.not.toThrow();
+	});
 });
