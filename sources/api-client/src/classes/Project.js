@@ -19,6 +19,10 @@ module.exports = class Project extends Base {
 		return this._idProject;
 	}
 
+	toJSON() {
+		return JSON.stringify({ idProject: this._idProject });
+	}
+
 	/**
 	 * Get all the sprints belonging to the project
 	 * @returns {Object[]} array of Sprints

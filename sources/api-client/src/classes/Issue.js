@@ -40,6 +40,27 @@ module.exports = class Issue extends Base {
 		this.deadline = deadline != null ? new Date(deadline) : null;
 	}
 
+	toJSON() {
+		return JSON.stringify({
+			idProject: this._idProject,
+			idSprint: this._idSprint,
+			idColumn: this._idColumn,
+			idEpic: this._idEpic,
+			idLabel: this._idLabel,
+			assignees: this._assigneeIds,
+			code: this._code,
+			title: this.title,
+			category: this.category,
+			points: this.points,
+			priority: this.priority,
+			description: this.description,
+			deadline:
+				this.deadline instanceof Date
+					? this.deadline.toISOString()
+					: null,
+		});
+	}
+
 	get id() {
 		return this._code;
 	}

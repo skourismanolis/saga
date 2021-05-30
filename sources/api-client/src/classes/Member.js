@@ -15,4 +15,19 @@ module.exports = class Member extends Base {
 		this.role = role;
 		this.picture = picture || null;
 	}
+
+	get id() {
+		return this._idMember;
+	}
+
+	toJSON() {
+		return JSON.stringify({
+			idMember: this._idMember,
+			name: this.name,
+			surname: this.surname,
+			email: this.email,
+			role: this.role,
+			picture: this.picture,
+		});
+	}
 };
