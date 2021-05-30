@@ -93,6 +93,13 @@ module.exports = class Sprint extends Base {
 		);
 	}
 
+	/**
+	 * Update the sprint's values
+	 * @param {Object} sprintConf sprint configuration
+	 * @param {String=} sprintConf.title the title of the sprint
+	 * @param {Date|Null=} sprintConf.start When did this sprint start
+	 * @param {Date|Null=} sprintConf.finish when will this sprint end
+	 */
 	async update({ title, start, finish }) {
 		let newSprint = {
 			title: title || this.title,
