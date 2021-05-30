@@ -15,4 +15,8 @@ module.exports = class Member extends Base {
 		this.role = role;
 		this.picture = picture || null;
 	}
+
+	get id() {
+		return this._idMember;
+	}
 };
