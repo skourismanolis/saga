@@ -1701,7 +1701,7 @@ components:
           type: string
         points:
           type: integer
-          minimum: 0
+          nullable: true
         deadline:
           type: string
           format: date-time
@@ -1759,7 +1759,7 @@ components:
           type: string
         points:
           type: integer
-          minimum: 0
+          nullable: true
         deadline:
           type: string
           format: date-time
@@ -1810,7 +1810,7 @@ components:
           type: string
         points:
           type: integer
-          minimum: 0
+          nullable: true
         deadline:
           type: string
           format: date-time
