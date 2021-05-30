@@ -31,13 +31,21 @@ module.exports = class Issue extends Base {
 		this._idEpic = idEpic;
 		this._idLabel = idLabel;
 		this._assigneeIds = assignees;
-		this.code = code;
+		this._code = code;
 		this.title = title;
 		this.category = category;
 		this.points = points;
 		this.priority = priority;
 		this.description = description;
 		this.deadline = deadline != null ? new Date(deadline) : null;
+	}
+
+	get id() {
+		return this._code;
+	}
+
+	get code() {
+		return this._code;
 	}
 
 	getProject() {
@@ -142,7 +150,7 @@ module.exports = class Issue extends Base {
 		};
 
 		await this.axios.put(
-			`/projects/${this._idProject}/issues/${this.code}`,
+			`/projects/${this._idProject}/issues/${this._code}`,
 			newIssue
 		);
 	}
