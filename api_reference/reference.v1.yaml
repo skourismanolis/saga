@@ -2018,11 +2018,14 @@ components:
         timestamp:
           type: string
           format: date-time
+        idUser:
+          type: integer
       required:
         - idComment
         - code
         - content
         - timestamp
+        - idUser
     UserPost:
       title: UserPost
       type: object

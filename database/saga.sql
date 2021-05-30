@@ -173,13 +173,19 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `saga`.`comment` (
   `idComment` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idUser` INT UNSIGNED NOT NULL,
   `code` VARCHAR(45) NOT NULL,
-  `content` VARCHAR(500) NOT NULL,
+  `content` TEXT NOT NULL,
   `timestamp` TIMESTAMP NOT NULL,
   PRIMARY KEY (`idComment`),
   CONSTRAINT `fk_comment_issue1`
     FOREIGN KEY (`code`)
     REFERENCES `saga`.`issue` (`code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comment_user1`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `saga`.`user` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -222,6 +228,13 @@ CREATE TABLE IF NOT EXISTS `saga`.`assignee` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Insert User with id 0 and username "deleted"
+-- -----------------------------------------------------
+SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
+INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `birthDate`, `verified`, `plan`)
+VALUES (0,'deleted', '', '', '', '', '2021-05-30', '1', 'Free');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
