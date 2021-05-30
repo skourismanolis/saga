@@ -1695,6 +1695,7 @@ components:
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
+          nullable: true
           items:
             type: integer
         title:
@@ -1753,6 +1754,7 @@ components:
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
+          nullable: true
           items:
             type: integer
         title:
@@ -1804,6 +1806,7 @@ components:
         assignees:
           type: array
           description: List of userIds that are assigned to this issue
+          nullable: true
           items:
             type: integer
         title:
