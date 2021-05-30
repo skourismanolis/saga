@@ -1,8 +1,8 @@
 const Base = require('./Base');
 /****************************************************************************************/
-/*                                       WARNING                                        *
-/*    Move require's to the end of the file in order to avoid circular references       *
-/*                                                                                      *
+/*                                       WARNING                                        */
+/*    Move require's to the end of the file in order to avoid circular references       */
+/*                                                                                      */
 /****************************************************************************************/
 
 module.exports = class Issue extends Base {
@@ -42,6 +42,20 @@ module.exports = class Issue extends Base {
 
 	getProject() {
 		return new Project(this.client, this._idProject);
+	}
+
+	/**
+	 * Get the Sprint this Issue belongs in. If it doesn't belong to a sprint, returns null
+	 * @returns {Object|Null} the Sprint
+	 */
+	async getSprint() {
+		if (this._idSprint == null) return null;
+		else {
+			let { data: sprint } = await this.axios.get(
+				`/projects/${this._idProject}/sprints/${this._idSprint}`
+			);
+			return new Sprint(this.client, sprint, this._idProject);
+		}
 	}
 
 	/**
@@ -137,3 +151,4 @@ module.exports = class Issue extends Base {
 const Label = require('./Label');
 const Member = require('./Member');
 const Project = require('./Project');
+const Sprint = require('./Sprint');
