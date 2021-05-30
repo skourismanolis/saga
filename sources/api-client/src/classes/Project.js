@@ -1,7 +1,9 @@
 const Base = require('./Base');
-const Label = require('./Label');
-const Member = require('./Member');
-const UserRole = require('./UserRoles');
+/****************************************************************************************/
+/*                                       WARNING                                        *
+/*    Move require's to the end of the file in order to avoid circular references       *
+/*                                                                                      *
+/****************************************************************************************/
 
 module.exports = class Project extends Base {
 	/**
@@ -85,6 +87,74 @@ module.exports = class Project extends Base {
 		);
 	}
 
+	/**
+	 * completely deletes the given issue
+	 * @param {Issue} issue the Issue to delete
+	 */
+	async deleteIssue(issue) {
+		await this.axios.delete(
+			`projects/${this._idProject}/issues/${issue.code}`
+		);
+	}
+
+	/**
+	 * Return Issue using the issue's code
+	 * @param {String} code
+	 */
+	async getIssue(code) {
+		let { data: issue } = await this.axios.get(
+			`/projects/${this._idProject}/issues/${code}`
+		);
+		return new Issue(this.client, issue, this._idProject);
+	}
+
+	/**
+	 * Creates an issue on this project with the given values.
+	 * @param {Object} issueConf the values used to create the issue
+	 * @param {String} issueConf.title The title of the issue
+	 * @param {String} issueConf.category One of 'Story', 'Task', 'Bug'
+	 * @param {Number=} issueConf.points Story points
+	 * @param {String=} issueConf.priority One of 'Very Low','Low','Neutral','High','Very High'
+	 * @param {String=} issueConf.description Issue description
+	 * @param {Date=} issueConf.deadline when is this issue due
+	 * @param {Number|Null=} issueConf.label the label the new issue will have
+	 * @returns {Issue}
+	 */
+	async createIssue({
+		title,
+		category,
+		points,
+		priority,
+		description,
+		deadline,
+		label,
+	}) {
+		let labelValue;
+
+		if (label == undefined) labelValue = null;
+		else labelValue = label.id;
+
+		let newIssue = {
+			title,
+			category,
+			idLabel: labelValue,
+			points: points || null,
+			priority: priority || null,
+			description: description || null,
+			deadline: deadline || null,
+			assignees: [],
+		};
+
+		let {
+			data: { code },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/issues`,
+			newIssue
+		);
+
+		return await this.getIssue(code);
+	}
+
 	async update({ title, picture }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
@@ -92,3 +162,8 @@ module.exports = class Project extends Base {
 		});
 	}
 };
+
+const Issue = require('./Issue');
+const Label = require('./Label');
+const Member = require('./Member');
+const UserRole = require('./UserRoles');

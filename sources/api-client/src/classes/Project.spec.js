@@ -2,6 +2,8 @@ const SagaClient = require('../index');
 const Project = require('./Project');
 const Member = require('./Member');
 const Label = require('./Label');
+const Issue = require('./Issue');
+const IssueCategory = require('./IssueCategory');
 
 let project;
 
@@ -55,5 +57,21 @@ describe('labels', () => {
 			color: '#123456',
 		});
 		await expect(project.deleteLabel(label)).resolves.not.toThrow();
+	});
+});
+
+describe('issues', () => {
+	it('creates new issue', async () => {
+		await expect(
+			project.createIssue({
+				title: 'asdsd',
+				category: IssueCategory.STORY,
+				points: 1,
+			})
+		).resolves.toBeInstanceOf(Issue);
+	});
+	it('deletes an issue', async () => {
+		let issue = await project.getIssue('asd');
+		await expect(project.deleteIssue(issue)).resolves.not.toThrow();
 	});
 });
