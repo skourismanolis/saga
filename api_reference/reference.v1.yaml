@@ -345,9 +345,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  idIssue:
-                    type: integer
-                    minimum: 0
+                  code:
+                    type: string
+                required:
+                  - code
         '400':
           description: Bad Request
         '401':
