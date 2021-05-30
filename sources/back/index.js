@@ -85,19 +85,21 @@ app.post('/users', async (req, res) => {
 
 	try {
 		// prettier-ignore
-		const [result] = db.pool.query('SELECT * FROM user WHERE email = ?', [req.body.email]);
+		const [result] = await db.pool.query('SELECT * FROM user WHERE email = ?', [req.body.email]);
+		console.log(result);
 		if (result.length > 0) {
 			throw new Error('Email exists');
 		}
 	} catch (err) {
+		console.log(err);
 		res.status(403).send('Forbidden');
+		return;
 	}
 
 	try {
 		const salt = await bcrypt.genSalt();
 
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
 		await db.pool.query(
 			'INSERT INTO user (username,email, password, name, surname, birthDate, verified, plan , profession, picture, studies, residence) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
 			[
