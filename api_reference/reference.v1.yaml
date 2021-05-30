@@ -1872,6 +1872,10 @@ components:
           nullable: true
         title:
           type: string
+      required:
+        - start
+        - finish
+        - title
     Epic:
       title: Epic
       type: object
