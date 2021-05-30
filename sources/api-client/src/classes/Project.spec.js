@@ -4,6 +4,7 @@ const Member = require('./Member');
 const Label = require('./Label');
 const Issue = require('./Issue');
 const IssueCategory = require('./IssueCategory');
+const IssuePriority = require('./IssuePriority');
 
 let project;
 
@@ -67,6 +68,7 @@ describe('issues', () => {
 				title: 'asdsd',
 				category: IssueCategory.STORY,
 				points: 1,
+				priority: IssuePriority.NEUTRAL,
 			})
 		).resolves.toBeInstanceOf(Issue);
 	});
