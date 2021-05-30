@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`user` (
   `idUser` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(72) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
   `birthDate` DATE NOT NULL,
@@ -96,7 +96,6 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   `idEpic` INT NOT NULL,
   `idProject` INT UNSIGNED NOT NULL,
-  `idSprint` INT UNSIGNED NULL,
   `title` VARCHAR(255) NOT NULL,
   `start` DATE NULL,
   `deadline` DATE NULL,
@@ -105,11 +104,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   CONSTRAINT `fk_epic_project1`
     FOREIGN KEY (`idProject`)
     REFERENCES `saga`.`project` (`idProject`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_epic_sprint1`
-    FOREIGN KEY (`idSprint`)
-    REFERENCES `saga`.`sprint` (`idSprint`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

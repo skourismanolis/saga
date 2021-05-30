@@ -1847,11 +1847,6 @@ components:
           nullable: true
         title:
           type: string
-        epics:
-          type: array
-          description: an array of all epics in sprint
-          items:
-            $ref: '#/components/schemas/Epic'
         issues:
           type: array
           description: an array of all issues in sprint that are not in contained epics
@@ -1862,7 +1857,6 @@ components:
         - start
         - finish
         - title
-        - epics
         - issues
     SprintPutPost:
       title: Sprint Put Post
