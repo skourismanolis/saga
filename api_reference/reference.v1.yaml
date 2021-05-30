@@ -1981,6 +1981,11 @@ components:
         timestamp:
           type: string
           format: date-time
+      required:
+        - idPayment
+        - idUser
+        - amount
+        - timestamp
     Column:
       title: Column
       type: object
@@ -2006,6 +2011,9 @@ components:
           type: string
         order:
           type: integer
+      required:
+        - name
+        - order
     CommentPost:
       title: Comment Post
       type: object
