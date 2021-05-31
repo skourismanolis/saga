@@ -1908,6 +1908,9 @@ components:
           description: an array of all issues contained
           items:
             $ref: '#/components/schemas/Issue'
+        description:
+          type: string
+          nullable: true
       required:
         - idEpic
         - title
@@ -1929,10 +1932,14 @@ components:
           type: string
           format: date-time
           nullable: true
+        description:
+          type: string
+          nullable: true
       required:
         - title
         - deadline
         - start
+        - description
     Label:
       title: Label
       type: object
