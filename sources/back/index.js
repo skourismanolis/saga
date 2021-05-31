@@ -75,7 +75,7 @@ app.post('/users/login', async (req, res) => {
 // register
 app.post('/users', async (req, res) => {
 	try {
-		Joi.attempt(req.body, schemas.UserPost);
+		Joi.attempt(req.body, schemas.UserPutPost);
 
 		if (!email_validator.validate(req.body.email)) {
 			throw new Error('Invalid email.');
