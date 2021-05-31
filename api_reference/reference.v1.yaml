@@ -18,7 +18,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectShort'
+                  $ref: '#/components/schemas/Project'
         '401':
           description: Unauthorized
         '500':
