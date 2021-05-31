@@ -2,8 +2,8 @@ const Joi = require('joi');
 const c = require('./schemas_constants');
 
 const schema = Joi.object().keys({
-	email: Joi.string().email().required(),
-	password: Joi.string().min(c.MIN_PASSWORD).max(c.MAX_PASSWORD).required(),
+	code: Joi.string().min(c.MIN_STRING).max(c.MAX_STRING).required(),
+	content: Joi.string().min(c.MIN_TEXT).max(c.MAX_TEXT).required(),
 });
 
 module.exports = schema;
