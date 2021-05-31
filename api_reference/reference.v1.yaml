@@ -1576,7 +1576,7 @@ components:
           avatar: 'http://example.com'
       properties:
         idUser:
-          type: number
+          type: integer
           minimum: 0
         name:
           type: string
@@ -1601,8 +1601,8 @@ components:
         - email
         - role
         - picture
-    ProjectShort:
-      title: Project Short
+    Project:
+      title: Project
       type: object
       description: Minimal info about a project
       x-examples:
@@ -1625,10 +1625,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProjectMemberShort'
+        picture:
+          type: string
+          nullable: true
       required:
         - idProject
         - name
         - members
+        - picture
     ProjectMemberShort:
       title: Project Member Short
       type: object
