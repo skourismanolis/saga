@@ -1,5 +1,5 @@
 <template>
 	<div class="flex-column">
-		<h1>register</h1>
+		<h1>registerr</h1>
 	</div>
 </template>
