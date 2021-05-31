@@ -1,6 +1,6 @@
 <template>
 	<div class="d-flex flex-row justify-content-around">
-		<div class="card flex-column">
+		<div class="card flex-column" @click="redirectRegister">
 			<div class="d-flex justify-content-around card-header free">
 				<h3>Δωρεάν</h3>
 			</div>
@@ -16,7 +16,7 @@
 			</div>
 		</div>
 
-		<div class="card flex-column">
+		<div class="card flex-column" @click="redirectRegister">
 			<div class="d-flex justify-content-around card-header normal">
 				<h3>Κανονικό</h3>
 			</div>
@@ -32,7 +32,7 @@
 			</div>
 		</div>
 
-		<div class="card flex-column">
+		<div class="card flex-column" @click="redirectRegister">
 			<div class="d-flex justify-content-around card-header premium">
 				<h3>Premium</h3>
 			</div>
@@ -52,6 +52,9 @@
 
 <script>
 export default {
+	props: {
+		toRegister: Boolean,
+	},
 	data() {
 		return {
 			free_plan_points: [
@@ -72,6 +75,13 @@ export default {
 				{ message: 'Sed ultrices hendrerit dolor.' },
 			],
 		};
+	},
+	methods: {
+		redirectRegister() {
+			if (this.toRegister == true) {
+				this.$router.push({ path: '/register' }).catch(() => {});
+			}
+		},
 	},
 };
 </script>

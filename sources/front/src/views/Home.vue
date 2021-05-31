@@ -21,7 +21,7 @@
 			</h3>
 		</div>
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans />
+			<RatePlans :toRegister="true" />
 		</div>
 	</div>
 </template>
