@@ -7,7 +7,11 @@ const schema = Joi.object().keys({
 	name: Joi.string().min(c.MIN_STRING).max(c.MAX_STRING).required(),
 	surname: Joi.string().min(c.MIN_STRING).max(c.MAX_STRING).required(),
 	email: Joi.string().email().required(),
-	picture: Joi.string().max(c.MAX_STRING).required().allow(null),
+	picture: Joi.string()
+		.min(c.MIN_STRING)
+		.max(c.MAX_STRING)
+		.required()
+		.allow(null),
 });
 
 module.exports = schema;

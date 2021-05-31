@@ -1,5 +1,5 @@
-const UserLoginPost = require('./UserLoginPost');
-const UserPost = require('./UserPost');
+const Column = require('./Column');
+const ColumnPutPost = require('./ColumnPutPost');
 const Comment = require('./Comment');
 const CommentPost = require('./CommentPost');
 const Epic = require('./Epic');
@@ -12,8 +12,15 @@ const LabelPutPost = require('./LabelPutPost');
 const Payment = require('./Payment');
 const ProjectMember = require('./ProjectMember');
 const ProjectMemberShort = require('./ProjectMemberShort');
+const Sprint = require('./Sprint');
+const SprintPutPost = require('./SprintPutPost');
+const User = require('./User');
+const UserLoginPost = require('./UserLoginPost');
+const UserPutPost = require('./UserPutPost');
 
 module.exports = {
+	Column,
+	ColumnPutPost,
 	Comment,
 	CommentPost,
 	Epic,
@@ -26,6 +33,9 @@ module.exports = {
 	Payment,
 	ProjectMember,
 	ProjectMemberShort,
+	Sprint,
+	SprintPutPost,
+	User,
 	UserLoginPost,
-	UserPost,
+	UserPutPost,
 };

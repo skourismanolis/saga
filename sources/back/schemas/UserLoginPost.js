@@ -1,12 +1,9 @@
 const Joi = require('joi');
-
-// const MAX_INT = 1000;
-// const MAX_TEXT = 65535;
-const MAX_STRING = 255;
+const c = require('./schemas_constants');
 
 const schema = Joi.object().keys({
-	email: Joi.string().required().min(1).max(MAX_STRING),
-	password: Joi.string().required().min(1).max(MAX_STRING),
+	email: Joi.string().email().required(),
+	password: Joi.string().min(c.MIN_PASSWORD).max(c.MAX_PASSWORD).required(),
 });
 
 module.exports = schema;

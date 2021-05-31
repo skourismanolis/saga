@@ -6,7 +6,11 @@ const schema = Joi.object().keys({
 	role: Joi.string().valid('Admin', 'Member').required(),
 	name: Joi.string().min(c.MIN_STRING).max(c.MAX_STRING).required(),
 	surname: Joi.string().min(c.MIN_STRING).max(c.MAX_STRING).required(),
-	picture: Joi.string().max(c.MAX_STRING).required().allow(null),
+	picture: Joi.string()
+		.min(c.MIN_STRING)
+		.max(c.MAX_STRING)
+		.required()
+		.allow(null),
 });
 
 module.exports = schema;

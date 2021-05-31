@@ -9,4 +9,6 @@ module.exports = {
 	MAX_TEXT: 65535,
 	COLOR_SIZE: 6,
 	COLOR_PATTERN: /^[0-9A-Fa-f]+$/,
+	MIN_PASSWORD: 1,
+	MAX_PASSWORD: 50,
 };
