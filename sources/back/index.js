@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const port = 8080;
 const express = require('express');
 const app = express();
@@ -65,6 +67,7 @@ app.post('/users/login', async (req, res) => {
 			res.status(400).send('Invalid username or password');
 		}
 	} catch (err) {
+		console.log(err);
 		res.status(500).send('Internal Server Error');
 	}
 });
@@ -72,7 +75,7 @@ app.post('/users/login', async (req, res) => {
 // register
 app.post('/users', async (req, res) => {
 	try {
-		Joi.attempt(req.body, schemas.UserPost);
+		Joi.attempt(req.body, schemas.UserPutPost);
 
 		if (!email_validator.validate(req.body.email)) {
 			throw new Error('Invalid email.');
