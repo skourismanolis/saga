@@ -1306,7 +1306,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserPost'
+              $ref: '#/components/schemas/UserPutPost'
         description: ''
       x-internal: false
       parameters: []
@@ -1336,7 +1336,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserPost'
+              $ref: '#/components/schemas/UserPutPost'
         description: |-
           Change some details about this specific account.
           Requires password authentication.
@@ -2054,8 +2054,8 @@ components:
         - content
         - timestamp
         - idUser
-    UserPost:
-      title: UserPost
+    UserPutPost:
+      title: User Put Post
       type: object
       properties:
         username:
