@@ -1,6 +1,7 @@
 <template>
 	<div class="flex-column d-flex">
 		<ReturnToPage id="back" />
+
 		<div id="form-container" class="align-self-center flex-column d-flex">
 			<img id="logo" class="align-self-center" src="../assets/logo.png" />
 
@@ -51,15 +52,54 @@
 				</div>
 			</form>
 		</div>
+
+		<div class="d-flex flex-row text-section justify-content-center">
+			<h3 class="align-self-sm-baseline black-text">Διάλεξε το</h3>
+			<h3 class="align-self-sm-baseline purple-text">πλάνο</h3>
+			<h3 class="align-self-sm-baseline black-text">
+				που σου ταιριάζει!
+			</h3>
+		</div>
+
+		<div class="d-flex justify-content-center" id="rate-plans">
+			<RatePlans :toRegister="false" />
+		</div>
+
+		<div
+			id="button-container"
+			class="d-flex justify-content-between align-self-center"
+		>
+			<button type="button" class="btn btn-danger">Ακύρωση</button>
+
+			<div class="d-flex flex-row">
+				<div class="form-check align-middle">
+					<input
+						class="form-check-input"
+						type="checkbox"
+						value=""
+						id="defaultCheck1"
+					/>
+					<label class="form-check-label" for="defaultCheck1">
+						Έχω διαβάσει και αποδέχομαι τους όρους χρήσης
+					</label>
+				</div>
+
+				<button type="button" class="btn btn-primary align-middle">
+					Δημιουργία Λογαριασμού
+				</button>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 import ReturnToPage from '../components/ReturnToPage.vue';
+import RatePlans from '../components/RatePlans.vue';
 
 export default {
 	components: {
 		ReturnToPage,
+		RatePlans,
 	},
 };
 </script>
@@ -72,6 +112,7 @@ export default {
 
 #form-container {
 	margin-top: 11px;
+	margin-bottom: 60px;
 }
 
 #logo {
@@ -110,5 +151,27 @@ export default {
 .form-group input {
 	border-radius: 4pt;
 	height: 50px;
+}
+
+.purple-text {
+	margin-left: 10px;
+	margin-right: 10px;
+	font-weight: bold;
+	color: #564787;
+	font-size: 48px;
+}
+
+.black-text {
+	font-weight: bold;
+	font-size: 36px;
+}
+
+#rate-plans {
+	margin-top: 36px;
+	margin-bottom: 88px;
+}
+
+#button-container {
+	width: 1007px;
 }
 </style>

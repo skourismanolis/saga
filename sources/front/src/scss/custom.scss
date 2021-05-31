@@ -1,15 +1,15 @@
 // Custom.scss
-$border-radius: 10px;
+$border-radius: 10pt;
 
 $theme-colors: (
-  "primary": #564787,
-  "secondary": #FFD972,
-  "danger": #DB5461,
-  "dark": #5a5b59,
-  "light": #f2f2f2,
-  "alert": #fde441,
-  "info": #04BBFA,
-  "success": #14CD6F,
+	'primary': #564787,
+	'secondary': #ffd972,
+	'danger': #db5461,
+	'dark': #5a5b59,
+	'light': #f2f2f2,
+	'alert': #fde441,
+	'info': #04bbfa,
+	'success': #14cd6f,
 );
 
 @import '../../../../node_modules/bootstrap/scss/bootstrap';
