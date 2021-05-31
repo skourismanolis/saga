@@ -9,6 +9,7 @@ const IssuePost = require('./IssuePost');
 const IssuePut = require('./IssuePut');
 const Label = require('./Label');
 const LabelPutPost = require('./LabelPutPost');
+const Payment = require('./Payment');
 
 module.exports = {
 	Comment,
@@ -20,6 +21,7 @@ module.exports = {
 	IssuePut,
 	Label,
 	LabelPutPost,
+	Payment,
 	UserLoginPost,
 	UserPost,
 };

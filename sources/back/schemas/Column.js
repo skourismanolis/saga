@@ -2,9 +2,9 @@ const Joi = require('joi');
 const c = require('./schemas_constants');
 
 const schema = Joi.object().keys({
-	idColumn: Joi.number().required().integer().min(c.MIN_ID),
-	name: Joi.string().required().min(c.MIN_STRING),
-	order: Joi.number().required().integer().min(0),
+	idColumn: Joi.number().integer().min(c.MIN_ID).required(),
+	name: Joi.string().min(c.MIN_STRING).required(),
+	order: Joi.number().integer().min(0).required(),
 });
 
 module.exports = schema;
