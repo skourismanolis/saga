@@ -585,6 +585,15 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idSprint:
+                    type: number
+                required:
+                  - idSprint
         '400':
           description: Bad Request
         '401':
@@ -1847,11 +1856,6 @@ components:
           nullable: true
         title:
           type: string
-        epics:
-          type: array
-          description: an array of all epics in sprint
-          items:
-            $ref: '#/components/schemas/Epic'
         issues:
           type: array
           description: an array of all issues in sprint that are not in contained epics
@@ -1862,7 +1866,6 @@ components:
         - start
         - finish
         - title
-        - epics
         - issues
     SprintPutPost:
       title: Sprint Put Post
@@ -1878,6 +1881,10 @@ components:
           nullable: true
         title:
           type: string
+      required:
+        - start
+        - finish
+        - title
     Epic:
       title: Epic
       type: object
@@ -1901,6 +1908,9 @@ components:
           description: an array of all issues contained
           items:
             $ref: '#/components/schemas/Issue'
+        description:
+          type: string
+          nullable: true
       required:
         - idEpic
         - title
@@ -1922,10 +1932,14 @@ components:
           type: string
           format: date-time
           nullable: true
+        description:
+          type: string
+          nullable: true
       required:
         - title
         - deadline
         - start
+        - description
     Label:
       title: Label
       type: object
@@ -1974,6 +1988,11 @@ components:
         timestamp:
           type: string
           format: date-time
+      required:
+        - idPayment
+        - idUser
+        - amount
+        - timestamp
     Column:
       title: Column
       type: object
@@ -1999,6 +2018,9 @@ components:
           type: string
         order:
           type: integer
+      required:
+        - name
+        - order
     CommentPost:
       title: Comment Post
       type: object
@@ -2024,11 +2046,14 @@ components:
         timestamp:
           type: string
           format: date-time
+        idUser:
+          type: integer
       required:
         - idComment
         - code
         - content
         - timestamp
+        - idUser
     UserPost:
       title: UserPost
       type: object

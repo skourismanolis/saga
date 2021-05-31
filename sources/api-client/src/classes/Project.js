@@ -1,8 +1,8 @@
 const Base = require('./Base');
 /****************************************************************************************/
-/*                                       WARNING                                        *
-/*    Move require's to the end of the file in order to avoid circular references       *
-/*                                                                                      *
+/*                                       WARNING                                        */
+/*    Move require's to the end of the file in order to avoid circular references       */
+/*                                                                                      */
 /****************************************************************************************/
 
 module.exports = class Project extends Base {
@@ -17,6 +17,21 @@ module.exports = class Project extends Base {
 
 	get id() {
 		return this._idProject;
+	}
+
+	toJSON() {
+		return JSON.stringify({ idProject: this._idProject });
+	}
+
+	/**
+	 * Get all the sprints belonging to the project
+	 * @returns {Object[]} array of Sprints
+	 */
+	async getSprints() {
+		let { data: sprints } = await this.axios.get(
+			`/projects/${this._idProject}/sprints`
+		);
+		return sprints.map((s) => new Sprint(this.client, s, this._idProject));
 	}
 
 	/**
@@ -56,6 +71,34 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Create a new sprint
+	 * @param {Object} sprintConf sprint configuration
+	 * @param {String} sprintConf.title the title of the sprint
+	 * @param {Date|Null=} sprintConf.start When did this sprint start
+	 * @param {Date|Null=} sprintConf.finish when will this sprint end
+	 */
+	async createSprint({ start, finish, title }) {
+		let newSprint = {
+			title: title,
+			start: start || null,
+			finish: finish || null,
+		};
+
+		let {
+			data: { idSprint },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/sprints`,
+			newSprint
+		);
+
+		return new Sprint(
+			this.client,
+			{ ...newSprint, issues: [], idSprint },
+			this._idProject
+		);
+	}
+
+	/**
 	 * @param {object} labelConf
 	 * @param {string} labelConf.name the name of the label
 	 * @param {string} labelConf.color the color of the label as a hex value including the starting #, ie: `#A525B6`
@@ -75,6 +118,16 @@ module.exports = class Project extends Base {
 			this.client,
 			{ idLabel, name, color },
 			this._idProject
+		);
+	}
+
+	/**
+	 * deletes the given sprint.
+	 * @param {Object} sprint the sprint to delete
+	 */
+	async deleteSprint(sprint) {
+		await this.axios.delete(
+			`/projects/${this._idProject}/sprints/${sprint.id}`
 		);
 	}
 
@@ -166,4 +219,5 @@ module.exports = class Project extends Base {
 const Issue = require('./Issue');
 const Label = require('./Label');
 const Member = require('./Member');
+const Sprint = require('./Sprint');
 const UserRole = require('./UserRoles');

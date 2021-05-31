@@ -3,6 +3,8 @@ const dayjs = require('dayjs');
 const SagaClient = require('../index');
 const Issue = require('./Issue');
 const Project = require('./Project');
+const IssuePriority = require('./IssuePriority');
+const Sprint = require('./Sprint');
 
 const MOCK_ISSUE = {
 	idSprint: 2,
@@ -14,7 +16,7 @@ const MOCK_ISSUE = {
 	title: 'lorem',
 	category: 'Task',
 	points: 12,
-	priority: 'Neutral',
+	priority: IssuePriority.NEUTRAL,
 	description: 'lorem ipsum dolor sit amet',
 	deadline: dayjs().add(1, 'month').toISOString(),
 };
@@ -57,5 +59,9 @@ describe('Issue', () => {
 		await expect(
 			issue.update({ title: 'asd', description: 'testing', label: null })
 		).resolves.not.toThrow();
+	});
+
+	it('returns the sprint', async () => {
+		await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
 	});
 });

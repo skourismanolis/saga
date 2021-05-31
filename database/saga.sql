@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`user` (
   `idUser` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(72) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
   `birthDate` DATE NOT NULL,
@@ -96,7 +96,6 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   `idEpic` INT NOT NULL,
   `idProject` INT UNSIGNED NOT NULL,
-  `idSprint` INT UNSIGNED NULL,
   `title` VARCHAR(255) NOT NULL,
   `start` DATE NULL,
   `deadline` DATE NULL,
@@ -105,11 +104,6 @@ CREATE TABLE IF NOT EXISTS `saga`.`epic` (
   CONSTRAINT `fk_epic_project1`
     FOREIGN KEY (`idProject`)
     REFERENCES `saga`.`project` (`idProject`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_epic_sprint1`
-    FOREIGN KEY (`idSprint`)
-    REFERENCES `saga`.`sprint` (`idSprint`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -179,13 +173,19 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `saga`.`comment` (
   `idComment` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idUser` INT UNSIGNED NOT NULL,
   `code` VARCHAR(45) NOT NULL,
-  `content` VARCHAR(500) NOT NULL,
+  `content` TEXT NOT NULL,
   `timestamp` TIMESTAMP NOT NULL,
   PRIMARY KEY (`idComment`),
   CONSTRAINT `fk_comment_issue1`
     FOREIGN KEY (`code`)
     REFERENCES `saga`.`issue` (`code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comment_user1`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `saga`.`user` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -228,6 +228,13 @@ CREATE TABLE IF NOT EXISTS `saga`.`assignee` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Insert User with id 0 and username "deleted"
+-- -----------------------------------------------------
+SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
+INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `birthDate`, `verified`, `plan`)
+VALUES (0,'deleted', '', '', '', '', '2021-05-30', '1', 'Free');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

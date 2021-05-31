@@ -1,8 +1,8 @@
 const Base = require('./Base');
 /****************************************************************************************/
-/*                                       WARNING                                        *
-/*    Move require's to the end of the file in order to avoid circular references       *
-/*                                                                                      *
+/*                                       WARNING                                        */
+/*    Move require's to the end of the file in order to avoid circular references       */
+/*                                                                                      */
 /****************************************************************************************/
 
 module.exports = class Issue extends Base {
@@ -31,7 +31,7 @@ module.exports = class Issue extends Base {
 		this._idEpic = idEpic;
 		this._idLabel = idLabel;
 		this._assigneeIds = assignees;
-		this.code = code;
+		this._code = code;
 		this.title = title;
 		this.category = category;
 		this.points = points;
@@ -40,8 +40,51 @@ module.exports = class Issue extends Base {
 		this.deadline = deadline != null ? new Date(deadline) : null;
 	}
 
+	toJSON() {
+		return JSON.stringify({
+			idProject: this._idProject,
+			idSprint: this._idSprint,
+			idColumn: this._idColumn,
+			idEpic: this._idEpic,
+			idLabel: this._idLabel,
+			assignees: this._assigneeIds,
+			code: this._code,
+			title: this.title,
+			category: this.category,
+			points: this.points,
+			priority: this.priority,
+			description: this.description,
+			deadline:
+				this.deadline instanceof Date
+					? this.deadline.toISOString()
+					: null,
+		});
+	}
+
+	get id() {
+		return this._code;
+	}
+
+	get code() {
+		return this._code;
+	}
+
 	getProject() {
 		return new Project(this.client, this._idProject);
+	}
+
+	/**
+	 * Get the Sprint this Issue belongs in. If it doesn't belong to a sprint, returns null
+	 * @returns {Object|Null} the Sprint
+	 */
+	async getSprint() {
+		if (this._idSprint == null) return null;
+		else {
+			let { data: sprint } = await this.axios.get(
+				`/projects/${this._idProject}/sprints/${this._idSprint}`
+			);
+			return new Sprint(this.client, sprint, this._idProject);
+		}
 	}
 
 	/**
@@ -128,7 +171,7 @@ module.exports = class Issue extends Base {
 		};
 
 		await this.axios.put(
-			`/projects/${this._idProject}/issues/${this.code}`,
+			`/projects/${this._idProject}/issues/${this._code}`,
 			newIssue
 		);
 	}
@@ -137,3 +180,4 @@ module.exports = class Issue extends Base {
 const Label = require('./Label');
 const Member = require('./Member');
 const Project = require('./Project');
+const Sprint = require('./Sprint');

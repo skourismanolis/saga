@@ -14,6 +14,15 @@ module.exports = class Label extends Base {
 		return this._idLabel;
 	}
 
+	toJSON() {
+		return JSON.stringify({
+			idProject: this._idProject,
+			idLabel: this._idLabel,
+			name: this.name,
+			color: this.color,
+		});
+	}
+
 	getProject() {
 		return new Project(this.client, this._idProject);
 	}
