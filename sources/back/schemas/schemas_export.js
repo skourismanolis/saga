@@ -7,6 +7,8 @@ const EpicPutPost = require('./EpicPutPost');
 const Issue = require('./Issue');
 const IssuePost = require('./IssuePost');
 const IssuePut = require('./IssuePut');
+const Label = require('./Label');
+const LabelPutPost = require('./LabelPutPost');
 
 module.exports = {
 	Comment,
@@ -16,6 +18,8 @@ module.exports = {
 	Issue,
 	IssuePost,
 	IssuePut,
+	Label,
+	LabelPutPost,
 	UserLoginPost,
 	UserPost,
 };

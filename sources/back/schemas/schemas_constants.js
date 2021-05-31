@@ -7,4 +7,6 @@ module.exports = {
 	MAX_EMAIL: 255,
 	MIN_TEXT: 1,
 	MAX_TEXT: 65535,
+	COLOR_SIZE: 6,
+	COLOR_PATTERN: /^[0-9A-Fa-f]+$/,
 };
