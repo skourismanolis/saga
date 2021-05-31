@@ -1,5 +1,17 @@
 <template>
 	<div class="flex-column">
-		<h1>register</h1>
+		<ReturnToPage />
 	</div>
 </template>
+
+<script>
+import ReturnToPage from '../components/ReturnToPage.vue';
+
+export default {
+	components: {
+		ReturnToPage,
+	},
+};
+</script>
+
+<style scoped></style>
