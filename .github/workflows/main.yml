@@ -97,5 +97,7 @@ jobs:
       run: yarn
       working-directory: ./sources/api-client
     - name: run tests
-      run: yarn test
+      run: |
+        yarn mock &
+        yarn test
       working-directory: ./sources/api-client

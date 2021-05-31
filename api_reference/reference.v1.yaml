@@ -37,6 +37,13 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idProject:
+                    type: integer
         '400':
           description: Bad Request
         '401':
@@ -60,16 +67,16 @@ paths:
               required:
                 - title
     parameters: []
-  '/projects/{projectId}':
+  '/projects/{idProject}':
     parameters:
       - schema:
           type: string
-        name: projectId
+        name: idProject
         in: path
         required: true
     delete:
       summary: Delete a project
-      operationId: delete-projects-projectId
+      operationId: delete-projects-idProject
       responses:
         '200':
           description: OK
@@ -84,10 +91,20 @@ paths:
       description: You must be a project admin in order to delete the project.
     put:
       summary: Update project info
-      operationId: put-projects-projectId
+      operationId: put-projects-idProject
       responses:
         '200':
           description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
       requestBody:
         content:
           application/json:
@@ -102,11 +119,12 @@ paths:
               required:
                 - title
                 - picture
-  '/projects/{projectId}/members':
+  '/projects/{idProject}/members':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     get:
@@ -129,11 +147,11 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-members
+      operationId: get-projects-idProject-members
       description: 'List the memebers of the project, including yourself.'
     delete:
       summary: Remove a member from the project
-      operationId: delete-projects-projectId-members
+      operationId: delete-projects-idProject-members
       responses:
         '200':
           description: OK
@@ -156,18 +174,18 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type:
-                    - string
-                    - number
+                idUser:
+                  type: integer
+                  minimum: 0
               required:
-                - id
+                - idUser
         description: The id of the user to remove from the project.
-  '/projects/{projectId}/members/admin':
+  '/projects/{idProject}/members/admin':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     post:
@@ -186,7 +204,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: post-projects-projectId-members-admin
+      operationId: post-projects-idProject-members-admin
       description: |-
         Promote a member to project admin. 
         **If the user is already a project admin nothing happens and 200 OK is returned.**
@@ -198,12 +216,11 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type:
-                    - string
-                    - number
+                idUser:
+                  type: integer
+                  minimum: 0
               required:
-                - id
+                - idUser
         description: The id of the member you want to promote
     delete:
       summary: Remove admin privileges
@@ -221,7 +238,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: delete-projects-projectId-members-admin
+      operationId: delete-projects-idProject-members-admin
       description: |-
         Remove admin privileges from the given project member.
         Project Admin only.
@@ -232,26 +249,18 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type:
-                    - string
-                    - number
+                idUser:
+                  type: integer
+                  minimum: 0
               required:
-                - id
-  /users:
-    post:
-      summary: Create new user
-      tags:
-        - users
-      responses: {}
-      operationId: post-users
-      description: Creates a new user
-    parameters: []
-  '/projects/{projectId}/issues':
+                - idUser
+        description: ''
+  '/projects/{idProject}/issues':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     get:
@@ -263,7 +272,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IssueShort'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
         '400':
           description: Bad Request
         '401':
@@ -274,10 +285,11 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-issues
+      operationId: get-projects-idProject-issues
       parameters:
         - schema:
             type: integer
+            minimum: 0
           in: query
           name: inSprint
           description: Show only issues that belong to the given sprint
@@ -287,27 +299,32 @@ paths:
           name: label
           description: Array of label ids. Must belong to the project. Shows only issues with the specified label(s)
         - schema:
-            type: string
+            type: integer
+            minimum: 0
           in: query
           name: withSprint
           description: Includes the `sprint` field in the results
         - schema:
-            type: string
+            type: integer
+            minimum: 0
           in: query
           name: withEpic
           description: Includes the `epic` field in the results
         - schema:
             type: integer
+            minimum: 0
           in: query
           name: assignee
-          description: User id. Must have access to the project. Shows only issues assigned to the specified user
+          description: User id. Must have access to the project. Shows only issues assigned to the specified user.
         - schema:
             type: integer
+            minimum: 0
           in: query
           name: column
-          description: The id of a column. Show only issues in this column.
+          description: The id of a column. Show only issues in this column. Can be null.
         - schema:
             type: integer
+            minimum: 0
           in: query
           name: inEpic
           description: The id of an Epic. Show only issues in this epic.
@@ -315,12 +332,227 @@ paths:
             type: string
           in: query
           name: search
-          description: search
-  '/projects/{projectId}/sprints':
+          description: search string
+      description: ''
+    post:
+      summary: Create new issue
+      operationId: post-projects-idProject-issues
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                required:
+                  - code
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuePost'
+        description: ''
+      description: |-
+        Creates a new issue in the current project.
+        Valid only if user has access to project.
+  '/projects/{idProject}/issues/{code}':
     parameters:
       - schema:
+          type: integer
+          minimum: 0
+        name: idProject
+        in: path
+        required: true
+      - schema:
           type: string
-        name: projectId
+        name: code
+        in: path
+        required: true
+    put:
+      summary: change specific issue's details
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: put-projects-idProject-issues-idIssue
+      description: |-
+        Change details of specific issue.
+        Must have access to project.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuePut'
+    get:
+      summary: get specific issue's details
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-idProject-issues-idIssue
+      description: |-
+        Get all details of specific issue.
+        Must have access to project.
+    delete:
+      summary: delete specific issue
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-projects-idProject-issues-idIssue
+      description: |-
+        Delete specific issue.
+        Must have access to project.
+  '/projects/{idProject}/issues/{code}/comments':
+    parameters:
+      - schema:
+          type: integer
+          minimum: 0
+        name: idProject
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    get:
+      summary: get comments
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-procects-idProject-issues-code-comments
+      description: Get all comments of this issue.
+    post:
+      summary: post new comment
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idComment:
+                    type: integer
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-procects-idProject-issues-code-comments
+      description: Post new comment on current issue.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentPost'
+        description: ''
+    delete:
+      summary: delete comment by id
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-procects-idProject-issues-code-comments-idComment
+      description: |-
+        Delete comment with id in body.
+        Comment must belong to current user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idComment:
+                  type: integer
+                  minimum: 0
+              required:
+                - idComment
+  '/projects/{idProject}/sprints':
+    parameters:
+      - schema:
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     get:
@@ -345,14 +577,23 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-sprints
+      operationId: get-projects-idProject-sprints
       description: ''
     post:
       summary: Add a new sprint to a Project
-      operationId: post-projects-projectId-sprints
+      operationId: post-projects-idProject-sprints
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idSprint:
+                    type: number
+                required:
+                  - idSprint
         '400':
           description: Bad Request
         '401':
@@ -367,23 +608,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Sprint'
+              $ref: '#/components/schemas/SprintPutPost'
       description: ''
-  '/projects/{projectId}/sprints/{sprintId}':
+  '/projects/{idProject}/sprints/{idSprint}':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
       - schema:
-          type: string
-        name: sprintId
+          type: integer
+          minimum: 0
+        name: idSprint
         in: path
         required: true
     put:
       summary: Update an existing sprint
-      operationId: put-projects-projectId-sprints-sprintId
+      operationId: put-projects-idProject-sprints-idSprint
       responses:
         '200':
           description: OK
@@ -402,11 +645,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Sprint'
-      description: Updates the given sprint
+              $ref: '#/components/schemas/SprintPutPost'
+      description: |-
+        Updates the given sprint.
+        Must have access to project.
     delete:
       summary: Delete a sprint
-      operationId: delete-projects-projectId-sprints-sprintId
+      operationId: delete-projects-idProject-sprints-idSprint
       responses:
         '200':
           description: OK
@@ -420,17 +665,46 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Removes the given sprint
-  '/projects/{projectId}/sprints/{sprintId}/issues':
+      description: |-
+        Removes the given sprint.
+        Must have access to project.
+    get:
+      summary: Get sprint by id
+      operationId: get-projects-idProject-sprints-idSprint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+      description: Get all details of specific sprint.
+  '/projects/{idProject}/sprints/{idSprint}/issues':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
       - schema:
-          type: string
-        name: sprintId
+          type: integer
+          minimum: 0
+        name: idSprint
         in: path
         required: true
     post:
@@ -449,7 +723,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-sprints-sprintId-issues
+      operationId: get-projects-idProject-sprints-idSprint-issues
       description: 'Add issues to the given sprint. If any of these issues already belong to a sprint, the information will be overwritten.'
       parameters: []
       requestBody:
@@ -462,7 +736,7 @@ paths:
         description: 'An array of issue codes to add to a sprint. If any of these issues already belong to a sprint, the information will be overwritten.'
     delete:
       summary: Remove issues from a sprint
-      operationId: delete-projects-projectId-sprints-sprintId-issues
+      operationId: delete-projects-idProject-sprints-idSprint-issues
       responses:
         '200':
           description: OK
@@ -485,11 +759,35 @@ paths:
               items:
                 type: string
         description: 'An array of issue codes to remove from the sprint. If some of these issues don''t belong to the given sprint, nothing will happen to them, the rest will be moved to the backlog.'
-  '/projects/{projectId}/epics':
+    get:
+      summary: get sprint issues
+      operationId: get-projects-idProject-sprints-idSprint-issues
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns all the issues in a sprint.
+  '/projects/{idProject}/epics':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     get:
@@ -514,10 +812,67 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-epics
+      operationId: get-projects-idProject-epics
     post:
       summary: Add a new epic
-      operationId: post-projects-projectId-epics
+      operationId: post-projects-idProject-epics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idEpic:
+                    type: integer
+                    minimum: 0
+                required:
+                  - idEpic
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EpicPutPost'
+  '/projects/{idProject}/epics/{idEpic}':
+    parameters:
+      - schema:
+          type: integer
+          minimum: 0
+        name: idProject
+        in: path
+        required: true
+      - schema:
+          type: integer
+          minimum: 0
+        name: idEpic
+        in: path
+        required: true
+    put:
+      summary: Change epic
+      tags: []
+      responses: {}
+      operationId: put-projects-idProject-epics-idEpic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EpicPutPost'
+        description: ''
+      description: Change details of an epic.
+    delete:
+      summary: Delete epic
+      tags: []
       responses:
         '200':
           description: OK
@@ -531,21 +886,48 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-  '/projects/{projectId}/epics/{epicId}/issues':
+      operationId: delete-projects-idProject-epics-idEpic
+      description: |-
+        Delete an epic.
+        All issues in this epic will have their epic field reset to null.
+    get:
+      summary: get epic
+      operationId: get-projects-idProject-epics-idEpic
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Epic'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Get all details of specific epic.
+  '/projects/{idProject}/epics/{idEpic}/issues':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
       - schema:
-          type: string
-        name: epicId
+          type: integer
+          minimum: 0
+        name: idEpic
         in: path
         required: true
     post:
       summary: Add issues to an epic
-      operationId: post-projects-projectId-epics-epicId-issues
+      operationId: post-projects-idProject-epics-idEpic-issues
       responses:
         '200':
           description: OK
@@ -570,7 +952,7 @@ paths:
       description: 'Add issues to the given epic. If any of these issues already belong to an epic, the information will be overwritten.'
     delete:
       summary: Remove issues from an epic
-      operationId: delete-projects-projectId-epics-epicId-issues
+      operationId: delete-projects-idProject-epics-idEpic-issues
       responses:
         '200':
           description: OK
@@ -593,11 +975,25 @@ paths:
               items:
                 type: string
         description: 'An array of issue codes to remove from the epic. If some of these issues don''t belong to the given epic, nothing will happen to them.'
-  '/projects/{projectId}/labels':
+    get:
+      summary: Get issues of epic
+      operationId: get-projects-idProject-epics-idEpic-issues
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+      description: Returns all the issues in an epic.
+  '/projects/{idProject}/labels':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
     get:
@@ -622,14 +1018,24 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      operationId: get-projects-projectId-labels
+      operationId: get-projects-idProject-labels
       description: List all labels belonging to the specified project.
     post:
       summary: Add a project label
-      operationId: post-projects-projectId-labels
+      operationId: post-projects-idProject-labels
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idLabel:
+                    type: integer
+                    minimum: 0
+                required:
+                  - idLabel
         '400':
           description: Bad Request
         '401':
@@ -644,45 +1050,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Label'
+              $ref: '#/components/schemas/LabelPutPost'
       description: Add a project label
-  '/projects/{projectId}/labels/{labelId}':
+  '/projects/{idProject}/labels/{idLabel}':
     parameters:
       - schema:
-          type: string
-        name: projectId
+          type: integer
+          minimum: 0
+        name: idProject
         in: path
         required: true
       - schema:
-          type: string
-        name: labelId
+          type: integer
+          minimum: 0
+        name: idLabel
         in: path
         required: true
-    get:
-      summary: Get a specific label's info
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Label'
-        '400':
-          description: Bad Request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-        '500':
-          description: Internal Server Error
-      operationId: get-projects-projectId-labels-labelId
-      description: Get a specific label's info
     put:
       summary: Update a label
-      operationId: put-projects-projectId-labels-labelId
+      operationId: put-projects-idProject-labels-idLabel
       responses:
         '200':
           description: OK
@@ -701,10 +1087,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Label'
+              $ref: '#/components/schemas/LabelPutPost'
     delete:
       summary: Delete a label
-      operationId: delete-projects-projectId-labels-labelId
+      operationId: delete-projects-idProject-labels-idLabel
       responses:
         '200':
           description: OK
@@ -718,10 +1104,399 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Delete the given label. All issues with this label will have their label field reset to null.
+      description: |-
+        Delete the given label.
+        All issues with this label will have their label field reset to null.
+    get:
+      summary: Get a single label
+      operationId: get-projects-idProject-labels-idLabel
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Label'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns a single label.
+  '/project/{idProject}/columns':
+    parameters:
+      - schema:
+          type: integer
+          minimum: 0
+        name: idProject
+        in: path
+        required: true
+    get:
+      summary: get columns
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Column'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Column'
+      operationId: get-project-idProject-columns
+      description: Get all columns in project (except from done) in an array.
+    post:
+      summary: new column
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idColumn:
+                    type: integer
+                    minimum: 0
+                required:
+                  - idColumn
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-project-idProject-columns
+      description: Create a new column.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColumnPutPost'
+  '/project/{idProject}/columns/{idColumn}':
+    parameters:
+      - schema:
+          type: integer
+          minimum: 0
+        name: idProject
+        in: path
+        required: true
+      - schema:
+          type: integer
+          minimum: 0
+        name: idColumn
+        in: path
+        required: true
+    delete:
+      summary: Delete Column
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: delete-project-idProject-columns-idColumn
+      description: |-
+        Delete a column.
+        Must have access to project.
+    put:
+      summary: Change Column
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: put-project-idProject-columns-idColumn
+      description: |-
+        Change details of a column.
+        Must have access to project.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColumnPutPost'
+    get:
+      summary: Get a single Column
+      operationId: get-project-idProject-columns-idColumn
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Column'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns a single column that belongs to the project.
+  /users:
+    post:
+      summary: Create new user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      operationId: post-users
+      description: |-
+        Creates a new unverified user using given credentials.
+        Sends verification token to given email.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPost'
+        description: ''
+      x-internal: false
+      parameters: []
+    parameters: []
+    put:
+      summary: Put User by id
+      operationId: put-users-idUser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Change some details about current user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPost'
+        description: |-
+          Change some details about this specific account.
+          Requires password authentication.
+    delete:
+      summary: Delete User
+      operationId: delete-users
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        Delete current user.
+        Requires password authentication.
+        Comments and issues by this user will have theis creator id set to 0.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+        description: ''
+  /users/login:
+    post:
+      summary: Login with credentials
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: post-users-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      description: |
+        User login request.
+        Requires email and password and returns a json web token in response's body.
+  '/users/{idUser}':
+    get:
+      summary: Get user by id
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Returns details about the user with given id.
+    parameters:
+      - schema:
+          type: integer
+        name: idUser
+        in: path
+        required: true
+  '/users/{idUser}/payment':
+    parameters:
+      - schema:
+          type: integer
+        name: idUser
+        in: path
+        required: true
+    get:
+      summary: Get Payment List
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      operationId: get-users-idUser-payment
+      description: |-
+        Receives all the existing payments and generates missing ones.
+        Authentication for same user required.
+  '/token/{webToken}':
+    parameters:
+      - schema:
+          type: string
+        name: webToken
+        in: path
+        required: true
+    get:
+      summary: Handle token
+      tags: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-token-webToken
+      description: |-
+        Handles process indicated by webToken.
+
+        webToken is a json web token that contains a "process" field that shows what action needs to be taken.
+        "process" can be "verification" or "invite".
 components:
   schemas:
-    UserProfile:
+    User:
       description: ''
       type: object
       title: User Profile
@@ -737,10 +1512,9 @@ components:
           email: string
           avatar: null
       properties:
-        id:
-          type:
-            - string
-            - number
+        idUser:
+          type: integer
+          minimum: 0
         name:
           type: string
         surname:
@@ -777,7 +1551,7 @@ components:
             - Premium
             - Host
       required:
-        - id
+        - idUser
         - name
         - surname
         - proffesion
@@ -787,6 +1561,7 @@ components:
         - email
         - picture
         - username
+        - plan
     ProjectMember:
       description: User representation used in project members list.
       type: object
@@ -800,10 +1575,9 @@ components:
           admin: true
           avatar: 'http://example.com'
       properties:
-        id:
-          type:
-            - string
-            - number
+        idUser:
+          type: number
+          minimum: 0
         name:
           type: string
         surname:
@@ -811,40 +1585,26 @@ components:
         email:
           type: string
           format: email
-        admin:
-          type: boolean
+        role:
+          type: string
+          enum:
+            - Admin
+            - Member
         picture:
           type: string
           format: uri
           nullable: true
       required:
-        - id
+        - idUser
         - name
         - surname
         - email
-        - admin
+        - role
         - picture
     ProjectShort:
       title: Project Short
       type: object
       description: Minimal info about a project
-      properties:
-        id:
-          type:
-            - string
-            - number
-        name:
-          type: string
-        members:
-          type:
-            - string
-            - array
-          items:
-            $ref: '#/components/schemas/ProjectMemberShort'
-      required:
-        - id
-        - name
-        - members
       x-examples:
         example-1:
           id: 2
@@ -855,6 +1615,20 @@ components:
               lastName: Skouris
               admin: true
               avatar: null
+      properties:
+        idProject:
+          type: integer
+          minimum: 0
+        name:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectMemberShort'
+      required:
+        - idProject
+        - name
+        - members
     ProjectMemberShort:
       title: Project Member Short
       type: object
@@ -867,51 +1641,57 @@ components:
           admin: true
           avatar: null
       properties:
-        id:
-          type:
-            - string
-            - integer
+        idUser:
+          type: integer
+          minimum: 0
         name:
           type: string
         surname:
           type: string
-        admin:
-          type: boolean
+        role:
+          type: string
+          enum:
+            - Admin
+            - Member
         picture:
           type: string
           format: uri
           nullable: true
       required:
-        - id
+        - idUser
         - name
         - surname
-        - admin
+        - role
         - picture
-    IssueShort:
-      title: Issue Short
+    Issue:
+      title: Issue
       type: object
       description: A short-ish representation of each issue
       x-examples: {}
       properties:
         code:
           type: string
-        title:
-          type: string
-        IdLabel:
+        idEpic:
           type: integer
-        points:
+          minimum: 0
+          nullable: true
+        idLabel:
+          type: integer
+          minimum: 0
+          nullable: true
+        idSprint:
           type: integer
           minimum: 0
           nullable: true
         category:
-          type: string
           enum:
             - Story
             - Task
             - Bug
-        deadline:
           type: string
-          format: date-time
+        idColumn:
+          type: integer
+          minimum: 0
           nullable: true
         priority:
           type: string
@@ -921,32 +1701,176 @@ components:
             - Neutral
             - High
             - Very High
-        asignees:
+        assignees:
           type: array
           description: List of userIds that are assigned to this issue
+          nullable: true
           items:
             type: integer
-        idSprint:
+        title:
+          type: string
+        points:
           type: integer
           nullable: true
-        idEpic:
-          type: integer
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        description:
+          type: string
           nullable: true
       required:
         - code
-        - title
-        - IdLabel
-        - points
+        - idEpic
+        - idLabel
+        - idSprint
         - category
-        - deadline
+        - idColumn
         - priority
-        - asignees
+        - assignees
+        - title
+        - points
+        - deadline
+        - description
+    IssuePut:
+      title: Issue Put
+      type: object
+      description: A representation of issue for put request
+      x-examples: {}
+      properties:
+        idLabel:
+          type: integer
+          minimum: 0
+          nullable: true
+        category:
+          enum:
+            - Story
+            - Task
+            - Bug
+          type: string
+        idColumn:
+          type: integer
+          minimum: 0
+          nullable: true
+        priority:
+          type: string
+          enum:
+            - Very Low
+            - Low
+            - Neutral
+            - High
+            - Very High
+        assignees:
+          type: array
+          description: List of userIds that are assigned to this issue
+          nullable: true
+          items:
+            type: integer
+        title:
+          type: string
+        points:
+          type: integer
+          nullable: true
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      required:
+        - idLabel
+        - category
+        - idColumn
+        - priority
+        - assignees
+        - title
+        - points
+        - deadline
+        - description
+    IssuePost:
+      title: Issue Post
+      type: object
+      description: A representation of issue for post request
+      x-examples: {}
+      properties:
+        idLabel:
+          type: integer
+          minimum: 0
+          nullable: true
+        category:
+          enum:
+            - Story
+            - Task
+            - Bug
+          type: string
+        priority:
+          type: string
+          enum:
+            - Very Low
+            - Low
+            - Neutral
+            - High
+            - Very High
+        assignees:
+          type: array
+          description: List of userIds that are assigned to this issue
+          nullable: true
+          items:
+            type: integer
+        title:
+          type: string
+        points:
+          type: integer
+          nullable: true
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      required:
+        - idLabel
+        - category
+        - priority
+        - assignees
+        - title
+        - points
+        - deadline
+        - description
     Sprint:
       title: Sprint
       type: object
       properties:
-        id:
+        idSprint:
           type: integer
+          minimum: 0
+        start:
+          type: string
+          format: date-time
+          nullable: true
+        finish:
+          type: string
+          format: date-time
+          nullable: true
+        title:
+          type: string
+        issues:
+          type: array
+          description: an array of all issues in sprint that are not in contained epics
+          items:
+            $ref: '#/components/schemas/Issue'
+      required:
+        - idSprint
+        - start
+        - finish
+        - title
+        - issues
+    SprintPutPost:
+      title: Sprint Put Post
+      type: object
+      properties:
         start:
           type: string
           format: date-time
@@ -958,16 +1882,43 @@ components:
         title:
           type: string
       required:
-        - id
         - start
         - finish
         - title
     Epic:
       title: Epic
       type: object
+      description: ''
       properties:
         idEpic:
+          type: integer
+          minimum: 0
+        title:
           type: string
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        start:
+          type: string
+          format: date-time
+          nullable: true
+        issues:
+          type: array
+          description: an array of all issues contained
+          items:
+            $ref: '#/components/schemas/Issue'
+      required:
+        - idEpic
+        - title
+        - deadline
+        - start
+        - issues
+    EpicPutPost:
+      title: Epic Put Post
+      type: object
+      description: ''
+      properties:
         title:
           type: string
         deadline:
@@ -979,17 +1930,16 @@ components:
           format: date-time
           nullable: true
       required:
-        - idEpic
         - title
         - deadline
         - start
-      description: ''
     Label:
       title: Label
       type: object
       properties:
         idLabel:
           type: integer
+          minimum: 0
         name:
           type: string
         color:
@@ -1000,4 +1950,148 @@ components:
         - idLabel
         - name
         - color
+    LabelPutPost:
+      title: Label Put Post
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+          pattern: '^#[A-Fa-f0-9]{6}$'
+          description: hex color value
+      required:
+        - name
+        - color
+    Payment:
+      title: Payment
+      type: object
+      properties:
+        idPayment:
+          type: integer
+          minimum: 0
+        idUser:
+          type: integer
+          minimum: 0
+        amount:
+          type: number
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+          minimum: 0
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - idPayment
+        - idUser
+        - amount
+        - timestamp
+    Column:
+      title: Column
+      type: object
+      description: ''
+      properties:
+        name:
+          type: string
+        order:
+          type: integer
+        idColumn:
+          type: integer
+          minimum: 0
+      required:
+        - name
+        - order
+        - idColumn
+    ColumnPutPost:
+      title: Column Put Post
+      type: object
+      description: Column without the id
+      properties:
+        name:
+          type: string
+        order:
+          type: integer
+      required:
+        - name
+        - order
+    CommentPost:
+      title: Comment Post
+      type: object
+      properties:
+        code:
+          type: string
+        content:
+          type: string
+      required:
+        - code
+        - content
+    Comment:
+      title: Comment
+      type: object
+      properties:
+        idComment:
+          type: integer
+          minimum: 0
+        code:
+          type: string
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        idUser:
+          type: integer
+      required:
+        - idComment
+        - code
+        - content
+        - timestamp
+        - idUser
+    UserPost:
+      title: UserPost
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        profession:
+          type: string
+          nullable: true
+        birthDate:
+          type: string
+          format: date
+        studies:
+          type: string
+          nullable: true
+        residence:
+          type: string
+          nullable: true
+        picture:
+          type: string
+          nullable: true
+        plan:
+          type: string
+          enum:
+            - Free
+            - Premium
+            - Host
+      required:
+        - username
+        - email
+        - password
+        - name
+        - surname
+        - profession
+        - birthDate
+        - studies
+        - residence
+        - picture
+        - plan
   securitySchemes: {}
