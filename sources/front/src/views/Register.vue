@@ -69,18 +69,22 @@
 			id="button-container"
 			class="d-flex justify-content-between align-self-center"
 		>
-			<button type="button" class="btn btn-danger">Ακύρωση</button>
+			<button type="button" class="btn btn-danger" @click="redirectHome">
+				Ακύρωση
+			</button>
 
 			<div class="d-flex flex-row">
-				<div class="form-check align-middle">
+				<div class="form-check align-middle d-flex align-items-center">
 					<input
 						class="form-check-input"
 						type="checkbox"
 						value=""
 						id="defaultCheck1"
+						required
 					/>
 					<label class="form-check-label" for="defaultCheck1">
-						Έχω διαβάσει και αποδέχομαι τους όρους χρήσης
+						Έχω διαβάσει και αποδέχομαι τους
+						<a href="#"> όρους χρήσης </a>
 					</label>
 				</div>
 
@@ -88,6 +92,10 @@
 					Δημιουργία Λογαριασμού
 				</button>
 			</div>
+		</div>
+		<div class="d-flex justify-content-between" id="art-container">
+			<img src="../assets/reglog-art-bottom-left.png" />
+			<img src="../assets/reglog-art-bottom-right.png" />
 		</div>
 	</div>
 </template>
@@ -100,6 +108,11 @@ export default {
 	components: {
 		ReturnToPage,
 		RatePlans,
+	},
+	methods: {
+		redirectHome() {
+			this.$router.push({ path: '/' }).catch(() => {});
+		},
 	},
 };
 </script>
@@ -173,5 +186,25 @@ export default {
 
 #button-container {
 	width: 1007px;
+}
+
+.form-check {
+	margin-right: 60px;
+
+	width: 244px;
+
+	text-align: center;
+}
+
+.form-check a {
+	color: #db5461;
+}
+
+.form-check-input {
+	margin-right: 16px;
+}
+
+#art-container {
+	margin-top: 51px;
 }
 </style>

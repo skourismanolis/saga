@@ -6,7 +6,7 @@
 		</div>
 		<button
 			type="button"
-			class="btn btn-primary col-element"
+			class="btn btn-primary col-element d-flex align-items-center"
 			v-on:click="scrollToElement()"
 		>
 			Ξεκίνα τώρα
@@ -69,6 +69,7 @@ export default {
 }
 
 .bi-chevron-right {
+	margin-left: 8px;
 	font-size: 24px;
 }
 
