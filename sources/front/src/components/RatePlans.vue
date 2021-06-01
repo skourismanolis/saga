@@ -2,10 +2,7 @@
 	<div class="d-flex flex-row justify-content-around">
 		<div
 			class="card flex-column"
-			@click="
-				redirectRegister;
-				changeActivePlan('free');
-			"
+			@click="$emit('plan-change', 'free')"
 			v-bind:class="{ active: plan == 'free' }"
 		>
 			<div class="d-flex justify-content-around card-header free">
@@ -25,10 +22,7 @@
 
 		<div
 			class="card flex-column"
-			@click="
-				redirectRegister;
-				changeActivePlan('normal');
-			"
+			@click="$emit('plan-change', 'normal')"
 			v-bind:class="{ active: plan == 'normal' }"
 		>
 			<div class="d-flex justify-content-around card-header normal">
@@ -48,10 +42,7 @@
 
 		<div
 			class="card flex-column"
-			@click="
-				redirectRegister;
-				changeActivePlan('premium');
-			"
+			@click="$emit('plan-change', 'premium')"
 			v-bind:class="{ active: plan == 'premium' }"
 		>
 			<div class="d-flex justify-content-around card-header premium">
@@ -80,7 +71,6 @@ export default {
 	data() {
 		return {
 			// plan: '',
-
 			free_plan_points: [
 				{ message: 'Orci varius natoque penatibus et magnis.' },
 				{ message: 'Etiam in bibendum velit.' },
@@ -99,17 +89,6 @@ export default {
 				{ message: 'Sed ultrices hendrerit dolor.' },
 			],
 		};
-	},
-	methods: {
-		redirectRegister() {
-			if (this.toRegister == true) {
-				this.$router.push({ path: '/register' }).catch(() => {});
-			}
-		},
-
-		changeActivePlan(clickedPlan) {
-			this.plan = clickedPlan;
-		},
 	},
 };
 </script>
@@ -130,7 +109,7 @@ export default {
 
 .card:hover {
 	cursor: pointer;
-	background-color: #ffedca;
+	background-color: #ffc85b;
 }
 
 .active {

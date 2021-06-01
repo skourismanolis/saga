@@ -21,7 +21,7 @@
 			</h3>
 		</div>
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans :toRegister="true" />
+			<RatePlans :toRegister="true" @plan-change="redirectRegister" />
 		</div>
 	</div>
 </template>
@@ -41,6 +41,13 @@ export default {
 				// Use el.scrollIntoView() to instantly scroll to the element
 				el.scrollIntoView({ behavior: 'smooth' });
 			}
+		},
+
+		redirectRegister(value) {
+			let query = { activePlan: value };
+			this.$router
+				.push({ path: '/register', query: query })
+				.catch(() => {});
 		},
 	},
 };

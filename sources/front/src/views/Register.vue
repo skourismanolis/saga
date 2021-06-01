@@ -62,7 +62,11 @@
 		</div>
 
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans :toRegister="false" />
+			<RatePlans
+				:toRegister="false"
+				:plan="activePlan"
+				@plan-change="changePlan"
+			/>
 		</div>
 
 		<div
@@ -109,10 +113,24 @@ export default {
 		ReturnToPage,
 		RatePlans,
 	},
+	data() {
+		return {
+			activePlan: '',
+		};
+	},
 	methods: {
 		redirectHome() {
 			this.$router.push({ path: '/' }).catch(() => {});
 		},
+
+		changePlan(value) {
+			this.activePlan = value;
+		},
+	},
+	created() {
+		if (this.$route.query != null) {
+			this.activePlan = this.$route.query.activePlan;
+		}
 	},
 };
 </script>
