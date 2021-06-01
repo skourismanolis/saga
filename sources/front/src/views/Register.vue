@@ -205,6 +205,6 @@ export default {
 }
 
 #art-container {
-	margin-top: 51px;
+	margin-top: 100px;
 }
 </style>

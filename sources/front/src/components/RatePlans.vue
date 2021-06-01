@@ -1,6 +1,13 @@
 <template>
 	<div class="d-flex flex-row justify-content-around">
-		<div class="card flex-column" @click="redirectRegister">
+		<div
+			class="card flex-column"
+			@click="
+				redirectRegister;
+				changeActivePlan('free');
+			"
+			v-bind:class="{ active: plan == 'free' }"
+		>
 			<div class="d-flex justify-content-around card-header free">
 				<h3>Δωρεάν</h3>
 			</div>
@@ -16,7 +23,14 @@
 			</div>
 		</div>
 
-		<div class="card flex-column" @click="redirectRegister">
+		<div
+			class="card flex-column"
+			@click="
+				redirectRegister;
+				changeActivePlan('normal');
+			"
+			v-bind:class="{ active: plan == 'normal' }"
+		>
 			<div class="d-flex justify-content-around card-header normal">
 				<h3>Κανονικό</h3>
 			</div>
@@ -32,7 +46,14 @@
 			</div>
 		</div>
 
-		<div class="card flex-column" @click="redirectRegister">
+		<div
+			class="card flex-column"
+			@click="
+				redirectRegister;
+				changeActivePlan('premium');
+			"
+			v-bind:class="{ active: plan == 'premium' }"
+		>
 			<div class="d-flex justify-content-around card-header premium">
 				<h3>Premium</h3>
 			</div>
@@ -54,9 +75,12 @@
 export default {
 	props: {
 		toRegister: Boolean,
+		plan: String,
 	},
 	data() {
 		return {
+			// plan: '',
+
 			free_plan_points: [
 				{ message: 'Orci varius natoque penatibus et magnis.' },
 				{ message: 'Etiam in bibendum velit.' },
@@ -82,6 +106,10 @@ export default {
 				this.$router.push({ path: '/register' }).catch(() => {});
 			}
 		},
+
+		changeActivePlan(clickedPlan) {
+			this.plan = clickedPlan;
+		},
 	},
 };
 </script>
@@ -102,6 +130,10 @@ export default {
 
 .card:hover {
 	cursor: pointer;
+	background-color: #ffedca;
+}
+
+.active {
 	background-color: #fedc97;
 }
 
