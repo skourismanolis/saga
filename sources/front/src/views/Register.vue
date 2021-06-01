@@ -17,6 +17,7 @@
 						class="form-control"
 						id="exampleFormControlInput1"
 						placeholder="Email..."
+						v-model="registerForm.email"
 						required
 					/>
 				</div>
@@ -27,6 +28,7 @@
 						class="form-control"
 						id="exampleFormControlInput1"
 						placeholder="Επίθετο..."
+						v-model="registerForm.surname"
 						required
 					/>
 				</div>
@@ -37,6 +39,7 @@
 						class="form-control"
 						id="exampleFormControlInput1"
 						placeholder="Όνομα..."
+						v-model="registerForm.name"
 						required
 					/>
 				</div>
@@ -47,6 +50,7 @@
 						class="form-control"
 						id="exampleInputPassword1"
 						placeholder="Κωδικός..."
+						v-model="registerForm.password"
 						required
 					/>
 				</div>
@@ -62,11 +66,7 @@
 		</div>
 
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans
-				:toRegister="false"
-				:plan="activePlan"
-				@plan-change="changePlan"
-			/>
+			<RatePlans :plan="registerForm.plan" @plan-change="changePlan" />
 		</div>
 
 		<div
@@ -84,6 +84,7 @@
 						type="checkbox"
 						value=""
 						id="defaultCheck1"
+						v-model="registerForm.terms"
 						required
 					/>
 					<label class="form-check-label" for="defaultCheck1">
@@ -92,7 +93,11 @@
 					</label>
 				</div>
 
-				<button type="button" class="btn btn-primary align-middle">
+				<button
+					type="button"
+					class="btn btn-primary align-middle"
+					@click="registerUser"
+				>
 					Δημιουργία Λογαριασμού
 				</button>
 			</div>
@@ -115,7 +120,14 @@ export default {
 	},
 	data() {
 		return {
-			activePlan: '',
+			registerForm: {
+				email: '',
+				surname: '',
+				name: '',
+				password: '',
+				plan: '',
+				terms: false,
+			},
 		};
 	},
 	methods: {
@@ -124,12 +136,37 @@ export default {
 		},
 
 		changePlan(value) {
-			this.activePlan = value;
+			this.registerForm.plan = value;
+		},
+
+		async registerUser() {
+			try {
+				let object = {
+					username: null,
+					email: this.registerForm.email,
+					password: this.registerForm.password,
+					name: this.registerForm.name,
+					surname: this.registerForm.surname,
+					profession: null,
+					birthDate: null,
+					studies: null,
+					residence: null,
+					picture: null,
+					plan: this.registerForm.plan,
+				};
+				console.log(object);
+				// let response = await this.$axios.post('/users', object);
+				// if(re)
+				alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
+			} catch (error) {
+				alert(this.errormessage);
+				console.log(error);
+			}
 		},
 	},
 	created() {
 		if (this.$route.query != null) {
-			this.activePlan = this.$route.query.activePlan;
+			this.registerForm.plan = this.$route.query.registerForm.plan;
 		}
 	},
 };
@@ -156,7 +193,7 @@ export default {
 	background-color: #fedc97;
 
 	width: 440px;
-	height: 446px;
+	height: 457px;
 
 	padding: 48px 60px;
 
