@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const email_validator = require('email-validator');
+var nodemailer = require('nodemailer');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
@@ -59,7 +60,6 @@ app.post('/', async (req, res) => {
 	try {
 		// prettier-ignore
 		const [result] = await db.pool.query('SELECT * FROM user WHERE email = ?', [req.body.email]);
-		console.log(result);
 		if (result.length > 0) {
 			throw new Error('Email exists');
 		}
@@ -76,7 +76,7 @@ app.post('/', async (req, res) => {
 		await db.pool.query(
 			'INSERT INTO user (username,email, password, name, surname, verified, plan , picture) VALUES (?,?,?,?,?,?,?,?)',
 			[
-				req.body.username,
+				req.body.name + ' ' + req.body.surname,
 				req.body.email,
 				hashedPassword,
 				req.body.name,
@@ -86,9 +86,42 @@ app.post('/', async (req, res) => {
 				req.body.picture,
 			]
 		);
+		// prettier-ignore
+		const [result] = await db.pool.query(
+			'SELECT * FROM user WHERE email = ?',
+			[req.body.email]
+		);
+		if (result.length == 0) {
+			throw new Error('Not in db');
+		}
+		const emailToken = jwt.sign(
+			{
+				id: result[0].id,
+			},
+			process.env.EMAIL_SECRET
+		);
+
+		const url = `http://localhost:8080/confirmation/${emailToken}`;
+
+		var transporter = nodemailer.createTransport({
+			service: 'gmail', // hostname
+			auth: {
+				user: 'mail',
+				pass: 'pass',
+			},
+		});
+
+		await transporter.sendMail({
+			to: result[0].email,
+			subject: 'Confirm Email for Saga Account',
+			html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
+		});
 
 		res.status(200).send('Ok');
 	} catch (err) {
+		await db.pool.query('DELETE FROM user WHERE email = ?', [
+			req.body.email,
+		]);
 		console.error(err);
 		res.status(500).send('Internal Server Error');
 	}
