@@ -141,27 +141,68 @@ export default {
 
 		async registerUser() {
 			try {
-				let object = {
-					username: null,
-					email: this.registerForm.email,
-					password: this.registerForm.password,
-					name: this.registerForm.name,
-					surname: this.registerForm.surname,
-					profession: null,
-					birthDate: null,
-					studies: null,
-					residence: null,
-					picture: null,
-					plan: this.registerForm.plan,
-				};
-				console.log(object);
-				// let response = await this.$axios.post('/users', object);
-				// if(re)
-				alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
+				if (
+					this.registerForm.email == '' ||
+					this.registerForm.password == '' ||
+					this.registerForm.name == '' ||
+					this.registerForm.surname == ''
+				) {
+					alert('Παρακαλώ συμπληρώστε όλα τα πεδία της φόρμας.');
+					this.scrollToElement('#form');
+				} else if (
+					this.validateEmail(this.registerForm.email) == false
+				) {
+					alert('Το email που εισάγατε δεν είναι έγκυρο!');
+					this.scrollToElement('#form');
+				} else if (
+					this.registerForm.plan != 'free' &&
+					this.registerForm.plan != 'normal' &&
+					this.registerForm.plan != 'premium'
+				) {
+					alert('Παρακαλώ επιλέξτε κάποιο από τα πλάνα.');
+					this.scrollToElement('#rate-plans');
+				} else if (this.registerForm.terms == false) {
+					alert('Παρακαλώ διαβάστε τους όρους χρήσης.');
+					this.scrollToElement('#button-container');
+				} else {
+					let object = {
+						username: null,
+						email: this.registerForm.email,
+						password: this.registerForm.password,
+						name: this.registerForm.name,
+						surname: this.registerForm.surname,
+						profession: null,
+						birthDate: null,
+						studies: null,
+						residence: null,
+						picture: null,
+						plan: this.registerForm.plan,
+					};
+					console.log(object);
+					alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
+				}
 			} catch (error) {
 				alert(this.errormessage);
 				console.log(error);
 			}
+		},
+		scrollToElement(i) {
+			const el = this.$el.querySelector(i);
+
+			if (el) {
+				// Use el.scrollIntoView() to instantly scroll to the element
+				el.scrollIntoView({ behavior: 'smooth' });
+			}
+		},
+		validateEmail(mail) {
+			if (
+				/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+					mail
+				)
+			) {
+				return true;
+			}
+			return false;
 		},
 	},
 	created() {
