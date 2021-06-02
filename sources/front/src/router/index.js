@@ -16,11 +16,17 @@ const routes = [
 		path: '/register',
 		name: 'Register',
 		component: Register,
+		meta: {
+			navbar: false,
+		},
 	},
 	{
 		path: '/login',
 		name: 'Login',
 		component: Login,
+		meta: {
+			navbar: false,
+		},
 	},
 	{
 		path: '/about',

@@ -204,8 +204,6 @@ export default {
 		},
 	},
 	created() {
-		this.$emit('toggle-navbar', false);
-
 		window.scrollTo(0, 0);
 
 		if (this.$route.query != null) {
