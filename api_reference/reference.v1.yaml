@@ -1281,15 +1281,6 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                required:
-                  - token
         '400':
           description: Bad Request
         '401':
@@ -1494,6 +1485,40 @@ paths:
 
         webToken is a json web token that contains a "process" field that shows what action needs to be taken.
         "process" can be "verification" or "invite".
+  '/projects/{idProject}/invite':
+    parameters:
+      - schema:
+          type: string
+        name: idProject
+        in: path
+        required: true
+    get:
+      summary: Get invite link
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inviteLink:
+                    type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-idProject-invite
+      description: |-
+        Returns the invite link of the current project.
+        Needs to be admin.
 components:
   schemas:
     User:
@@ -2062,4 +2087,23 @@ components:
         - surname
         - picture
         - plan
+    TokenRequest:
+      title: TokenRequest
+      type: object
+      properties:
+        process:
+          type: string
+          enum:
+            - forgot
+            - registration
+            - invite
+        idUser:
+          type: integer
+          minimum: 1
+        idProject:
+          type: integer
+          minimum: 1
+      required:
+        - process
+        - idUser
   securitySchemes: {}
