@@ -92,6 +92,8 @@ export default {
 		},
 	},
 	created() {
+		this.$emit('toggle-navbar', false);
+
 		window.scrollTo(0, 0);
 	},
 };
