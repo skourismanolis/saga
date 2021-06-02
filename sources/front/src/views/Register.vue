@@ -9,7 +9,7 @@
 				<h4 id="form-header" class="align-self-center">
 					Δημιουργήστε τον Λογαριασμό σας
 				</h4>
-				<a href="#" class="align-self-center">Έχω λογαριασμό</a>
+				<a href="/login" class="align-self-center">Έχω λογαριασμό</a>
 
 				<div class="form-group">
 					<input
@@ -171,10 +171,6 @@ export default {
 						password: this.registerForm.password,
 						name: this.registerForm.name,
 						surname: this.registerForm.surname,
-						profession: null,
-						birthDate: null,
-						studies: null,
-						residence: null,
 						picture: null,
 						plan: this.registerForm.plan,
 					};
