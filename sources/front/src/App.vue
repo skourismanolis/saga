@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
-		<router-view @toggle-navbar="toggleNavbar" />
+		<router-view />
 		<div class="footer-container">
 			<Footer />
 		</div>
@@ -18,13 +18,19 @@ export default {
 		Navbar,
 	},
 	data() {
-		return {
-			navbarFlag: true,
-		};
+		return {};
 	},
-	methods: {
-		toggleNavbar(value) {
-			this.navbarFlag = value;
+	methods: {},
+	mounted() {
+		console.log(this.$route);
+	},
+	computed: {
+		navbarFlag() {
+			if (this.$route.meta != null && this.$route.meta.navbar == false) {
+				return false;
+			} else {
+				return true;
+			}
 		},
 	},
 };
