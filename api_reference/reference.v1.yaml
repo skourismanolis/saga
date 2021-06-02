@@ -1519,19 +1519,6 @@ components:
           type: string
         surname:
           type: string
-        proffesion:
-          type: string
-          nullable: true
-        birthDate:
-          type: string
-          minLength: 1
-          format: date
-        studies:
-          type: string
-          nullable: true
-        residence:
-          type: string
-          nullable: true
         email:
           type: string
           minLength: 1
@@ -1554,10 +1541,6 @@ components:
         - idUser
         - name
         - surname
-        - proffesion
-        - birthDate
-        - studies
-        - residence
         - email
         - picture
         - username

@@ -21,13 +21,9 @@ CREATE TABLE IF NOT EXISTS `saga`.`user` (
   `password` VARCHAR(72) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
-  `birthDate` DATE NOT NULL,
   `verified` TINYINT NOT NULL,
   `plan` ENUM("Free", "Premium", "Host") NOT NULL,
-  `profession` VARCHAR(45) NULL,
   `picture` VARCHAR(45) NULL,
-  `studies` VARCHAR(45) NULL,
-  `residence` VARCHAR(45) NULL,
   PRIMARY KEY (`idUser`))
 ENGINE = InnoDB;
 
