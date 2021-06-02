@@ -1500,17 +1500,7 @@ components:
       description: ''
       type: object
       title: User Profile
-      x-examples:
-        example-1:
-          id: '1'
-          firstName: string
-          lastName: string
-          proffesion: string
-          birth: 1999/01/29
-          studies: string
-          city: string
-          email: string
-          avatar: null
+      x-examples: {}
       properties:
         idUser:
           type: integer
@@ -1529,8 +1519,8 @@ components:
           nullable: true
         username:
           type: string
-          minLength: 3
           maxLength: 45
+          minLength: 1
         plan:
           type: string
           enum:
@@ -2055,18 +2045,6 @@ components:
           type: string
         surname:
           type: string
-        profession:
-          type: string
-          nullable: true
-        birthDate:
-          type: string
-          format: date
-        studies:
-          type: string
-          nullable: true
-        residence:
-          type: string
-          nullable: true
         picture:
           type: string
           nullable: true
@@ -2082,10 +2060,6 @@ components:
         - password
         - name
         - surname
-        - profession
-        - birthDate
-        - studies
-        - residence
         - picture
         - plan
   securitySchemes: {}

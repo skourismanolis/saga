@@ -229,8 +229,8 @@ ENGINE = InnoDB;
 -- Insert User with id 0 and username "deleted"
 -- -----------------------------------------------------
 SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
-INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `birthDate`, `verified`, `plan`)
-VALUES (0,'deleted', '', '', '', '', '2021-05-30', '1', 'Free');
+INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `verified`, `plan`)
+VALUES (0,'deleted', '', '', '', '', '1', 'Free');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
