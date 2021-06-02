@@ -101,7 +101,7 @@ app.post('/', async (req, res) => {
 			process.env.EMAIL_SECRET
 		);
 
-		const url = `http://localhost:8080/confirmation/${emailToken}`;
+		const url = `http://localhost:8080/token/${emailToken}`;
 
 		var transporter = nodemailer.createTransport({
 			service: 'gmail', // hostname
