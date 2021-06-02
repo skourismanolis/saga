@@ -16,7 +16,7 @@
 						class="form-control"
 						id="exampleFormControlInput1"
 						placeholder="Email..."
-						v-model="registerForm.email"
+						v-model="loginForm.email"
 						required
 					/>
 				</div>
@@ -27,15 +27,21 @@
 						class="form-control"
 						id="exampleInputPassword1"
 						placeholder="Κωδικός..."
-						v-model="registerForm.password"
+						v-model="loginForm.password"
 						required
 					/>
 				</div>
 
-				<button type="submit" class="btn btn-primary align-self-center">
+				<button
+					type="submit"
+					class="btn btn-primary align-self-center"
+					@click="loginUser"
+				>
 					Σύνδεση
 				</button>
+
 				<div id="line"><hr /></div>
+
 				<div class="d-flex flex-row align-self-center">
 					<i class="bi bi-circle-fill"></i>
 					<router-link to="#" class="align-self-center">
@@ -67,13 +73,24 @@ export default {
 	},
 	data() {
 		return {
-			registerForm: {
+			loginForm: {
 				email: '',
 				password: '',
 			},
 		};
 	},
-	methods: {},
+
+	methods: {
+		loginUser() {
+			console.log('beep');
+
+			let object = {
+				email: this.loginForm.email,
+				password: this.loginForm.password,
+			};
+			console.log(object);
+		},
+	},
 	created() {
 		this.$emit('toggle-navbar', false);
 
