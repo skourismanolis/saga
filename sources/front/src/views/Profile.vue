@@ -24,13 +24,16 @@
 				<div id="link-container" class="flex-column d-flex">
 					<div class="d-flex flex-row align-self-center">
 						<i class="bi bi-credit-card link-icon"></i>
-						<router-link to="/register" class="align-self-center">
+						<router-link to="/payments" class="align-self-center">
 							Στοιχεία χρέωσης</router-link
 						>
 					</div>
 					<div class="d-flex flex-row align-self-center">
 						<i class="bi bi-gear link-icon"></i>
-						<router-link to="#" class="align-self-center">
+						<router-link
+							to="/profile_settings"
+							class="align-self-center"
+						>
 							Ρυθμίσεις
 						</router-link>
 					</div>
