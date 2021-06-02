@@ -10,10 +10,6 @@ const schema = Joi.object().keys({
 	password: Joi.string().required().min(1).max(MAX_STRING),
 	name: Joi.string().required().min(1).max(MAX_STRING),
 	surname: Joi.string().required().min(1).max(MAX_STRING),
-	profession: Joi.string().min(0).max(MAX_STRING),
-	birthDate: Joi.date().required(),
-	studies: Joi.string().min(0).max(MAX_STRING),
-	residence: Joi.string().min(0).max(MAX_STRING),
 	picture: Joi.string().min(0).max(MAX_STRING),
 	plan: Joi.string().required().valid('Free', 'Premium', 'Host'),
 });
