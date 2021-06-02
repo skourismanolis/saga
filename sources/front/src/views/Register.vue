@@ -9,7 +9,9 @@
 				<h4 id="form-header" class="align-self-center">
 					Δημιουργήστε τον Λογαριασμό σας
 				</h4>
-				<a href="/login" class="align-self-center">Έχω λογαριασμό</a>
+				<router-link id="a" to="/login" class="align-self-center">
+					Έχω λογαριασμό
+				</router-link>
 
 				<div class="form-group">
 					<input
@@ -247,9 +249,7 @@ export default {
 	text-align: center;
 }
 
-#form a {
-	color: #db5461;
-	font-size: 16;
+#form #a {
 	margin-bottom: 24px;
 }
 

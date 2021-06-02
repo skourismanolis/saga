@@ -5,8 +5,8 @@
 			class="align-middle"
 			src="../assets/long-arrow-back.png"
 		/>
-		<a href="/" id="link" class="align-middle"
-			>Επιστροφή στην αρχική σελίδα</a
+		<router-link to="/" id="link" class="align-middle"
+			>Επιστροφή στην αρχική σελίδα</router-link
 		>
 	</div>
 </template>
@@ -21,7 +21,6 @@
 }
 
 #link {
-	color: #db5461;
 	font-size: 24px;
 }
 </style>

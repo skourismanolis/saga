@@ -38,12 +38,14 @@
 				<div id="line"><hr /></div>
 				<div class="d-flex flex-row align-self-center">
 					<i class="bi bi-circle-fill"></i>
-					<a href="/login">Ξέχασα τον κωδικό</a>
+					<router-link to="#" class="align-self-center">
+						Ξέχασα τον κωδικό
+					</router-link>
 				</div>
 				<div class="d-flex flex-row align-self-center">
 					<i class="bi bi-circle-fill"></i>
-					<a href="/register" class="align-self-center"
-						>Δημιουργία Λογαριασμού</a
+					<router-link to="/register" class="align-self-center">
+						Δημιουργία Λογαριασμού</router-link
 					>
 				</div>
 			</form>
@@ -127,11 +129,6 @@ export default {
 .form-group input {
 	border-radius: 4pt;
 	height: 50px;
-}
-
-#form a {
-	color: #db5461;
-	font-size: 16;
 }
 
 #form i {
