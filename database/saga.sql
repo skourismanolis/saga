@@ -21,13 +21,9 @@ CREATE TABLE IF NOT EXISTS `saga`.`user` (
   `password` VARCHAR(72) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
-  `birthDate` DATE NOT NULL,
   `verified` TINYINT NOT NULL,
   `plan` ENUM("Free", "Premium", "Host") NOT NULL,
-  `profession` VARCHAR(45) NULL,
   `picture` VARCHAR(45) NULL,
-  `studies` VARCHAR(45) NULL,
-  `residence` VARCHAR(45) NULL,
   PRIMARY KEY (`idUser`))
 ENGINE = InnoDB;
 
@@ -233,8 +229,8 @@ ENGINE = InnoDB;
 -- Insert User with id 0 and username "deleted"
 -- -----------------------------------------------------
 SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
-INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `birthDate`, `verified`, `plan`)
-VALUES (0,'deleted', '', '', '', '', '2021-05-30', '1', 'Free');
+INSERT INTO `saga`.`user` (`idUser`, `username`, `email`, `password`, `name`, `surname`, `verified`, `plan`)
+VALUES (0,'deleted', '', '', '', '', '1', 'Free');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

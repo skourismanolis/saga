@@ -18,7 +18,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectShort'
+                  $ref: '#/components/schemas/Project'
         '401':
           description: Unauthorized
         '500':
@@ -1306,7 +1306,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserPost'
+              $ref: '#/components/schemas/UserPutPost'
         description: ''
       x-internal: false
       parameters: []
@@ -1336,7 +1336,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserPost'
+              $ref: '#/components/schemas/UserPutPost'
         description: |-
           Change some details about this specific account.
           Requires password authentication.
@@ -1500,17 +1500,7 @@ components:
       description: ''
       type: object
       title: User Profile
-      x-examples:
-        example-1:
-          id: '1'
-          firstName: string
-          lastName: string
-          proffesion: string
-          birth: 1999/01/29
-          studies: string
-          city: string
-          email: string
-          avatar: null
+      x-examples: {}
       properties:
         idUser:
           type: integer
@@ -1519,19 +1509,6 @@ components:
           type: string
         surname:
           type: string
-        proffesion:
-          type: string
-          nullable: true
-        birthDate:
-          type: string
-          minLength: 1
-          format: date
-        studies:
-          type: string
-          nullable: true
-        residence:
-          type: string
-          nullable: true
         email:
           type: string
           minLength: 1
@@ -1542,8 +1519,8 @@ components:
           nullable: true
         username:
           type: string
-          minLength: 3
           maxLength: 45
+          minLength: 1
         plan:
           type: string
           enum:
@@ -1554,10 +1531,6 @@ components:
         - idUser
         - name
         - surname
-        - proffesion
-        - birthDate
-        - studies
-        - residence
         - email
         - picture
         - username
@@ -1576,7 +1549,7 @@ components:
           avatar: 'http://example.com'
       properties:
         idUser:
-          type: number
+          type: integer
           minimum: 0
         name:
           type: string
@@ -1601,8 +1574,8 @@ components:
         - email
         - role
         - picture
-    ProjectShort:
-      title: Project Short
+    Project:
+      title: Project
       type: object
       description: Minimal info about a project
       x-examples:
@@ -1625,10 +1598,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProjectMemberShort'
+        picture:
+          type: string
+          nullable: true
       required:
         - idProject
         - name
         - members
+        - picture
     ProjectMemberShort:
       title: Project Member Short
       type: object
@@ -1908,6 +1885,9 @@ components:
           description: an array of all issues contained
           items:
             $ref: '#/components/schemas/Issue'
+        description:
+          type: string
+          nullable: true
       required:
         - idEpic
         - title
@@ -1929,10 +1909,14 @@ components:
           type: string
           format: date-time
           nullable: true
+        description:
+          type: string
+          nullable: true
       required:
         - title
         - deadline
         - start
+        - description
     Label:
       title: Label
       type: object
@@ -2047,8 +2031,8 @@ components:
         - content
         - timestamp
         - idUser
-    UserPost:
-      title: UserPost
+    UserPutPost:
+      title: User Put Post
       type: object
       properties:
         username:
@@ -2061,18 +2045,6 @@ components:
           type: string
         surname:
           type: string
-        profession:
-          type: string
-          nullable: true
-        birthDate:
-          type: string
-          format: date
-        studies:
-          type: string
-          nullable: true
-        residence:
-          type: string
-          nullable: true
         picture:
           type: string
           nullable: true
@@ -2088,10 +2060,6 @@ components:
         - password
         - name
         - surname
-        - profession
-        - birthDate
-        - studies
-        - residence
         - picture
         - plan
   securitySchemes: {}
