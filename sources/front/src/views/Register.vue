@@ -1,11 +1,11 @@
 <template>
-	<div class="flex-column d-flex">
+	<form class="flex-column d-flex">
 		<ReturnToPage id="back" />
 
 		<div id="form-container" class="align-self-center flex-column d-flex">
 			<img id="logo" class="align-self-center" src="../assets/logo.png" />
 
-			<form id="form" class="flex-column d-flex">
+			<div id="form" class="flex-column d-flex">
 				<h4 id="form-header" class="align-self-center">
 					Δημιουργήστε τον Λογαριασμό σας
 				</h4>
@@ -56,7 +56,7 @@
 						required
 					/>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<div class="d-flex flex-row text-section justify-content-center">
@@ -96,7 +96,7 @@
 				</div>
 
 				<button
-					type="button"
+					type="submit"
 					class="btn btn-primary align-middle"
 					@click="registerUser"
 				>
@@ -108,7 +108,7 @@
 			<img src="../assets/reglog-art-bottom-left.png" />
 			<img src="../assets/reglog-art-bottom-right.png" />
 		</div>
-	</div>
+	</form>
 </template>
 
 <script>
@@ -144,28 +144,12 @@ export default {
 		async registerUser() {
 			try {
 				if (
-					this.registerForm.email == '' ||
-					this.registerForm.password == '' ||
-					this.registerForm.name == '' ||
-					this.registerForm.surname == ''
-				) {
-					alert('Παρακαλώ συμπληρώστε όλα τα πεδία της φόρμας.');
-					this.scrollToElement('#form');
-				} else if (
-					this.validateEmail(this.registerForm.email) == false
-				) {
-					alert('Το email που εισάγατε δεν είναι έγκυρο!');
-					this.scrollToElement('#form');
-				} else if (
 					this.registerForm.plan != 'free' &&
 					this.registerForm.plan != 'normal' &&
 					this.registerForm.plan != 'premium'
 				) {
 					alert('Παρακαλώ επιλέξτε κάποιο από τα πλάνα.');
 					this.scrollToElement('#rate-plans');
-				} else if (this.registerForm.terms == false) {
-					alert('Παρακαλώ διαβάστε τους όρους χρήσης.');
-					this.scrollToElement('#button-container');
 				} else {
 					let object = {
 						username: null,
@@ -177,7 +161,7 @@ export default {
 						plan: this.registerForm.plan,
 					};
 					console.log(object);
-					alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
+					// alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
 				}
 			} catch (error) {
 				alert(this.errormessage);
