@@ -51,6 +51,7 @@ export default {
 		},
 	},
 	created() {
+		this.$emit('toggle-navbar', true);
 		window.scrollTo(0, 0);
 	},
 };
