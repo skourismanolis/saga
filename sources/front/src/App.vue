@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
-		<router-view />
+		<Navbar v-if="navbarFlag" />
+		<router-view @toggle-navbar="toggleNavbar" />
 		<div class="footer-container">
 			<Footer />
 		</div>
@@ -9,10 +10,22 @@
 
 <script>
 import Footer from './components/Footer';
+import Navbar from './components/navbar_off';
 
 export default {
 	components: {
 		Footer,
+		Navbar,
+	},
+	data() {
+		return {
+			navbarFlag: true,
+		};
+	},
+	methods: {
+		toggleNavbar(value) {
+			this.navbarFlag = value;
+		},
 	},
 };
 </script>

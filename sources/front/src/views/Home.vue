@@ -6,7 +6,7 @@
 		</div>
 		<button
 			type="button"
-			class="btn btn-primary col-element"
+			class="btn btn-primary col-element d-flex align-items-center"
 			v-on:click="scrollToElement()"
 		>
 			Ξεκίνα τώρα
@@ -21,7 +21,7 @@
 			</h3>
 		</div>
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans :toRegister="true" />
+			<RatePlans :toRegister="true" @plan-change="redirectRegister" />
 		</div>
 	</div>
 </template>
@@ -42,6 +42,17 @@ export default {
 				el.scrollIntoView({ behavior: 'smooth' });
 			}
 		},
+
+		redirectRegister(value) {
+			let query = { activePlan: value };
+			this.$router
+				.push({ path: '/register', query: query })
+				.catch(() => {});
+		},
+	},
+	created() {
+		this.$emit('toggle-navbar', true);
+		window.scrollTo(0, 0);
 	},
 };
 </script>
@@ -69,6 +80,7 @@ export default {
 }
 
 .bi-chevron-right {
+	margin-left: 8px;
 	font-size: 24px;
 }
 
