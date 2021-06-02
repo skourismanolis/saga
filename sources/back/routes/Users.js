@@ -74,20 +74,16 @@ app.post('/', async (req, res) => {
 
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
 		await db.pool.query(
-			'INSERT INTO user (username,email, password, name, surname, birthDate, verified, plan , profession, picture, studies, residence) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+			'INSERT INTO user (username,email, password, name, surname, verified, plan , picture) VALUES (?,?,?,?,?,?,?,?)',
 			[
 				req.body.username,
 				req.body.email,
 				hashedPassword,
 				req.body.name,
 				req.body.surname,
-				req.body.birthDate,
 				0,
 				req.body.plan,
-				req.body.profession,
 				req.body.picture,
-				req.body.studies,
-				req.body.residence,
 			]
 		);
 
