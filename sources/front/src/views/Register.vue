@@ -165,8 +165,10 @@ export default {
 		},
 	},
 	created() {
+		window.scrollTo(0, 0);
+
 		if (this.$route.query != null) {
-			this.registerForm.plan = this.$route.query.registerForm.plan;
+			this.registerForm.plan = this.$route.query.activePlan;
 		}
 	},
 };
