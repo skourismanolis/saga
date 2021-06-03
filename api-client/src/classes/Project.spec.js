@@ -4,6 +4,7 @@ const Member = require('./Member');
 const Label = require('./Label');
 const Issue = require('./Issue');
 const Sprint = require('./Sprint.js');
+const PaginatedList = require('./PaginatedList');
 const IssueCategory = require('./IssueCategory');
 const IssuePriority = require('./IssuePriority');
 
@@ -88,11 +89,15 @@ describe('sprints', () => {
 
 	it('returns a list of sprints', async () => {
 		let sprints = await project.getSprints();
-		sprints.forEach((s) => expect(s).toBeInstanceOf(Sprint));
+		expect(sprints).toBeInstanceOf(PaginatedList);
+		sprints.content.forEach((s) => expect(s).toBeInstanceOf(Sprint));
 	});
 
 	it('deletes a sprint', async () => {
 		let sprints = await project.getSprints();
-		await expect(project.deleteSprint(sprints[0])).resolves.not.toThrow();
+
+		await expect(
+			project.deleteSprint(sprints.content[0])
+		).resolves.not.toThrow();
 	});
 });
