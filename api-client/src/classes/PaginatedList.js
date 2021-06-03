@@ -47,12 +47,14 @@ module.exports = class PaginatedList extends Base {
 
 	/**
 	 * Jumps to specific page and refreshes
-	 * @param {Number} index page index, must be greater than 0 obv
+	 * @param {Number} index 0-based page index
 	 */
 	async setPage(index) {
-		if (index <= 0) throw 'Invalid index. Must be greater than 0.';
-		this._offset = this._total - this._perPage;
-		if (this._offset < 0) this._offset = 0;
+		if (index < 0)
+			throw 'Invalid index. Must be greater than or equal to 0.';
+		this._offset = this._perPage * index;
+		if (this._offset >= this._total)
+			this._offset = this.pageCount * this._perPage;
 		await this.refresh();
 	}
 
@@ -70,7 +72,8 @@ module.exports = class PaginatedList extends Base {
 	 * Move to next page
 	 */
 	async nextPage() {
-		this._offset += this._perPage;
+		if (this._offset + this._perPage < this._total)
+			this._offset += this._perPage;
 		await this.refresh();
 	}
 
@@ -80,11 +83,12 @@ module.exports = class PaginatedList extends Base {
 
 	get currentPage() {
 		if (this._total === 0) return null;
-		return this._offset / this._total;
+
+		return Math.floor(this._offset / this._perPage);
 	}
 
 	get pageCount() {
-		let pageCount = this._total / this._perPage;
+		let pageCount = Math.floor(this._total / this._perPage);
 		if (this._total % this._perPage > 0) pageCount++;
 		return pageCount;
 	}
