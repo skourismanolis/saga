@@ -74,6 +74,10 @@ module.exports = class PaginatedList extends Base {
 		await this.refresh();
 	}
 
+	get perPage() {
+		return this._perPage;
+	}
+
 	get currentPage() {
 		if (this._total === 0) return null;
 		return this._offset / this._total;
@@ -85,7 +89,7 @@ module.exports = class PaginatedList extends Base {
 		return pageCount;
 	}
 
-	get lastPage() {
+	get isLastPage() {
 		return this._offset + this._perPage >= this._total;
 	}
 
