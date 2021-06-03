@@ -20,7 +20,7 @@ module.exports = class PaginatedList extends Base {
 	}
 
 	async refresh() {
-		let { data, headers } = this.axios({
+		let { data, headers } = await this.axios({
 			method: 'GET',
 			url: this._url,
 			headers: {
@@ -29,7 +29,7 @@ module.exports = class PaginatedList extends Base {
 			},
 		});
 
-		this._total = Number(headers['X-Pagination-Total']);
+		this._total = Number(headers['x-pagination-total']);
 
 		this._content = this._dataTransformer(data);
 	}
