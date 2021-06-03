@@ -27,10 +27,10 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-      working-directory: ./sources/front
+      working-directory: ./front-end
     - name: run linter
       run: npx eslint .
-      working-directory: ./sources/front
+      working-directory: ./front-end
 
   lint-cli:
     runs-on: ubuntu-latest
@@ -44,10 +44,10 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-      working-directory: ./sources/cli
+      working-directory: ./cli-app
     - name: run linter
       run: npx eslint .
-      working-directory: ./sources/cli
+      working-directory: ./cli-app
 
   lint-backend:
     runs-on: ubuntu-latest
@@ -61,10 +61,10 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-      working-directory: ./sources/back
+      working-directory: ./back-end
     - name: run linter
       run: npx eslint .
-      working-directory: ./sources/back
+      working-directory: ./back-end
 
   lint-api-client:
     runs-on: ubuntu-latest
@@ -78,10 +78,10 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-      working-directory: ./sources/api-client
+      working-directory: ./api-client
     - name: run linter
       run: npx eslint .
-      working-directory: ./sources/api-client
+      working-directory: ./api-client
 
   test-api-client:
     runs-on: ubuntu-latest
@@ -95,9 +95,9 @@ jobs:
     - uses: c-hive/gha-yarn-cache@v1
     - name: install modules
       run: yarn
-      working-directory: ./sources/api-client
+      working-directory: ./api-client
     - name: run tests
       run: |
         yarn mock &
         yarn test
-      working-directory: ./sources/api-client
+      working-directory: ./api-client
