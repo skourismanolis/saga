@@ -2152,6 +2152,7 @@ components:
       description: The total number of the resource that exists in the db.
       schema:
         type: integer
+        minimum: 0
   parameters:
     X-Pagination-Limit:
       name: X-Pagination-Limit
