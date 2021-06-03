@@ -127,4 +127,46 @@ app.post('/', async (req, res) => {
 	}
 });
 
+app.put('/', async (req, res) => {
+	try {
+		Joi.attempt(req.body, schemas.UserPutPost);
+	} catch (error) {
+		res.status(400).send('Bad request');
+		return;
+	}
+
+	try {
+		const salt = await bcrypt.genSalt();
+
+		const [result] = await db.pool.query(
+			'SELECT * FROM user WHERE id = ?',
+			[req.user.id]
+		);
+
+		if (result.length == 0) {
+			res.status(401).send('Unauthorized');
+			return;
+		}
+		const verification = result[0].verification;
+		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+		await db.pool.query(
+			'UPDATE user SET username = ? ,email = ? , password = ? , name = ? , surname = ? , verified = ? , plan = ?  , picture = ?  WHERE id = ?',
+			[
+				req.body.username,
+				req.body.email,
+				hashedPassword,
+				req.body.name,
+				req.body.surname,
+				verification,
+				req.body.plan,
+				req.body.picture,
+				req.user.id,
+			]
+		);
+		res.status(200).send('Ok');
+	} catch (error) {
+		res.status(500).send('Internal Server Error');
+	}
+});
+
 module.exports = app;
