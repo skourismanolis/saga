@@ -4,14 +4,19 @@ module.exports = class PaginatedList extends Base {
 	/**
 	 * @param {Object} client a SagaClient object
 	 * @param {String} options.url url used to fetch the connected resource
+	 * @param {Function} options.dataTransformer a function that takes an array of the resource
+	 *                                           as returned from the api, transforms it
+	 *                                           (i.e. calls a constructor) and returns the array
+	 *                                           of the api to expose to the user
 	 */
-	constructor(client, { url }) {
+	constructor(client, { url, dataTransformer }) {
 		super(client);
 		this._url = url;
 		this._offset = 0; //pagination offset
 		this._total = 0; //how many of the resource exist currently
 		this._content = []; //the actual resources
 		this._perPage = this.client._perPage; //how many of the connected resource to get per page
+		this._dataTransformer = dataTransformer;
 	}
 
 	async refresh() {
@@ -26,7 +31,7 @@ module.exports = class PaginatedList extends Base {
 
 		this._total = Number(headers['X-Pagination-Total']);
 
-		this._content = data;
+		this._content = this._dataTransformer(data);
 	}
 
 	/**
