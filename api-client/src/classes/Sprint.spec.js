@@ -4,6 +4,7 @@ const dayjs = require('dayjs');
 const Sprint = require('./Sprint');
 const Project = require('./Project');
 const Issue = require('./Issue');
+const PaginatedList = require('./PaginatedList');
 
 let client;
 
@@ -58,8 +59,9 @@ describe('main functions', () => {
 	});
 
 	test('get all issues', async () => {
-		let issues = await sprint.getAllIssues();
-		issues.forEach((i) => expect(i).toBeInstanceOf(Issue));
+		let issues = await sprint.getIssues();
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.forEach((i) => expect(i).toBeInstanceOf(Issue));
 	});
 
 	test('add issues', async () => {
@@ -71,8 +73,10 @@ describe('main functions', () => {
 	});
 
 	test('remove issues', async () => {
-		let issues = await sprint.getAllIssues();
-		await expect(sprint.removeIssues(issues)).resolves.not.toThrow();
+		let issues = await sprint.getIssues();
+		await expect(
+			sprint.removeIssues(issues.content)
+		).resolves.not.toThrow();
 	});
 
 	it('updates', async () => {
