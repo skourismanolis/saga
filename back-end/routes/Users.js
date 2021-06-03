@@ -97,7 +97,8 @@ app.post('/', async (req, res) => {
 		}
 		const emailToken = jwt.sign(
 			{
-				id: result[0].id,
+				process: 'register',
+				id: result[0].idUser,
 			},
 			process.env.EMAIL_SECRET
 		);
