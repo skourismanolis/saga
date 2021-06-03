@@ -2,7 +2,6 @@ openapi: 3.0.0
 info:
   title: reference
   version: '1.0'
-  description: Routes with pagination respond with the `X-Pagination-Total` header.
 servers:
   - url: 'http://localhost:3000'
 paths:
@@ -13,9 +12,7 @@ paths:
       responses:
         '200':
           description: OK
-          headers:
-            X-Pagination-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
+          headers: {}
           content:
             application/json:
               schema:
@@ -34,8 +31,6 @@ paths:
           in: query
           name: search
           description: a string to search project names
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
     post:
       summary: Create a new project
       tags: []
@@ -280,9 +275,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Issue'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
         '400':
           description: Bad Request
         '401':
@@ -341,8 +333,6 @@ paths:
           in: query
           name: search
           description: search string
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
       description: ''
     post:
       summary: Create new issue
@@ -483,9 +473,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
         '400':
           description: Bad Request
         '401':
@@ -498,9 +485,6 @@ paths:
           description: Internal Server Error
       operationId: get-procects-idProject-issues-code-comments
       description: Get all comments of this issue.
-      parameters:
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
     post:
       summary: post new comment
       tags: []
@@ -583,9 +567,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sprint'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
         '400':
           description: Bad Request
         '401':
@@ -598,9 +579,6 @@ paths:
           description: Internal Server Error
       operationId: get-projects-idProject-sprints
       description: ''
-      parameters:
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
     post:
       summary: Add a new sprint to a Project
       operationId: post-projects-idProject-sprints
@@ -793,9 +771,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Issue'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
         '400':
           description: Bad Request
         '401':
@@ -807,9 +782,6 @@ paths:
         '500':
           description: Internal Server Error
       description: Returns all the issues in a sprint.
-      parameters:
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
   '/projects/{idProject}/epics':
     parameters:
       - schema:
@@ -830,9 +802,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Epic'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
         '400':
           description: Bad Request
         '401':
@@ -844,9 +813,6 @@ paths:
         '500':
           description: Internal Server Error
       operationId: get-projects-idProject-epics
-      parameters:
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
     post:
       summary: Add a new epic
       operationId: post-projects-idProject-epics
@@ -1021,13 +987,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Issue'
-          headers:
-            X-Pagniation-Total:
-              $ref: '#/components/headers/X-Pagination-Total'
       description: Returns all the issues in an epic.
-      parameters:
-        - $ref: '#/components/parameters/X-Pagination-Limit'
-        - $ref: '#/components/parameters/X-Pagination-Offset'
   '/projects/{idProject}/labels':
     parameters:
       - schema:
@@ -2147,24 +2107,3 @@ components:
         - process
         - idUser
   securitySchemes: {}
-  headers:
-    X-Pagination-Total:
-      description: The total number of the resource that exists in the db.
-      schema:
-        type: integer
-  parameters:
-    X-Pagination-Limit:
-      name: X-Pagination-Limit
-      in: header
-      required: false
-      schema:
-        type: number
-      description: Up to how many entries to respond with
-    X-Pagination-Offset:
-      name: X-Pagination-Offset
-      in: header
-      required: false
-      schema:
-        type: number
-      description: How many entries to skip
-  responses: {}
