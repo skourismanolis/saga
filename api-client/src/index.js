@@ -1,12 +1,13 @@
 const axios = require('axios');
 const Project = require('./classes/Project');
+const PaginatedList = require('./classes/PaginatedList');
 
 module.exports = class SagaClient {
 	/**
 	 * Saga client constructor
 	 * @param {Object} options
 	 * @param {String} options.url the baseurl of the api.
-	 * @param {Number=15} options.perPage how many items each page has
+	 * @param {Number} [options.perPage=15] how many items each page has
 	 */
 	constructor({ url, perPage = 15 }) {
 		if (perPage <= 0) throw 'Invalid page size. Must be greater than 0.';
@@ -15,8 +16,12 @@ module.exports = class SagaClient {
 	}
 
 	async getProjects() {
-		let { data: projects } = await this.axios.get('/projects');
-
-		return projects.map((proj) => new Project(this, proj.id));
+		let list = new PaginatedList(this, {
+			url: '/projects',
+			dataTransformer: (projects) =>
+				projects.map((proj) => new Project(this, proj.id)),
+		});
+		await list.refresh();
+		return list;
 	}
 };

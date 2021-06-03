@@ -1,6 +1,7 @@
 const Project = require('./classes/Project');
-const SagaClient = require('./index');
+const PaginatedList = require('./classes/PaginatedList');
 
+const SagaClient = require('./index');
 describe('constructs correctly', () => {
 	test('correct baseURL', () => {
 		let c = new SagaClient({ url: __MOCKURL__ });
@@ -16,10 +17,11 @@ describe('projects', () => {
 
 	it('returns a project list', async () => {
 		let projects = await client.getProjects();
-		expect(projects).toBeInstanceOf(Array);
-		expect(projects.length).toBeGreaterThan(0);
-		let project = projects[0];
-		expect(project).not.toBeFalsy();
-		expect(project).toBeInstanceOf(Project);
+
+		expect(projects).toBeInstanceOf(PaginatedList);
+
+		expect(projects.total).toBeGreaterThan(0);
+
+		projects.content.forEach((p) => expect(p).toBeInstanceOf(Project));
 	});
 });
