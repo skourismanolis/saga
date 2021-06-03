@@ -23,7 +23,7 @@ app.post('/login', async (req, res) => {
 		const users = result[0];
 		if (await bcrypt.compare(req.body.password, users.password)) {
 			const user = {
-				id: users.id,
+				id: users.idUser,
 				plan: users.plan,
 			};
 			const accessToken = jwt.sign(
@@ -86,6 +86,7 @@ app.post('/', async (req, res) => {
 				req.body.picture,
 			]
 		);
+
 		// prettier-ignore
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE email = ?',
@@ -137,20 +138,20 @@ app.put('/', async (req, res) => {
 
 	try {
 		const salt = await bcrypt.genSalt();
-
-		const [result] = await db.pool.query(
-			'SELECT * FROM user WHERE id = ?',
-			[req.user.id]
-		);
+		// prettier-ignore
+		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
+		[
+			req.user.id,
+		]);
 
 		if (result.length == 0) {
 			res.status(401).send('Unauthorized');
 			return;
 		}
-		const verification = result[0].verification;
+		const verification = result[0].verified;
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
 		await db.pool.query(
-			'UPDATE user SET username = ? ,email = ? , password = ? , name = ? , surname = ? , verified = ? , plan = ?  , picture = ?  WHERE id = ?',
+			'UPDATE user SET username = ? ,email = ? , password = ? , name = ? , surname = ? , verified = ? , plan = ?  , picture = ?  WHERE idUser = ?',
 			[
 				req.body.username,
 				req.body.email,
