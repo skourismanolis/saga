@@ -4,7 +4,7 @@
 	"main": "src/index.js",
 	"scripts": {
 		"lint": "eslint . --fix",
-		"mock": "prism mock -d ../../api_reference/reference.v1.yaml",
+		"mock": "prism mock -d ../docs/api_reference/reference.v1.yaml",
 		"test": "jest",
 		"test-dev": "jest --watch"
 	},
