@@ -1,4 +1,5 @@
 const Base = require('./Base');
+const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
 /*                                       WARNING                                        */
 /*    Move require's to the end of the file in order to avoid circular references       */
@@ -28,10 +29,13 @@ module.exports = class Project extends Base {
 	 * @returns {Object[]} array of Sprints
 	 */
 	async getSprints() {
-		let { data: sprints } = await this.axios.get(
-			`/projects/${this._idProject}/sprints`
-		);
-		return sprints.map((s) => new Sprint(this.client, s, this._idProject));
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/sprints`,
+			dataTransformer: (sprints) =>
+				sprints.map((s) => new Sprint(this.client, s, this._idProject)),
+		});
+		await list.refresh();
+		return list;
 	}
 
 	/**

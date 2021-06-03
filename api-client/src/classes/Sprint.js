@@ -1,4 +1,5 @@
 const Base = require('./Base');
+const PaginatedList = require('./PaginatedList');
 const dayjs = require('dayjs');
 
 /****************************************************************************************/
@@ -71,17 +72,19 @@ module.exports = class Sprint extends Base {
 
 	/**
 	 * returns all the Issues belonging to this sprint.
-	 * @returns {Object[]} Issue array.
+	 * @returns {Object} Issue PaginatedList
 	 */
-	async getAllIssues() {
-		const issueUrl = `/projects/${this._idProject}/issues/`;
-		let reponses = await Promise.all(
-			this._issueIds.map((code) => this.axios.get(issueUrl + code))
-		);
+	async getIssues() {
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/sprints/${this._idSprint}/issues`,
+			dataTransformer: (issues) =>
+				issues.map(
+					(issue) => new Issue(this.client, issue, this._idProject)
+				),
+		});
 
-		return reponses.map(
-			({ data: issue }) => new Issue(this.client, issue, this._idProject)
-		);
+		await list.refresh();
+		return list;
 	}
 
 	/**
