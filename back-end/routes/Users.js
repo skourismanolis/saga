@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const app = express.Router();
 const jwt = require('jsonwebtoken');
@@ -97,7 +98,8 @@ app.post('/', async (req, res) => {
 		}
 		const emailToken = jwt.sign(
 			{
-				id: result[0].id,
+				process: 'register',
+				id: result[0].idUser,
 			},
 			process.env.EMAIL_SECRET
 		);
@@ -107,8 +109,8 @@ app.post('/', async (req, res) => {
 		var transporter = nodemailer.createTransport({
 			service: 'gmail', // hostname
 			auth: {
-				user: 'mail',
-				pass: 'pass',
+				user: process.env.GMAIL_EMAIL,
+				pass: process.env.GMAIL_PASS,
 			},
 		});
 
@@ -137,9 +139,8 @@ app.put('/', async (req, res) => {
 	}
 
 	try {
-		const salt = await bcrypt.genSalt();
 		// prettier-ignore
-		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
+		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ? , password = ?', 
 		[
 			req.user.id,
 		]);
@@ -148,17 +149,18 @@ app.put('/', async (req, res) => {
 			res.status(401).send('Unauthorized');
 			return;
 		}
-		const verification = result[0].verified;
-		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+		// prettier-ignore
+		if ( (await bcrypt.compare(req.body.password, result[0].password) ) == false ) {
+			res.status(403).send('Forbidden');
+			return;
+		}
 		await db.pool.query(
-			'UPDATE user SET username = ? ,email = ? , password = ? , name = ? , surname = ? , verified = ? , plan = ?  , picture = ?  WHERE idUser = ?',
+			'UPDATE user SET username = ? ,email = ? , name = ? , surname = ? , plan = ?  , picture = ?  WHERE idUser = ?',
 			[
 				req.body.username,
 				req.body.email,
-				hashedPassword,
 				req.body.name,
 				req.body.surname,
-				verification,
 				req.body.plan,
 				req.body.picture,
 				req.user.id,
