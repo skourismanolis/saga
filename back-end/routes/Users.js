@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const app = express.Router();
 const jwt = require('jsonwebtoken');
@@ -108,8 +109,8 @@ app.post('/', async (req, res) => {
 		var transporter = nodemailer.createTransport({
 			service: 'gmail', // hostname
 			auth: {
-				user: 'mail',
-				pass: 'pass',
+				user: process.env.GMAIL_EMAIL,
+				pass: process.env.GMAIL_PASS,
 			},
 		});
 
