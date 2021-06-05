@@ -1,7 +1,7 @@
 <template>
 	<!-- <div id="background" class="d-flex justify-content-center"></div> -->
-	<div id="background" class="d-flex justify-content-center">
-		<form>
+	<div id="background" class="d-flex flex-column justify-content-center">
+		<form class="align-self-center">
 			<h2 class="form-header">Γενικά</h2>
 
 			<div class="flex-row d-flex">
@@ -83,11 +83,20 @@
 				</button>
 			</div>
 		</form>
+
+		<div class="d-flex justify-content-center" id="rate-plans">
+			<RatePlans :plan="userInfo.plan" @plan-change="changePlan" />
+		</div>
 	</div>
 </template>
 
 <script>
+import RatePlans from '../components/RatePlans.vue';
+
 export default {
+	components: {
+		RatePlans,
+	},
 	data() {
 		return {
 			userInfo: {
@@ -95,6 +104,7 @@ export default {
 				name: 'Όνομα',
 				surname: 'Επίθετο',
 				email: 'example@provider.domain',
+				plan: '',
 			},
 		};
 	},
@@ -104,6 +114,12 @@ export default {
 			// if (this.user && this.user.ProfilePicPath)
 			// 	filename = this.user.ProfilePicPath;
 			return require(`../assets/profile pics/${filename}`);
+		},
+	},
+
+	methods: {
+		changePlan(value) {
+			this.userInfo.plan = value;
 		},
 	},
 };
@@ -172,5 +188,9 @@ form {
 
 .btn-link {
 	padding: 0px;
+}
+
+#rate-plans {
+	margin-bottom: 101px;
 }
 </style>
