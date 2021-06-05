@@ -35,6 +35,18 @@ describe('main functions', () => {
 	it('returns project', () => {
 		expect(sprint.getProject()).toBeInstanceOf(Project);
 	});
+	test('toJSON', () => {
+		let spr = sprint.toJSON();
+		expect(spr).toBeTruthy();
+		expect(() => {
+			spr = JSON.parse(spr);
+		}).not.toThrow();
+
+		let matcher = { ...MOCKSPRINT };
+		delete matcher.issues;
+
+		expect(spr).toMatchObject(matcher);
+	});
 
 	test('in sprint', async () => {
 		let project = sprint.getProject();

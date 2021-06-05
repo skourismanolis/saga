@@ -6,6 +6,8 @@ const Project = require('./Project');
 const IssuePriority = require('./IssuePriority');
 const Sprint = require('./Sprint');
 const Column = require('./Column');
+const Label = require('./Label');
+const Member = require('./Member');
 
 const MOCK_ISSUE = {
 	idSprint: 2,
@@ -34,6 +36,16 @@ describe('Issue', () => {
 		expect(issue).toBeTruthy();
 	});
 
+	it('has toJSON', () => {
+		let is = issue.toJSON();
+		expect(is).toBeTruthy();
+		expect(() => {
+			is = JSON.parse(is);
+		}).not.toThrow();
+
+		expect(is).toMatchObject(MOCK_ISSUE);
+	});
+
 	it('is done', () => {
 		issue._idColumn = null;
 		expect(issue.isDone()).toBe(true);
@@ -57,6 +69,11 @@ describe('Issue', () => {
 		expect(issue.getProject()).toBeInstanceOf(Project);
 	});
 
+	it('returns assignees', async () => {
+		let assignees = await issue.getAssignees();
+		assignees.forEach((a) => expect(a).toBeInstanceOf(Member));
+	});
+
 	it('updates fields', async () => {
 		await expect(
 			issue.update({ title: 'asd', description: 'testing', label: null })
@@ -65,6 +82,10 @@ describe('Issue', () => {
 
 	it('returns the sprint', async () => {
 		await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
+	});
+
+	it('returns the label', async () => {
+		await expect(issue.getLabel()).resolves.toBeInstanceOf(Label);
 	});
 
 	it('returns the column', async () => {

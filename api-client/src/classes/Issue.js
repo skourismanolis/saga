@@ -92,9 +92,12 @@ module.exports = class Issue extends Base {
 	 */
 	async getLabel() {
 		if (this._idLabel === null) return null;
-		let { data: label } = this.axios.get(
-			`/project/${this._idProject}/labels/${this._idLabel}`
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${this._idLabel}`
 		);
+
+		console.log(label);
+
 		return new Label(this.client, label, this._idProject);
 	}
 
