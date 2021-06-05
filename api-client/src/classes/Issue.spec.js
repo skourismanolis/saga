@@ -5,10 +5,11 @@ const Issue = require('./Issue');
 const Project = require('./Project');
 const IssuePriority = require('./IssuePriority');
 const Sprint = require('./Sprint');
+const Column = require('./Column');
 
 const MOCK_ISSUE = {
 	idSprint: 2,
-	idColumn: null,
+	idColumn: 2,
 	idEpic: null,
 	idLabel: 3,
 	assignees: [1, 2, 3],
@@ -34,6 +35,7 @@ describe('Issue', () => {
 	});
 
 	it('is done', () => {
+		issue._idColumn = null;
 		expect(issue.isDone()).toBe(true);
 	});
 
@@ -63,5 +65,11 @@ describe('Issue', () => {
 
 	it('returns the sprint', async () => {
 		await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
+	});
+
+	it('returns the column', async () => {
+		issue._idColumn = 2;
+		let c = await issue.getColumn();
+		expect(c).toBeInstanceOf(Column);
 	});
 });

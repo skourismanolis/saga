@@ -98,6 +98,11 @@ module.exports = class Issue extends Base {
 		return new Label(this.client, label, this._idProject);
 	}
 
+	async getColumn() {
+		if (this._idColumn === null) return null;
+		return await this.getProject().getColumn(this._idColumn);
+	}
+
 	/**
 	 * @returns {Object[]} array of project Members
 	 */

@@ -1196,7 +1196,7 @@ paths:
         '500':
           description: Internal Server Error
       description: Returns a single label.
-  '/project/{idProject}/columns':
+  '/projects/{idProject}/columns':
     parameters:
       - schema:
           type: integer
@@ -1263,7 +1263,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ColumnPutPost'
-  '/project/{idProject}/columns/{idColumn}':
+  '/projects/{idProject}/columns/{idColumn}':
     parameters:
       - schema:
           type: integer
