@@ -30,6 +30,11 @@ module.exports = class Column extends Base {
 		return new Project(this.client, this._idProject);
 	}
 
+	/**
+	 * @param {object} columnConf
+	 * @param {string=} columnConf.name the name of the column
+	 * @param {Number=} columnConf.order the order of the column. Must be greater than 0.
+	 */
 	async update({ name, order }) {
 		if ((order != null && isNaN(order)) || order <= 0)
 			throw 'Invalid order number';
