@@ -7,6 +7,7 @@ const Sprint = require('./Sprint.js');
 const PaginatedList = require('./PaginatedList');
 const IssueCategory = require('./IssueCategory');
 const IssuePriority = require('./IssuePriority');
+const Column = require('./Column');
 
 let project;
 
@@ -99,5 +100,28 @@ describe('sprints', () => {
 		await expect(
 			project.deleteSprint(sprints.content[0])
 		).resolves.not.toThrow();
+	});
+});
+
+describe('columns', () => {
+	it('creates a new column', async () => {
+		await expect(
+			project.createColumn({ name: 'asdas', order: 2 })
+		).resolves.toBeInstanceOf(Column);
+	});
+
+	it('returns a list of columns', async () => {
+		let columns = await project.getColumns();
+		columns.forEach((s) => expect(s).toBeInstanceOf(Column));
+	});
+
+	it('returns a specific column', async () => {
+		let column = await project.getColumn(123);
+		expect(column).toBeInstanceOf(Column);
+	});
+
+	it('deletes a column', async () => {
+		let columns = await project.getColumns();
+		await expect(project.deleteColumn(columns[0])).resolves.not.toThrow();
 	});
 });

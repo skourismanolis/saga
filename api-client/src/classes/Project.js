@@ -48,6 +48,30 @@ module.exports = class Project extends Base {
 		return labels.map((l) => new Label(this.client, l, this._idProject));
 	}
 
+	/**
+	 * @returns {Object[]} array of Columns belonging to this project
+	 */
+	async getColumns() {
+		let { data: columns } = await this.axios.get(
+			`/projects/${this._idProject}/columns`
+		);
+
+		return columns.map((c) => new Column(this.client, c, this._idProject));
+	}
+
+	/**
+	 * Get a specific column from the api
+	 * @param {Number} idColumn
+	 * @returns {Object} Column
+	 */
+	async getColumn(idColumn) {
+		let { data: column } = await this.axios.get(
+			`/projects/${this._idProject}/columns/${idColumn}`
+		);
+
+		return new Column(this.client, column, this._idProject);
+	}
+
 	async getMembers() {
 		let { data: members } = await this.axios.get(
 			`/projects/${this._idProject}/members`
@@ -126,6 +150,28 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * @param {object} columnConf
+	 * @param {string} columnConf.name the name of the column
+	 * @param {Number} columnConf.order the order of the column. Must be greater than 0.
+	 * @returns {object} the newly created column
+	 */
+	async createColumn({ name, order }) {
+		let newColumn = { name, order };
+		let {
+			data: { idColumn },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/columns`,
+			newColumn
+		);
+
+		return new Column(
+			this.client,
+			{ idColumn, name, order },
+			this._idProject
+		);
+	}
+
+	/**
 	 * deletes the given sprint.
 	 * @param {Object} sprint the sprint to delete
 	 */
@@ -151,6 +197,16 @@ module.exports = class Project extends Base {
 	async deleteIssue(issue) {
 		await this.axios.delete(
 			`projects/${this._idProject}/issues/${issue.code}`
+		);
+	}
+
+	/**
+	 * remove a column from the project.
+	 * @param {object} column Column object
+	 */
+	async deleteColumn(column) {
+		await this.axios.delete(
+			`projects/${this._idProject}/columns/${column.id}`
 		);
 	}
 
@@ -225,3 +281,4 @@ const Label = require('./Label');
 const Member = require('./Member');
 const Sprint = require('./Sprint');
 const UserRole = require('./UserRoles');
+const Column = require('./Column');
