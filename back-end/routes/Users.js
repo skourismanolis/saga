@@ -172,4 +172,38 @@ app.put('/', async (req, res) => {
 	}
 });
 
+app.delete('/', async (req, res) => {
+	try {
+		const [result] = await db.pool.query(
+			'SELECT * FROM user WHERE idUser = ?',
+			[req.user.id]
+		);
+		if (result.length == 0) {
+			res.status(400).send('Bad request');
+			return;
+		}
+		if (bcrypt.compare(req.body.password, result[0].password) == false) {
+			res.status(403).send('Forbidden');
+			return;
+		}
+		// SOMEHOW FIND ALL THE PROJECTS HE IS THE LONE ADMIN AND DELETE THESE PROJECTS TOO
+		// IF NOT LONELY ADMIN, JUST DELETE ROW FROM "member" TABLE
+
+		db.Promise.all([
+			db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
+				req.user.id,
+			]),
+			db.pool.query('DELETE FROM payment WHERE idUser = ?', [
+				req.user.id,
+			]),
+			db.pool.query('DELETE FROM user WHERE idUser = ?', [req.user.id]),
+			// db.pool.query('DELETE FROM member WHERE idUser = ?', [req.user.id]),
+		]);
+
+		res.status(200).send('Ok');
+	} catch (error) {
+		res.status(500).send('Internal Server Error');
+	}
+});
+
 module.exports = app;
