@@ -75,6 +75,11 @@ describe('issues', () => {
 			})
 		).resolves.toBeInstanceOf(Issue);
 	});
+
+	it('returns a specific issue', async () => {
+		await expect(project.getIssue('12H')).resolves.toBeInstanceOf(Issue);
+	});
+
 	it('deletes an issue', async () => {
 		let issue = await project.getIssue('asd');
 		await expect(project.deleteIssue(issue)).resolves.not.toThrow();
