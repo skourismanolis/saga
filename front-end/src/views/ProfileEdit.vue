@@ -1,6 +1,6 @@
 <template>
 	<!-- <div id="background" class="d-flex justify-content-center"></div> -->
-	<div class="d-flex justify-content-center">
+	<div id="background" class="d-flex justify-content-center">
 		<form>
 			<h2 class="form-header">Γενικά</h2>
 
@@ -117,7 +117,7 @@ export default {
 <style scoped>
 #background {
 	width: 100%;
-	height: 758px;
+	height: 100%;
 
 	z-index: -100;
 
