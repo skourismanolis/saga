@@ -69,7 +69,7 @@ async function registration(req, res, tokenRequest) {
 			`SELECT idUser FROM user WHERE idUser = ?;`,
 			[tokenRequest.idUser]
 		);
-		if (results[0].length || tokenRequest.idUser == 0) {
+		if (results[0].length) {
 			return res.sendStatus(404);
 		}
 
