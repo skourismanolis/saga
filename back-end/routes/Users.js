@@ -183,21 +183,27 @@ app.delete('/', async (req, res) => {
 			return;
 		}
 		if (bcrypt.compare(req.body.password, result[0].password) == false) {
+			res.status(401).send('Unauthorized');
+			return;
+		}
+		const [admin] = await db.pool.query(
+			'SELECT * FROM member WHERE idUser = ? AND role = ?',
+			[req.user.id, 'Admin']
+		);
+		if (admin.length == 0) {
 			res.status(403).send('Forbidden');
 			return;
 		}
-		// SOMEHOW FIND ALL THE PROJECTS HE IS THE LONE ADMIN AND DELETE THESE PROJECTS TOO
-		// IF NOT LONELY ADMIN, JUST DELETE ROW FROM "member" TABLE
 
-		db.Promise.all([
+		await db.Promise.all([
 			db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
 				req.user.id,
 			]),
 			db.pool.query('DELETE FROM payment WHERE idUser = ?', [
 				req.user.id,
 			]),
+			db.pool.query('DELETE FROM member WHERE idUser = ?', [req.user.id]),
 			db.pool.query('DELETE FROM user WHERE idUser = ?', [req.user.id]),
-			// db.pool.query('DELETE FROM member WHERE idUser = ?', [req.user.id]),
 		]);
 
 		res.status(200).send('Ok');
