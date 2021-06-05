@@ -70,16 +70,11 @@
 			</div>
 
 			<div class="d-flex d-flex justify-content-between">
-				<div class="d-flex flex-row align-self-center">
+				<button type="submit" class="btn btn-link">
 					<i class="bi bi-trash link-icon"></i>
-					<router-link
-						type="submit"
-						to="/profile_settings"
-						class="align-self-center"
-					>
-						Διαγραφή λογαριασμού
-					</router-link>
-				</div>
+					Διαγραφή λογαριασμού
+				</button>
+
 				<button
 					type="submit"
 					class="btn d-flex btn-primary align-self-end"
@@ -173,5 +168,9 @@ form {
 	font-size: 16;
 	margin-right: 8px;
 	float: bottom;
+}
+
+.btn-link {
+	padding: 0px;
 }
 </style>
