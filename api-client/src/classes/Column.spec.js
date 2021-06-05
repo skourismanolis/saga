@@ -26,7 +26,7 @@ test('toJSON', () => {
 		col = JSON.parse(col);
 	}).not.toThrow();
 
-	expect(col).toEqual(MOCKCOLUMN);
+	expect(col).toMatchObject(MOCKCOLUMN);
 });
 
 test('get project', () => {
