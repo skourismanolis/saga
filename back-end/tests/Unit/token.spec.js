@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const supertest = require('supertest');
 const request = supertest(app);
 
-jsons = [
+let jsons = [
 	{
 		token: {
 			process: 'registration',
@@ -29,7 +29,7 @@ jsons = [
 ];
 
 let emailToken = [];
-jsons.forEach(function (item, index) {
+jsons.forEach(function (item) {
 	emailToken.push(
 		jwt.sign(item.token, process.env.EMAIL_SECRET, {
 			expiresIn: item.expires,
