@@ -41,6 +41,16 @@ test('updates', async () => {
 	).resolves.toBeUndefined();
 });
 
+test('toJSON', () => {
+	let proj = project.toJSON();
+	expect(proj).toBeTruthy();
+	expect(() => {
+		proj = JSON.parse(proj);
+	}).not.toThrow();
+
+	expect(proj).toMatchObject({ idProject: IDPROJECT });
+});
+
 describe('labels', () => {
 	it('lists all labels', async () => {
 		let labels = await project.getLabels();
