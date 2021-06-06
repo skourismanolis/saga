@@ -8,6 +8,7 @@ const PaginatedList = require('./PaginatedList');
 const IssueCategory = require('./IssueCategory');
 const IssuePriority = require('./IssuePriority');
 const Column = require('./Column');
+const Epic = require('./Epic');
 
 let project;
 let client;
@@ -134,6 +135,28 @@ describe('sprints', () => {
 
 		await expect(
 			project.deleteSprint(sprints.content[0])
+		).resolves.not.toThrow();
+	});
+});
+
+describe('epics', () => {
+	it('creates a new epic', async () => {
+		await expect(
+			project.createEpic({ title: 'asdas' })
+		).resolves.toBeInstanceOf(Epic);
+	});
+
+	it('returns a list of epics', async () => {
+		let epics = await project.getEpics();
+		expect(epics).toBeInstanceOf(PaginatedList);
+		epics.content.forEach((s) => expect(s).toBeInstanceOf(Epic));
+	});
+
+	it('deletes a epic', async () => {
+		let epics = await project.getEpics();
+
+		await expect(
+			project.deleteEpic(epics.content[0])
 		).resolves.not.toThrow();
 	});
 });

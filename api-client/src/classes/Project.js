@@ -45,6 +45,20 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get all the epics belonging to the project
+	 * @returns {Object[]} array of Epics
+	 */
+	async getEpics() {
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/epics`,
+			dataTransformer: (epics) =>
+				epics.map((e) => new Epic(this.client, e, this._idProject)),
+		});
+		await list.refresh();
+		return list;
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
@@ -104,6 +118,36 @@ module.exports = class Project extends Base {
 		return members
 			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.MEMBER);
+	}
+
+	/**
+	 * Create a new epic
+	 * @param {Object} epicConf epic configuration
+	 * @param {String} epicConf.title the title of the epic
+	 * @param {Date|Null=} epicConf.start When did this epic start
+	 * @param {Date|Null=} epicConf.deadline when will this epic end
+	 * @param {Date|Null=} epicConf.description the description of the epic
+	 */
+	async createEpic({ start, deadline, title, description }) {
+		let newEpic = {
+			title: title,
+			start: start || null,
+			deadline: deadline || null,
+			description: description || null,
+		};
+
+		let {
+			data: { idEpic },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/epics`,
+			newEpic
+		);
+
+		return new Epic(
+			this.client,
+			{ ...newEpic, issues: [], idEpic },
+			this._idProject
+		);
 	}
 
 	/**
@@ -186,6 +230,16 @@ module.exports = class Project extends Base {
 	async deleteSprint(sprint) {
 		await this.axios.delete(
 			`/projects/${this._idProject}/sprints/${sprint.id}`
+		);
+	}
+
+	/**
+	 * deletes the given epic.
+	 * @param {Object} epic the epic to delete
+	 */
+	async deleteEpic(epic) {
+		await this.axios.delete(
+			`/projects/${this._idProject}/epics/${epic.id}`
 		);
 	}
 
@@ -300,3 +354,4 @@ const Member = require('./Member');
 const Sprint = require('./Sprint');
 const UserRole = require('./UserRoles');
 const Column = require('./Column');
+const Epic = require('./Epic');
