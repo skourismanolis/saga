@@ -11,9 +11,11 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, idProject) {
+	constructor(client, { idProject, title, picture }) {
 		super(client);
 		this._idProject = idProject;
+		this.title = title;
+		this.picture = picture || null;
 	}
 
 	get id() {
@@ -21,7 +23,11 @@ module.exports = class Project extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({ idProject: this._idProject });
+		return JSON.stringify({
+			idProject: this._idProject,
+			title: this.title,
+			picture: this.picture,
+		});
 	}
 
 	/**
@@ -77,7 +83,9 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 
-		return members.map((member) => new Member(this.client, member));
+		return members.map(
+			(member) => new Member(this.client, member, this._idProject)
+		);
 	}
 
 	async getAdmins() {
@@ -85,7 +93,7 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.ADMIN);
 	}
 
@@ -94,7 +102,7 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.MEMBER);
 	}
 
@@ -268,11 +276,21 @@ module.exports = class Project extends Base {
 		return await this.getIssue(code);
 	}
 
+	async refresh() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		this.title = project.title;
+		this.picture = project.picture;
+	}
+
 	async update({ title, picture }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
 			picture,
 		});
+
+		await this.refresh();
 	}
 };
 

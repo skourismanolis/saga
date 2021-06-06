@@ -26,8 +26,20 @@ module.exports = class Column extends Base {
 		});
 	}
 
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/columns/${this.id}`
+		);
+
+		this.name = data.name;
+		this.order = data.order;
+	}
+
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**
@@ -48,6 +60,7 @@ module.exports = class Column extends Base {
 			`/projects/${this._idProject}/columns/${this._idColumn}`,
 			newColumn
 		);
+		await this.refresh();
 	}
 };
 const Project = require('./Project');

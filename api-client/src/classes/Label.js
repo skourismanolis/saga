@@ -23,8 +23,20 @@ module.exports = class Label extends Base {
 		});
 	}
 
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${this.id}`
+		);
+
+		this.name = data.name;
+		this.color = data.color;
+	}
+
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**
@@ -42,5 +54,6 @@ module.exports = class Label extends Base {
 			`/projects/${this._idProject}/labels/${this._idLabel}`,
 			newLabel
 		);
+		await this.refresh();
 	}
 };

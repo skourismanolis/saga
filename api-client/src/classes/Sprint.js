@@ -38,8 +38,11 @@ module.exports = class Sprint extends Base {
 	 * Get the project this sprint belongs in
 	 * @returns {object} Project
 	 */
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**

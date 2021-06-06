@@ -24,6 +24,12 @@ const MOCK_ISSUE = {
 	deadline: dayjs().add(1, 'month').toISOString(),
 };
 
+const MOCKPROJECT = {
+	idProject: 2,
+	title: 'asdasd',
+	picture: null,
+};
+
 let client;
 let issue;
 describe('Issue', () => {
@@ -46,6 +52,11 @@ describe('Issue', () => {
 		expect(is).toMatchObject(MOCK_ISSUE);
 	});
 
+	it('refreshes', async () => {
+		let is = new Issue(client, MOCK_ISSUE, 2);
+		await expect(is.refresh()).resolves.not.toThrow();
+	});
+
 	it('is done', () => {
 		issue._idColumn = null;
 		expect(issue.isDone()).toBe(true);
@@ -65,8 +76,13 @@ describe('Issue', () => {
 		expect(is.dueIn()).toBe(null);
 	});
 
-	it('returns the project', () => {
-		expect(issue.getProject()).toBeInstanceOf(Project);
+	it('returns the project', async () => {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		};
+		issue.axios = mockAxios;
+		await expect(issue.getProject()).resolves.toBeInstanceOf(Project);
+		issue.axios = client.axios;
 	});
 
 	it('returns assignees', async () => {
@@ -75,8 +91,10 @@ describe('Issue', () => {
 	});
 
 	it('updates fields', async () => {
+		let is = new Issue(client, MOCK_ISSUE, 2);
+
 		await expect(
-			issue.update({ title: 'asd', description: 'testing', label: null })
+			is.update({ title: 'asd', description: 'testing', label: null })
 		).resolves.not.toThrow();
 	});
 
@@ -89,8 +107,17 @@ describe('Issue', () => {
 	});
 
 	it('returns the column', async () => {
+		let mockGet = async (...args) => {
+			if (!args[0].includes('columns')) return { data: [MOCKPROJECT] };
+			else return client.axios.get(args);
+		};
+		let mockAxios = {
+			get: jest.fn(mockGet),
+		};
+		issue.axios = mockAxios;
 		issue._idColumn = 2;
 		let c = await issue.getColumn();
 		expect(c).toBeInstanceOf(Column);
+		issue.axios = client.axios;
 	});
 });
