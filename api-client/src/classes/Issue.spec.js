@@ -46,6 +46,11 @@ describe('Issue', () => {
 		expect(is).toMatchObject(MOCK_ISSUE);
 	});
 
+	it('refreshes', async () => {
+		let is = new Issue(client, MOCK_ISSUE, 2);
+		await expect(is.refresh()).resolves.not.toThrow();
+	});
+
 	it('is done', () => {
 		issue._idColumn = null;
 		expect(issue.isDone()).toBe(true);
@@ -75,8 +80,10 @@ describe('Issue', () => {
 	});
 
 	it('updates fields', async () => {
+		let is = new Issue(client, MOCK_ISSUE, 2);
+
 		await expect(
-			issue.update({ title: 'asd', description: 'testing', label: null })
+			is.update({ title: 'asd', description: 'testing', label: null })
 		).resolves.not.toThrow();
 	});
 

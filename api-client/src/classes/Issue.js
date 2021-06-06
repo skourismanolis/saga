@@ -61,6 +61,24 @@ module.exports = class Issue extends Base {
 		});
 	}
 
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/issues/${this.id}`
+		);
+
+		this._idSprint = data.idSprint;
+		this._idColumn = data.idColumn;
+		this._idEpic = data.idEpic;
+		this._idLabel = data.idLabel;
+		this._assigneeIds = data.assignees;
+		this.title = data.title;
+		this.category = data.category;
+		this.points = data.points;
+		this.priority = data.priority;
+		this.description = data.description;
+		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
+	}
+
 	get id() {
 		return this._code;
 	}
@@ -180,6 +198,8 @@ module.exports = class Issue extends Base {
 			`/projects/${this._idProject}/issues/${this._code}`,
 			newIssue
 		);
+
+		await this.refresh();
 	}
 };
 
