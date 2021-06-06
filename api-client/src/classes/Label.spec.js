@@ -33,6 +33,10 @@ test('toJSON', () => {
 	expect(lab).toMatchObject(MOCKLABEL);
 });
 
+test('refresh', async () => {
+	await expect(label.refresh()).resolves.not.toThrow();
+});
+
 test('get project', () => {
 	expect(label.getProject()).toBeInstanceOf(Project);
 });

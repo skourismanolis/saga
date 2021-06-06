@@ -23,6 +23,15 @@ module.exports = class Label extends Base {
 		});
 	}
 
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${this.id}`
+		);
+
+		this.name = data.name;
+		this.color = data.color;
+	}
+
 	getProject() {
 		return new Project(this.client, this._idProject);
 	}
@@ -42,5 +51,6 @@ module.exports = class Label extends Base {
 			`/projects/${this._idProject}/labels/${this._idLabel}`,
 			newLabel
 		);
+		await this.refresh();
 	}
 };
