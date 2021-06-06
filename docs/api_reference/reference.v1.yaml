@@ -1922,7 +1922,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        finish:
+        deadline:
           type: string
           format: date-time
           nullable: true
@@ -1936,7 +1936,7 @@ components:
       required:
         - idSprint
         - start
-        - finish
+        - deadline
         - title
         - issues
     SprintPutPost:
@@ -1947,7 +1947,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        finish:
+        deadline:
           type: string
           format: date-time
           nullable: true
@@ -1955,7 +1955,7 @@ components:
           type: string
       required:
         - start
-        - finish
+        - deadline
         - title
     Epic:
       title: Epic
