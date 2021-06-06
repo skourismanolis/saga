@@ -11,4 +11,8 @@ module.exports = class Base {
 	toJSON() {
 		throw 'This must be overriden';
 	}
+
+	async refresh() {
+		throw 'This must be overriden';
+	}
 };
