@@ -26,6 +26,15 @@ module.exports = class Column extends Base {
 		});
 	}
 
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/columns/${this.id}`
+		);
+
+		this.name = data.name;
+		this.order = data.order;
+	}
+
 	getProject() {
 		return new Project(this.client, this._idProject);
 	}
@@ -48,6 +57,7 @@ module.exports = class Column extends Base {
 			`/projects/${this._idProject}/columns/${this._idColumn}`,
 			newColumn
 		);
+		await this.refresh();
 	}
 };
 const Project = require('./Project');

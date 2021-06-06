@@ -29,6 +29,10 @@ test('toJSON', () => {
 	expect(col).toMatchObject(MOCKCOLUMN);
 });
 
+test('refresh', async () => {
+	await expect(column.refresh()).resolves.not.toThrow();
+});
+
 test('get project', () => {
 	expect(column.getProject()).toBeInstanceOf(Project);
 });
