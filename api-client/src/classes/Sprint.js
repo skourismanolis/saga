@@ -1,6 +1,4 @@
-const Base = require('./Base');
-const PaginatedList = require('./PaginatedList');
-const dayjs = require('dayjs');
+const IssueContainer = require('./IssueContainer');
 
 /****************************************************************************************/
 /*                                       WARNING                                        */
@@ -8,15 +6,24 @@ const dayjs = require('dayjs');
 /*                                                                                      */
 /****************************************************************************************/
 
-module.exports = class Sprint extends Base {
-	constructor(client, { idSprint, start, finish, title, issues }, idProject) {
-		super(client);
+module.exports = class Sprint extends IssueContainer {
+	constructor(
+		client,
+		{ idSprint, start, deadline, title, issues },
+		idProject
+	) {
+		super(
+			client,
+			{
+				start,
+				deadline,
+				title,
+				issues,
+			},
+			idProject,
+			`/projects/${idProject}/sprints/${idSprint}`
+		);
 		this._idSprint = idSprint;
-		this.start = start != null ? new Date(start) : null;
-		this.finish = finish != null ? new Date(finish) : null;
-		this.title = title;
-		this._issueIds = issues;
-		this._idProject = idProject;
 	}
 
 	get id() {
@@ -26,92 +33,12 @@ module.exports = class Sprint extends Base {
 	toJSON() {
 		return JSON.stringify({
 			idSprint: this._idSprint,
-			issueIds: this._issues,
+			issues: this._issueIds,
 			idProject: this._idProject,
 			start: this.start,
-			finish: this.finish,
+			deadline: this.deadline,
 			title: this.title,
 		});
-	}
-
-	/**
-	 * Get the project this sprint belongs in
-	 * @returns {object} Project
-	 */
-	async getProject() {
-		let { data: projects } = await this.axios.get(`/projects`);
-
-		let project = projects.find((m) => m.idProject == this._idProject);
-		return new Project(this.client, project);
-	}
-
-	/**
-	 * Checks if the given issue belongs to the given sprint
-	 * @param {Object} issue Issue to check if it belongs to this Sprint
-	 * @returns {Boolean}
-	 */
-	inSprint(issue) {
-		return this._issueIds.indexOf(issue.id) !== -1;
-	}
-
-	/**
-	 * Whether this sprint's start date has passed or not.
-	 * If no start date is set it means that the sprint hasn't started
-	 * @returns {Boolean}
-	 */
-	started() {
-		return this.start !== null;
-	}
-
-	/**
-	 * The time (in milliseconds) left until the deadline. Can be negative.
-	 * If there's no deadline set, it returns null.
-	 * @returns {Number|null} milliseconds until the deadline.
-	 */
-	dueIn() {
-		if (this.finish === null) return null;
-		return dayjs(this.finish).diff(dayjs());
-	}
-
-	/**
-	 * returns all the Issues belonging to this sprint.
-	 * @returns {Object} Issue PaginatedList
-	 */
-	async getIssues() {
-		let list = new PaginatedList(this.client, {
-			url: `/projects/${this._idProject}/sprints/${this._idSprint}/issues`,
-			dataTransformer: (issues) =>
-				issues.map(
-					(issue) => new Issue(this.client, issue, this._idProject)
-				),
-		});
-
-		await list.refresh();
-		return list;
-	}
-
-	/**
-	 * Adds the given issues to the sprint
-	 * @param {Object[]} issues the Issues to add
-	 */
-	async addIssues(issues) {
-		let issueIds = issues.map((i) => i.id);
-		await this.axios.post(
-			`/projects/${this._idProject}/sprints/${this._idSprint}/issues`,
-			issueIds
-		);
-	}
-
-	/**
-	 * Remove the given issues from the sprint
-	 * @param {Object[]} issues the Issues to remove
-	 */
-	async removeIssues(issues) {
-		let issueIds = issues.map((i) => i.id);
-		await this.axios.delete(
-			`/projects/${this._idProject}/sprints/${this._idSprint}/issues`,
-			issueIds
-		);
 	}
 
 	/**
@@ -121,11 +48,11 @@ module.exports = class Sprint extends Base {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.finish when will this sprint end
 	 */
-	async update({ title, start, finish }) {
+	async update({ title, start, deadline }) {
 		let newSprint = {
 			title: title || this.title,
 			start: start !== undefined ? start : this.start,
-			finish: finish !== undefined ? finish : this.finish,
+			deadline: deadline !== undefined ? deadline : this.deadline,
 		};
 
 		await this.axios.put(
@@ -134,6 +61,3 @@ module.exports = class Sprint extends Base {
 		);
 	}
 };
-
-const Project = require('./Project');
-const Issue = require('./Issue');

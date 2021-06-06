@@ -14,7 +14,7 @@ const MOCKSPRINT = {
 	idSprint: 1,
 	title: 'mansd',
 	start: null,
-	finish: null,
+	deadline: null,
 	issues: [12, 32, 23, ISSUEID],
 };
 
@@ -73,9 +73,9 @@ describe('main functions', () => {
 		let issue = await project.getIssue(ISSUEID);
 		//THIS IS BECAUSE THE MOCK SERVER IS DUMB
 		issue._code = ISSUEID;
-		expect(sprint.inSprint(issue)).toBe(true);
+		expect(sprint.includes(issue)).toBe(true);
 		issue._code = 'loemrm 3-9r 9iefefj9euf';
-		expect(sprint.inSprint(issue)).toBe(false);
+		expect(sprint.includes(issue)).toBe(false);
 	});
 
 	test('started', () => {
@@ -86,7 +86,7 @@ describe('main functions', () => {
 
 	test('due in', () => {
 		expect(sprint.dueIn()).toBe(null);
-		sprint.finish = dayjs().add('1', 'month').toDate();
+		sprint.deadline = dayjs().add('1', 'month').toDate();
 		expect(sprint.dueIn()).toBeGreaterThan(0);
 	});
 
