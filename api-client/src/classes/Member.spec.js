@@ -39,3 +39,9 @@ test('toJSON', () => {
 test('get project', () => {
 	expect(member.getProject()).toBeInstanceOf(Project);
 });
+
+test('refresh', async () => {
+	let mockAxios = { get: jest.fn(async () => ({ data: [MOCK_MEMBER] })) };
+	member.axios = mockAxios;
+	await expect(member.refresh()).resolves.not.toThrow();
+});

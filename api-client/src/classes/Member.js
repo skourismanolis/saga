@@ -44,5 +44,19 @@ module.exports = class Member extends Base {
 	getProject() {
 		return new Project(this.client, this._idProject);
 	}
+
+	async refresh() {
+		let { data: members } = await this.axios.get(
+			`/project/${this._idProject}/members`
+		);
+
+		let member = members.find((m) => m.idMember == this._idMember);
+
+		this.name = member.name;
+		this.surname = member.surname;
+		this.email = member.email || null;
+		this.role = member.role;
+		this.picture = member.picture || null;
+	}
 };
 const Project = require('./Project');
