@@ -1,7 +1,7 @@
 const SagaClient = require('../index');
 const dayjs = require('dayjs');
 
-const Sprint = require('./Sprint');
+const Epic = require('./Epic');
 const Project = require('./Project');
 const Issue = require('./Issue');
 const PaginatedList = require('./PaginatedList');
@@ -10,11 +10,12 @@ let client;
 
 const ISSUEID = 33;
 
-const MOCKSPRINT = {
-	idSprint: 1,
+const MOCKEPIC = {
+	idEpic: 1,
 	title: 'mansd',
 	start: null,
 	deadline: null,
+	description: 'asd',
 	issues: [12, 32, 23, ISSUEID],
 };
 
@@ -29,69 +30,69 @@ beforeAll(() => {
 });
 
 it('constructs correctly', () => {
-	expect(
-		new Sprint(client, MOCKSPRINT, MOCKPROJECT.idProject)
-	).toBeInstanceOf(Sprint);
+	expect(new Epic(client, MOCKEPIC, MOCKPROJECT.idProject)).toBeInstanceOf(
+		Epic
+	);
 });
 
 describe('main functions', () => {
-	let sprint;
+	let epic;
 	beforeAll(() => {
-		sprint = new Sprint(client, MOCKSPRINT, MOCKPROJECT.idProject);
+		epic = new Epic(client, MOCKEPIC, MOCKPROJECT.idProject);
 	});
 
 	it('returns project', async () => {
 		let mockAxios = {
 			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
 		};
-		sprint.axios = mockAxios;
-		await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
-		sprint.axios = client.axios;
+		epic.axios = mockAxios;
+		await expect(epic.getProject()).resolves.toBeInstanceOf(Project);
+		epic.axios = client.axios;
 	});
 
 	test('toJSON', () => {
-		let spr = sprint.toJSON();
-		expect(spr).toBeTruthy();
+		let epc = epic.toJSON();
+		expect(epc).toBeTruthy();
 		expect(() => {
-			spr = JSON.parse(spr);
+			epc = JSON.parse(epc);
 		}).not.toThrow();
 
-		let matcher = { ...MOCKSPRINT };
+		let matcher = { ...MOCKEPIC };
 		delete matcher.issues;
 
-		expect(spr).toMatchObject(matcher);
+		expect(epc).toMatchObject(matcher);
 	});
 
 	test('in sprint', async () => {
 		let mockAxios = {
 			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
 		};
-		sprint.axios = mockAxios;
-		let project = await sprint.getProject();
-		sprint.axios = client.axios;
+		epic.axios = mockAxios;
+		let project = await epic.getProject();
+		epic.axios = client.axios;
 
 		let issue = await project.getIssue(ISSUEID);
 		//THIS IS BECAUSE THE MOCK SERVER IS DUMB
 		issue._code = ISSUEID;
-		expect(sprint.includes(issue)).toBe(true);
+		expect(epic.includes(issue)).toBe(true);
 		issue._code = 'loemrm 3-9r 9iefefj9euf';
-		expect(sprint.includes(issue)).toBe(false);
+		expect(epic.includes(issue)).toBe(false);
 	});
 
 	test('started', () => {
-		expect(sprint.started()).toBe(false);
-		sprint.start = new Date();
-		expect(sprint.started()).toBe(true);
+		expect(epic.started()).toBe(false);
+		epic.start = new Date();
+		expect(epic.started()).toBe(true);
 	});
 
 	test('due in', () => {
-		expect(sprint.dueIn()).toBe(null);
-		sprint.deadline = dayjs().add('1', 'month').toDate();
-		expect(sprint.dueIn()).toBeGreaterThan(0);
+		expect(epic.dueIn()).toBe(null);
+		epic.deadline = dayjs().add('1', 'month').toDate();
+		expect(epic.dueIn()).toBeGreaterThan(0);
 	});
 
 	test('get all issues', async () => {
-		let issues = await sprint.getIssues();
+		let issues = await epic.getIssues();
 		expect(issues).toBeInstanceOf(PaginatedList);
 		issues.content.forEach((i) => expect(i).toBeInstanceOf(Issue));
 	});
@@ -100,41 +101,37 @@ describe('main functions', () => {
 		let mockAxios = {
 			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
 		};
-		sprint.axios = mockAxios;
-		let project = await sprint.getProject();
-		sprint.axios = client.axios;
+		epic.axios = mockAxios;
+		let project = await epic.getProject();
+		epic.axios = client.axios;
 
 		let issue1 = await project.getIssue('asdas');
 		let issue2 = await project.getIssue('aqwwsdas');
 
-		await expect(sprint.addIssues([issue1, issue2])).resolves.not.toThrow();
+		await expect(epic.addIssues([issue1, issue2])).resolves.not.toThrow();
 	});
 
 	test('remove issues', async () => {
-		let issues = await sprint.getIssues();
-		await expect(
-			sprint.removeIssues(issues.content)
-		).resolves.not.toThrow();
+		let issues = await epic.getIssues();
+		await expect(epic.removeIssues(issues.content)).resolves.not.toThrow();
 	});
 
 	it('refreshes', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: MOCKSPRINT })),
+			get: jest.fn(async () => ({ data: MOCKEPIC })),
 		};
-		sprint.axios = mockAxios;
-		await expect(sprint.refresh()).resolves.not.toThrow();
-		sprint.axios = client.axios;
+		epic.axios = mockAxios;
+		await expect(epic.refresh()).resolves.not.toThrow();
+		epic.axios = client.axios;
 	});
 
 	it('updates', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: MOCKSPRINT })),
+			get: jest.fn(async () => ({ data: MOCKEPIC })),
 			put: client.axios.put,
 		};
-		sprint.axios = mockAxios;
-		await expect(
-			sprint.update({ start: new Date() })
-		).resolves.not.toThrow();
-		sprint.axios = client.axios;
+		epic.axios = mockAxios;
+		await expect(epic.update({ title: 'asd' })).resolves.not.toThrow();
+		epic.axios = client.axios;
 	});
 });

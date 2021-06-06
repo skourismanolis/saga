@@ -9,7 +9,7 @@ const IssueContainer = require('./IssueContainer');
 module.exports = class Sprint extends IssueContainer {
 	constructor(
 		client,
-		{ idSprint, start, deadline, title, issues },
+		{ idEpic, start, deadline, title, issues, description },
 		idProject
 	) {
 		super(
@@ -21,55 +21,59 @@ module.exports = class Sprint extends IssueContainer {
 				issues,
 			},
 			idProject,
-			`/projects/${idProject}/sprints/${idSprint}`
+			`/projects/${idProject}/epics/${idEpic}`
 		);
-		this._idSprint = idSprint;
+		this._idEpic = idEpic;
+		this.description = description;
 	}
 
 	get id() {
-		return this._idSprint;
+		return this._idEpic;
 	}
 
 	toJSON() {
 		return JSON.stringify({
-			idSprint: this._idSprint,
+			idEpic: this._idEpic,
 			issues: this._issueIds,
 			idProject: this._idProject,
 			start: this.start,
 			deadline: this.deadline,
 			title: this.title,
+			description: this.description,
 		});
 	}
 
 	async refresh() {
 		let { data } = await this.axios.get(
-			`/projects/${this._idProject}/sprints/${this._idSprint}`
+			`/projects/${this._idProject}/epics/${this._idEpic}`
 		);
 
 		this._issueIds = data.issues;
 		this.start = data.start != null ? new Date(data.start) : null;
 		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
+		this.description = data.description;
 	}
 
 	/**
-	 * Update the sprint's values
-	 * @param {Object} sprintConf sprint configuration
-	 * @param {String=} sprintConf.title the title of the sprint
-	 * @param {Date|Null=} sprintConf.start When did this sprint start
-	 * @param {Date|Null=} sprintConf.finish when will this sprint end
+	 * Update the epic's values
+	 * @param {Object} epicConf epic configuration
+	 * @param {String=} epicConf.title the title of the epic
+	 * @param {Date|Null=} epicConf.start When did this epic start
+	 * @param {Date|Null=} epicConf.finish when will this epic end
 	 */
-	async update({ title, start, deadline }) {
-		let newSprint = {
+	async update({ title, description, start, deadline }) {
+		let newEpic = {
 			title: title || this.title,
 			start: start !== undefined ? start : this.start,
 			deadline: deadline !== undefined ? deadline : this.deadline,
+			description:
+				description !== undefined ? description : this.description,
 		};
 
 		await this.axios.put(
-			`/projects/${this._idProject}/sprints/${this._idSprint}`,
-			newSprint
+			`/projects/${this._idProject}/epics/${this._idEpic}`,
+			newEpic
 		);
-
 		await this.refresh();
 	}
 };
