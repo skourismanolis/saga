@@ -1,5 +1,6 @@
 const SagaClient = require('../index');
 const Member = require('./Member');
+const Project = require('./Project');
 
 let client;
 let member;
@@ -33,4 +34,8 @@ test('toJSON', () => {
 	}).not.toThrow();
 
 	expect(mem).toMatchObject(MOCK_MEMBER);
+});
+
+test('get project', () => {
+	expect(member.getProject()).toBeInstanceOf(Project);
 });

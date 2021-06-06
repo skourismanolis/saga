@@ -77,7 +77,9 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 
-		return members.map((member) => new Member(this.client, member));
+		return members.map(
+			(member) => new Member(this.client, member, this._idProject)
+		);
 	}
 
 	async getAdmins() {
@@ -85,7 +87,7 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.ADMIN);
 	}
 
@@ -94,7 +96,7 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.MEMBER);
 	}
 

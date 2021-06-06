@@ -134,7 +134,9 @@ module.exports = class Issue extends Base {
 			(m) => this._assigneeIds.indexOf(m.id) !== -1
 		);
 
-		return assignees.map((a) => new Member(this.client, a));
+		return assignees.map(
+			(a) => new Member(this.client, a, this._idProject)
+		);
 	}
 
 	/**
