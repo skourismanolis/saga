@@ -8,11 +8,12 @@ const Sprint = require('./Sprint');
 const Column = require('./Column');
 const Label = require('./Label');
 const Member = require('./Member');
+const Epic = require('./Epic');
 
 const MOCK_ISSUE = {
 	idSprint: 2,
 	idColumn: 2,
-	idEpic: null,
+	idEpic: 2,
 	idLabel: 3,
 	assignees: [1, 2, 3],
 	code: '2F3D',
@@ -100,6 +101,10 @@ describe('Issue', () => {
 
 	it('returns the sprint', async () => {
 		await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
+	});
+
+	it('returns the epic', async () => {
+		await expect(issue.getEpic()).resolves.toBeInstanceOf(Epic);
 	});
 
 	it('returns the label', async () => {

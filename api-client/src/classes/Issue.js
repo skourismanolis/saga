@@ -109,6 +109,20 @@ module.exports = class Issue extends Base {
 	}
 
 	/**
+	 * Get the Epic this Issue belongs in. If it doesn't belong to an epic, returns null
+	 * @returns {Object|Null} the Epic
+	 */
+	async getEpic() {
+		if (this._idEpic == null) return null;
+		else {
+			let { data: epic } = await this.axios.get(
+				`/projects/${this._idProject}/epics/${this._idEpic}`
+			);
+			return new Epic(this.client, epic, this._idProject);
+		}
+	}
+
+	/**
 	 * @returns {Object|Null} If the Issue has a Label assigned, it returns it, else it returns null.
 	 */
 	async getLabel() {
@@ -213,3 +227,4 @@ const Label = require('./Label');
 const Member = require('./Member');
 const Project = require('./Project');
 const Sprint = require('./Sprint');
+const Epic = require('./Epic');
