@@ -18,23 +18,37 @@ const MOCKSPRINT = {
 	issues: [12, 32, 23, ISSUEID],
 };
 
+const MOCKPROJECT = {
+	idProject: 2,
+	title: 'asdasd',
+	picture: null,
+};
+
 beforeAll(() => {
 	client = new SagaClient({ url: __MOCKURL__ });
 });
 
 it('constructs correctly', () => {
-	expect(new Sprint(client, MOCKSPRINT, 3)).toBeInstanceOf(Sprint);
+	expect(
+		new Sprint(client, MOCKSPRINT, MOCKPROJECT.idProject)
+	).toBeInstanceOf(Sprint);
 });
 
 describe('main functions', () => {
 	let sprint;
 	beforeAll(() => {
-		sprint = new Sprint(client, MOCKSPRINT, 3);
+		sprint = new Sprint(client, MOCKSPRINT, MOCKPROJECT.idProject);
 	});
 
-	it('returns project', () => {
-		expect(sprint.getProject()).toBeInstanceOf(Project);
+	it('returns project', async () => {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		};
+		sprint.axios = mockAxios;
+		await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
+		sprint.axios = client.axios;
 	});
+
 	test('toJSON', () => {
 		let spr = sprint.toJSON();
 		expect(spr).toBeTruthy();
@@ -49,7 +63,13 @@ describe('main functions', () => {
 	});
 
 	test('in sprint', async () => {
-		let project = sprint.getProject();
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		};
+		sprint.axios = mockAxios;
+		let project = await sprint.getProject();
+		sprint.axios = client.axios;
+
 		let issue = await project.getIssue(ISSUEID);
 		//THIS IS BECAUSE THE MOCK SERVER IS DUMB
 		issue._code = ISSUEID;
@@ -77,7 +97,13 @@ describe('main functions', () => {
 	});
 
 	test('add issues', async () => {
-		let project = sprint.getProject();
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		};
+		sprint.axios = mockAxios;
+		let project = await sprint.getProject();
+		sprint.axios = client.axios;
+
 		let issue1 = await project.getIssue('asdas');
 		let issue2 = await project.getIssue('aqwwsdas');
 

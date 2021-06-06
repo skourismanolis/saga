@@ -13,6 +13,12 @@ const MOCK_MEMBER = {
 	picture: '123',
 };
 
+const MOCKPROJECT = {
+	idProject: 2,
+	title: 'asdasd',
+	picture: null,
+};
+
 beforeAll(() => {
 	client = new SagaClient({ url: __MOCKURL__ });
 });
@@ -36,8 +42,11 @@ test('toJSON', () => {
 	expect(mem).toMatchObject(MOCK_MEMBER);
 });
 
-test('get project', () => {
-	expect(member.getProject()).toBeInstanceOf(Project);
+test('get project', async () => {
+	let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
+	member.axios = mockAxios;
+	await expect(member.getProject()).resolves.toBeInstanceOf(Project);
+	member.axios = client.axios;
 });
 
 test('refresh', async () => {

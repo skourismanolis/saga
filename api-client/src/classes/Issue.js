@@ -87,8 +87,11 @@ module.exports = class Issue extends Base {
 		return this._code;
 	}
 
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**
@@ -119,7 +122,8 @@ module.exports = class Issue extends Base {
 
 	async getColumn() {
 		if (this._idColumn === null) return null;
-		return await this.getProject().getColumn(this._idColumn);
+		let p = await this.getProject();
+		return await p.getColumn(this._idColumn);
 	}
 
 	/**

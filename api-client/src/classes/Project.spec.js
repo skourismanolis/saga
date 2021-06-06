@@ -10,16 +10,21 @@ const IssuePriority = require('./IssuePriority');
 const Column = require('./Column');
 
 let project;
+let client;
 
-const IDPROJECT = 3;
+const MOCKPROJECT = {
+	idProject: 2,
+	title: 'asdasd',
+	picture: null,
+};
 
 beforeAll(() => {
-	let client = new SagaClient({ url: __MOCKURL__ });
-	project = new Project(client, IDPROJECT);
+	client = new SagaClient({ url: __MOCKURL__ });
+	project = new Project(client, MOCKPROJECT);
 });
 
 test('project constructor', () => {
-	expect(project.id).toBe(IDPROJECT);
+	expect(project.id).toBe(MOCKPROJECT.idProject);
 });
 
 test('members', async () => {
@@ -35,10 +40,25 @@ test('members', async () => {
 	nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
 });
 
+test('refresh', async () => {
+	let mockAxios = {
+		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+	};
+	project.axios = mockAxios;
+	await expect(project.refresh()).resolves.not.toThrow();
+	project.axios = client.axios;
+});
+
 test('updates', async () => {
+	let mockAxios = {
+		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		put: client.axios.put,
+	};
+	project.axios = mockAxios;
 	await expect(
 		project.update({ title: 'test', picture: 'http://google.com' })
-	).resolves.toBeUndefined();
+	).resolves.not.toThrow();
+	project.axios = client.axios;
 });
 
 test('toJSON', () => {
@@ -48,7 +68,7 @@ test('toJSON', () => {
 		proj = JSON.parse(proj);
 	}).not.toThrow();
 
-	expect(proj).toMatchObject({ idProject: IDPROJECT });
+	expect(proj).toMatchObject(MOCKPROJECT);
 });
 
 describe('labels', () => {

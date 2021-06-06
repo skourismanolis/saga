@@ -32,8 +32,11 @@ module.exports = class Label extends Base {
 		this.color = data.color;
 	}
 
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**
