@@ -96,8 +96,6 @@ module.exports = class Issue extends Base {
 			`/projects/${this._idProject}/labels/${this._idLabel}`
 		);
 
-		console.log(label);
-
 		return new Label(this.client, label, this._idProject);
 	}
 
