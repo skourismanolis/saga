@@ -41,6 +41,16 @@ module.exports = class Sprint extends IssueContainer {
 		});
 	}
 
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${this._idSprint}`
+		);
+
+		this._issueIds = data.issues;
+		this.start = data.start != null ? new Date(data.start) : null;
+		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
+	}
+
 	/**
 	 * Update the sprint's values
 	 * @param {Object} sprintConf sprint configuration
@@ -59,5 +69,7 @@ module.exports = class Sprint extends IssueContainer {
 			`/projects/${this._idProject}/sprints/${this._idSprint}`,
 			newSprint
 		);
+
+		await this.refresh();
 	}
 };

@@ -117,9 +117,24 @@ describe('main functions', () => {
 		).resolves.not.toThrow();
 	});
 
+	it('refreshes', async () => {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: MOCKSPRINT })),
+		};
+		sprint.axios = mockAxios;
+		await expect(sprint.refresh()).resolves.not.toThrow();
+		sprint.axios = client.axios;
+	});
+
 	it('updates', async () => {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: MOCKSPRINT })),
+			put: client.axios.put,
+		};
+		sprint.axios = mockAxios;
 		await expect(
 			sprint.update({ start: new Date() })
 		).resolves.not.toThrow();
+		sprint.axios = client.axios;
 	});
 });
