@@ -120,6 +120,61 @@ module.exports = class Project extends Base {
 			.filter((member) => member.role === UserRole.MEMBER);
 	}
 
+	async searchIssues({
+		inSprint,
+		labels,
+		withSprint,
+		withEpic,
+		assignee,
+		column,
+		inEpic,
+		search,
+	}) {
+		let query = '';
+		if (inSprint !== undefined) {
+			query += '&inSprint=' + inSprint === null ? 'null' : inSprint.id;
+		}
+
+		if (labels != null) {
+			if (!(labels instanceof Array)) throw 'Labels must be an array';
+			query +=
+				'&labels=' + '[' + labels.map((l) => l.id).toString() + ']';
+		}
+
+		if (withSprint != null) {
+			query += '&withSprint=' + withSprint;
+		}
+
+		if (withEpic != null) {
+			query += '&withEpic=' + withEpic;
+		}
+
+		if (assignee != null) {
+			query += '&assignee=' + assignee.id;
+		}
+
+		if (column !== undefined) {
+			query += '&column=' + column === null ? 'null' : column.id;
+		}
+
+		if (inEpic !== undefined) {
+			query += '&inEpic=' + inEpic === null ? 'null' : inEpic.id;
+		}
+
+		if (search != null) {
+			query += '&search=' + search;
+		}
+
+		let ret = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/search?${query.slice(1)}`,
+			dataTransformer: (issues) =>
+				issues.map((i) => new Issue(this.client, i, this._idProject)),
+		});
+
+		await ret.refresh();
+		return ret;
+	}
+
 	/**
 	 * Create a new epic
 	 * @param {Object} epicConf epic configuration
