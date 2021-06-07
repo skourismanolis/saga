@@ -10,12 +10,15 @@ const schemas = require('../schemas/schemas_export');
 app.get('/', async (req, res) => {
 	//for debugging
 	try {
-		let results = await db.query(`SELECT idUser FROM user`);
-		if (results[0].length) {
+		let results = await db.pool.query(
+			`SELECT username FROM user WHERE idUser = ?`,
+			[1]
+		);
+		if (results[0].length == 0) {
 			return res.sendStatus(404);
 		}
 
-		return res.sendStatus(200);
+		return res.send(results[0]);
 	} catch (error) {
 		res.sendStatus(500);
 		console.error(error);
