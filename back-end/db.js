@@ -1,19 +1,20 @@
 const mysql = require('mysql2/promise');
 
 const USING_TESTING_SERVER = true;
+const TESTING_SERVER_PORT = '3307';
 let pool = null;
-let database = 'saga';
+let port = '3306';
 
 module.exports = {
 	async connect() {
 		if (USING_TESTING_SERVER && process.env.NODE_ENV == 'test') {
-			database = 'saga2';
+			port = TESTING_SERVER_PORT;
 		}
 		pool = await mysql.createPool({
 			host: 'localhost',
-			port: '3306',
+			port: port,
 			user: 'root',
-			database: database,
+			database: 'saga',
 			password: 'saga1234',
 			connectionLimit: 10,
 		});

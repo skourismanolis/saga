@@ -68,16 +68,16 @@ app.get('/:token', async (req, res) => {
 async function registration(req, res, tokenRequest) {
 	try {
 		//if user does not exist return 404 non found
-		let results = await db.query(
+		let results = await db.pool.query(
 			`SELECT idUser FROM user WHERE idUser = ?;`,
 			[tokenRequest.idUser]
 		);
-		if (results[0].length) {
+		if (results[0].length == 0) {
 			return res.sendStatus(404);
 		}
 
 		//update user
-		results = await db.query(
+		results = await db.pool.query(
 			`UPDATE user SET verified = 1 WHERE idUser = ?;`,
 			[tokenRequest.idUser]
 		);
