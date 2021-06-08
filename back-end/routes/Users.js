@@ -174,6 +174,7 @@ app.put('/', async (req, res) => {
 });
 
 app.delete('/', async (req, res) => {
+	let conn;
 	try {
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE idUser = ?',
@@ -195,21 +196,26 @@ app.delete('/', async (req, res) => {
 			res.status(403).send('Forbidden');
 			return;
 		}
-
-		await Promise.all([
-			db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
-				req.user.id,
-			]),
-			db.pool.query('DELETE FROM payment WHERE idUser = ?', [
-				req.user.id,
-			]),
-			db.pool.query('DELETE FROM member WHERE idUser = ?', [req.user.id]),
-			db.pool.query('DELETE FROM user WHERE idUser = ?', [req.user.id]),
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		await db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
+			req.user.id,
 		]);
+		await db.pool.query('DELETE FROM payment WHERE idUser = ?', [
+			req.user.id,
+		]);
+		await db.pool.query('DELETE FROM member WHERE idUser = ?', [
+			req.user.id,
+		]);
+		await db.pool.query('DELETE FROM user WHERE idUser = ?', [req.user.id]);
 
+		await conn.commit();
 		res.status(200).send('Ok');
 	} catch (error) {
+		if (conn != null) conn.rollback();
 		res.status(500).send('Internal Server Error');
+	} finally {
+		if (conn == null) conn.release();
 	}
 });
 
