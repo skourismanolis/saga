@@ -215,7 +215,7 @@ app.delete('/', async (req, res) => {
 		if (conn != null) conn.rollback();
 		res.status(500).send('Internal Server Error');
 	} finally {
-		if (conn == null) conn.release();
+		if (conn != null) conn.release();
 	}
 });
 
