@@ -6,11 +6,12 @@ const request = supertest(app);
 const { connect, db } = require('../../db');
 const runQuery = require('../runQuery');
 
-// Connect before all tests
 let ids;
 let jsons;
 let emailToken;
+
 beforeAll(async () => {
+	//make connection to get correct pool
 	await connect();
 	let myQueries = [
 		`INSERT INTO user VALUES (0, 'test1','test1','test1','test1','test2',0,'Free','test1');`,
@@ -20,6 +21,7 @@ beforeAll(async () => {
 	ids = [results[0].insertId, results[1].insertId];
 
 	jsons = [
+		//should work
 		{
 			token: {
 				process: 'registration',
@@ -27,12 +29,29 @@ beforeAll(async () => {
 			},
 			expires: '24h',
 		},
+		//expired
 		{
 			token: {
 				process: 'registration',
 				idUser: ids[1],
 			},
 			expires: 0,
+		},
+		//invalid process
+		{
+			token: {
+				process: 'test',
+				idUser: ids[1],
+			},
+			expires: 0,
+		},
+		//non existing idUser
+		{
+			token: {
+				process: 'registration',
+				idUser: 999999,
+			},
+			expires: '24h',
 		},
 	];
 
@@ -52,14 +71,31 @@ afterAll(async (done) => {
 	done();
 });
 
-describe('testing registration:', () => {
-	test('valid registration GET /token/<webToken>', async () => {
+describe('GET /token/<webToken> registration:', () => {
+	test('valid registration ', async () => {
+		//make request to endpoint
 		const response = await request.get('/token/' + emailToken[0]);
 		expect(response.status).toBe(200);
+
+		//check if actually changed
+		let results = await runQuery(db.pool, [
+			`SELECT verified FROM user WHERE idUser = ${ids[0]};`,
+		]);
+		expect(results[0][0].verified).toBe(1);
 	});
 
-	test('valid registration GET /token/<webToken>', async () => {
+	test('expired jwt', async () => {
 		const response = await request.get('/token/' + emailToken[1]);
 		expect(response.status).toBe(400);
+	});
+
+	test('invalid process', async () => {
+		const response = await request.get('/token/' + emailToken[2]);
+		expect(response.status).toBe(400);
+	});
+
+	test('non existing user', async () => {
+		const response = await request.get('/token/' + emailToken[3]);
+		expect(response.status).toBe(404);
 	});
 });
