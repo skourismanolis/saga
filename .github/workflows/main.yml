@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: initialize docker
-        run: docker-compose up -d
+        run: docker compose up -d
         working-directory: ./back-end/tests
       - name: checkout
         uses: actions/checkout@v2
