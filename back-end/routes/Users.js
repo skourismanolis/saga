@@ -1,4 +1,5 @@
 require('dotenv').config({ path: '../.env' });
+require('mysql2/promise');
 const express = require('express');
 const app = express.Router();
 const jwt = require('jsonwebtoken');
@@ -190,12 +191,12 @@ app.delete('/', async (req, res) => {
 			'SELECT * FROM member WHERE idUser = ? AND role = ?',
 			[req.user.id, 'Admin']
 		);
-		if (admin.length == 0) {
+		if (admin.length > 0) {
 			res.status(403).send('Forbidden');
 			return;
 		}
 
-		await db.Promise.all([
+		await Promise.all([
 			db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
 				req.user.id,
 			]),
