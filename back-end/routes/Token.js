@@ -7,24 +7,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 
-app.get('/', async (req, res) => {
-	//for debugging
-	try {
-		let results = await db.pool.query(
-			`SELECT username FROM user WHERE idUser = ?`,
-			[1]
-		);
-		if (results[0].length == 0) {
-			return res.sendStatus(404);
-		}
-
-		return res.send(results[0]);
-	} catch (error) {
-		res.sendStatus(500);
-		console.error(error);
-	}
-});
-
 app.get('/:token', async (req, res) => {
 	try {
 		let token = req.params.token;
@@ -33,7 +15,6 @@ app.get('/:token', async (req, res) => {
 			process.env.EMAIL_SECRET,
 			async (err, tokenRequest) => {
 				if (err) return res.sendStatus(400);
-				console.log(tokenRequest);
 				try {
 					Joi.attempt(tokenRequest, schemas.TokenObject);
 
@@ -47,11 +28,6 @@ app.get('/:token', async (req, res) => {
 						case 'invite':
 							await invite(req, res, tokenRequest);
 							break;
-						default:
-							console.log(
-								'GET /token/<webToken> with unexpected process'
-							);
-							return res.sendStatus(403);
 					}
 				} catch (error) {
 					console.log(error);
