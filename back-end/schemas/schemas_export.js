@@ -10,7 +10,8 @@ const IssuePut = require('./IssuePut');
 const Label = require('./Label');
 const LabelPutPost = require('./LabelPutPost');
 const Payment = require('./Payment');
-const Project = require('./Project');
+const ProjectCreate = require('./ProjectCreate');
+const ProjectUpdate = require('./ProjectUpdate');
 const ProjectMember = require('./ProjectMember');
 const ProjectMemberShort = require('./ProjectMemberShort');
 const Sprint = require('./Sprint');
@@ -32,7 +33,8 @@ module.exports = {
 	Label,
 	LabelPutPost,
 	Payment,
-	Project,
+	ProjectCreate,
+	ProjectUpdate,
 	ProjectMember,
 	ProjectMemberShort,
 	Sprint,
