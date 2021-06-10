@@ -32,5 +32,6 @@ app.get('/', async (req, res) => {
 
 app.use('/users', require('./routes/Users'));
 app.use('/token', require('./routes/Token'));
+app.use('/projects', require('./routes/Projects'));
 
 module.exports = app;

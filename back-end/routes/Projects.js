@@ -1,14 +1,14 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const app = express.Router();
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 
 // CREATE PROJECT
-app.post('/projects', async (req, res) => {
+app.post('/', async (req, res) => {
 	let conn;
 	try {
 		Joi.attempt(req.body, schemas.ProjectCreate);
@@ -17,11 +17,14 @@ app.post('/projects', async (req, res) => {
 	}
 	try {
 		const [result] = await db.pool.query(
-			'GET idUser,verified FROM user WHERE idUser = ?',
+			'SELECT idUser,verified FROM user WHERE idUser = ?',
 			[req.user.id]
 		);
-		if (result[0].verified == 0) {
+		if (result.length == 0) {
 			return res.sendStatus(401);
+		}
+		if (result[0].verified == 0) {
+			return res.sendStatus(403);
 		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -29,6 +32,7 @@ app.post('/projects', async (req, res) => {
 			'INSERT INTO project (title) VALUES (?)',
 			[req.body.title]
 		);
+
 		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
 			[req.user.id, project[0].idProject, 'Admin']
