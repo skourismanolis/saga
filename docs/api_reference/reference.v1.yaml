@@ -318,18 +318,6 @@ paths:
             type: integer
             minimum: 0
           in: query
-          name: withSprint
-          description: Includes the `sprint` field in the results
-        - schema:
-            type: integer
-            minimum: 0
-          in: query
-          name: withEpic
-          description: Includes the `epic` field in the results
-        - schema:
-            type: integer
-            minimum: 0
-          in: query
           name: assignee
           description: User id. Must have access to the project. Shows only issues assigned to the specified user.
         - schema:

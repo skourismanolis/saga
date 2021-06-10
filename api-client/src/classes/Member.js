@@ -13,12 +13,12 @@ module.exports = class Member extends Base {
 	 */
 	constructor(
 		client,
-		{ idMember, name, surname, email, role, picture },
+		{ idUser, name, surname, email, role, picture },
 		idProject
 	) {
 		super(client);
 		this._idProject = idProject;
-		this._idMember = idMember;
+		this._idUser = idUser;
 		this.name = name;
 		this.surname = surname;
 		this.email = email || null;
@@ -27,12 +27,12 @@ module.exports = class Member extends Base {
 	}
 
 	get id() {
-		return this._idMember;
+		return this._idUser;
 	}
 
 	toJSON() {
 		return JSON.stringify({
-			idMember: this._idMember,
+			idUser: this._idUser,
 			name: this.name,
 			surname: this.surname,
 			email: this.email,
@@ -53,7 +53,7 @@ module.exports = class Member extends Base {
 			`/project/${this._idProject}/members`
 		);
 
-		let member = members.find((m) => m.idMember == this._idMember);
+		let member = members.find((m) => m.idUser == this._idUser);
 
 		this.name = member.name;
 		this.surname = member.surname;
