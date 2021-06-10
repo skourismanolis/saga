@@ -245,6 +245,16 @@ describe('issue search', () => {
 		);
 	});
 
+	test('search', async () => {
+		enableMock();
+
+		let issues = await project.searchIssues({
+			search: 'asd',
+		});
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+	});
+
 	afterAll(() => disableMock());
 });
 
