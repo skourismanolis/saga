@@ -38,8 +38,9 @@ app.post('/', async (req, res) => {
 			[req.user.id, project[0].idProject, 'Admin']
 		);
 		await conn.commit();
-
-		return res.sendStatus(200);
+		return res
+			.status(200)
+			.send({ message: 'OK', idProject: project[0].idProject });
 	} catch (error) {
 		console.error(error);
 		if (conn != null) conn.rollback();
