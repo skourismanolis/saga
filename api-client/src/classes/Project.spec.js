@@ -172,6 +172,15 @@ describe('issue search', () => {
 					};
 				});
 			}
+
+			if (reqURL.searchParams.get('column') != null) {
+				let columnId = Number(reqURL.searchParams.get('column'));
+
+				resp.data = resp.data.map((issue) => ({
+					...issue,
+					idColumn: columnId,
+				}));
+			}
 			return resp;
 		};
 
@@ -243,6 +252,19 @@ describe('issue search', () => {
 		issues.content.map((i) =>
 			expect(i._assigneeIds).toContain(members[0].id)
 		);
+	});
+
+	test('column', async () => {
+		disableMock();
+		let columns = await project.getColumns();
+		enableMock();
+
+		let issues = await project.searchIssues({
+			column: columns[0],
+		});
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+		issues.content.map((i) => expect(i._idColumn).toBe(columns[0].id));
 	});
 
 	test('search', async () => {
