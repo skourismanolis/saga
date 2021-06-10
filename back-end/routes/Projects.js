@@ -34,13 +34,11 @@ app.post('/', async (req, res) => {
 		);
 
 		await conn.query(
-			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
-			[req.user.id, project[0].idProject, 'Admin']
+			'INSERT INTO member (idUser, idProject , role) VALUES (?,(SELECT max(idProject) FROM project),?)',
+			[req.user.id, 'Admin']
 		);
 		await conn.commit();
-		return res
-			.status(200)
-			.send({ message: 'OK', idProject: project[0].idProject });
+		res.status(200).send({ message: 'OK', idProject: project.insertId });
 	} catch (error) {
 		console.error(error);
 		if (conn != null) conn.rollback();
