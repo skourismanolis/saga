@@ -125,10 +125,8 @@ describe('issue search', () => {
 	 * the results to match the query.
 	 */
 	function enableMock() {
-		originalAxios = client.axios;
 		let mockAxios = async (...args) => {
 			let resp = await originalAxios(...args);
-
 			let reqURL = new URL(args[0].url, originalAxios.defaults.baseURL);
 
 			if (reqURL.searchParams.get('inSprint') != null) {
@@ -156,6 +154,24 @@ describe('issue search', () => {
 				}));
 			}
 
+			if (reqURL.searchParams.get('assignee') != null) {
+				resp.data = resp.data.map((issue) => {
+					let assignees = issue.assignees;
+					let assigneeId = Number(
+						reqURL.searchParams.get('assignee')
+					);
+					if (assignees == null) {
+						assignees = [assigneeId];
+					} else {
+						assignees = [...assignees, assigneeId];
+					}
+
+					return {
+						...issue,
+						assignees,
+					};
+				});
+			}
 			return resp;
 		};
 
@@ -172,7 +188,10 @@ describe('issue search', () => {
 	}
 
 	let originalAxios;
-	beforeAll(() => enableMock());
+	beforeAll(() => {
+		originalAxios = client.axios;
+		enableMock();
+	});
 
 	test('no search', async () => {
 		await expect(project.searchIssues({})).resolves.toBeInstanceOf(
@@ -209,6 +228,21 @@ describe('issue search', () => {
 		let labelIds = labels.map((l) => l.id);
 
 		issues.content.map((i) => expect(labelIds).toContain(i._idLabel));
+	});
+
+	test('assignee', async () => {
+		disableMock();
+		let members = await project.getMembers();
+		enableMock();
+
+		let issues = await project.searchIssues({
+			assignee: members[0],
+		});
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+		issues.content.map((i) =>
+			expect(i._assigneeIds).toContain(members[0].id)
+		);
 	});
 
 	afterAll(() => disableMock());
