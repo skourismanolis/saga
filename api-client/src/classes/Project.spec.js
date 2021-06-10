@@ -1,3 +1,5 @@
+const URL = require('url').URL;
+
 const SagaClient = require('../index');
 const Project = require('./Project');
 const Member = require('./Member');
@@ -115,6 +117,101 @@ describe('issues', () => {
 		let issue = await project.getIssue('asd');
 		await expect(project.deleteIssue(issue)).resolves.not.toThrow();
 	});
+});
+
+describe('issue search', () => {
+	/**
+	 * Enables axios mocking. Highjacks search urls with query parameters and modifies
+	 * the results to match the query.
+	 */
+	function enableMock() {
+		originalAxios = client.axios;
+		let mockAxios = async (...args) => {
+			let resp = await originalAxios(...args);
+
+			let reqURL = new URL(args[0].url, originalAxios.defaults.baseURL);
+
+			if (reqURL.searchParams.get('inSprint') != null) {
+				resp.data = resp.data.map((issue) => ({
+					...issue,
+					idSprint: reqURL.searchParams.get('inSprint'),
+				}));
+			}
+
+			//set the idLabel of every issue to be one of the idLabels included the query
+			if (reqURL.searchParams.get('labels') != null) {
+				//parse labels string into array of numbers
+				let labels = reqURL.searchParams.get('labels');
+				labels = decodeURIComponent(labels);
+				labels = labels.split(',');
+				labels = labels.map((l) => Number(l));
+
+				//assign a random label to every issue
+
+				let randomNumber = Math.floor(Math.random() * 1000);
+
+				resp.data = resp.data.map((issue) => ({
+					...issue,
+					idLabel: labels[randomNumber % (labels.length - 1)],
+				}));
+			}
+
+			return resp;
+		};
+
+		project.axios = mockAxios;
+		project.client.axios = mockAxios;
+	}
+
+	/**
+	 * Restores axios to the unmocked version
+	 */
+	function disableMock() {
+		project.axios = originalAxios;
+		project.client.axios = originalAxios;
+	}
+
+	let originalAxios;
+	beforeAll(() => enableMock());
+
+	test('no search', async () => {
+		await expect(project.searchIssues({})).resolves.toBeInstanceOf(
+			PaginatedList
+		);
+	});
+
+	test('inSprint', async () => {
+		disableMock();
+		let sprints = await project.getSprints();
+		enableMock();
+
+		let issues = await project.searchIssues({
+			inSprint: sprints.content[0],
+		});
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+		issues.content.map((i) =>
+			expect(Number(i._idSprint)).toBe(sprints.content[0].id)
+		);
+	});
+
+	test('labels', async () => {
+		disableMock();
+		let labels = await project.getLabels();
+		enableMock();
+
+		let issues = await project.searchIssues({
+			labels: labels,
+		});
+
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+		let labelIds = labels.map((l) => l.id);
+
+		issues.content.map((i) => expect(labelIds).toContain(i._idLabel));
+	});
+
+	afterAll(() => disableMock());
 });
 
 describe('sprints', () => {
