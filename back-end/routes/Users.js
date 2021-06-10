@@ -198,16 +198,12 @@ app.delete('/', async (req, res) => {
 		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		await db.pool.query('DELETE FROM assignee WHERE idUser = ?', [
+		await conn.query('DELETE FROM assignee WHERE idUser = ?', [
 			req.user.id,
 		]);
-		await db.pool.query('DELETE FROM payment WHERE idUser = ?', [
-			req.user.id,
-		]);
-		await db.pool.query('DELETE FROM member WHERE idUser = ?', [
-			req.user.id,
-		]);
-		await db.pool.query('DELETE FROM user WHERE idUser = ?', [req.user.id]);
+		await conn.query('DELETE FROM payment WHERE idUser = ?', [req.user.id]);
+		await conn.query('DELETE FROM member WHERE idUser = ?', [req.user.id]);
+		await conn.query('DELETE FROM user WHERE idUser = ?', [req.user.id]);
 
 		await conn.commit();
 		res.status(200).send('Ok');
