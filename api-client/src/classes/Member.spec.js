@@ -5,7 +5,7 @@ const Project = require('./Project');
 let client;
 let member;
 const MOCK_MEMBER = {
-	idMember: 2,
+	idUser: 2,
 	name: 'sdf',
 	surname: 'asd',
 	email: 'dj3j@jad.com',
@@ -29,7 +29,7 @@ test('constructs', () => {
 });
 
 test('id', () => {
-	expect(member.id).toBe(MOCK_MEMBER.idMember);
+	expect(member.id).toBe(MOCK_MEMBER.idUser);
 });
 
 test('toJSON', () => {
