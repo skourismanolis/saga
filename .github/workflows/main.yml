@@ -105,11 +105,11 @@ jobs:
   test-backend:
     runs-on: ubuntu-latest
     steps:
-      - name: initialize docker
-        run: docker compose up -d
-        working-directory: ./back-end/tests
       - name: checkout
         uses: actions/checkout@v2
+      - name: initialize docker
+        run: docker-compose up -d
+        working-directory: ./back-end/tests
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
@@ -118,5 +118,5 @@ jobs:
         run: yarn
         working-directory: ./back-end
       - name: run tests
-        run: yarn test
+        run: yarn jest
         working-directory: ./back-end

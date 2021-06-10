@@ -17,7 +17,12 @@ beforeAll(async () => {
 		`INSERT INTO user VALUES (0, 'test1','test1','test1','test1','test2',0,'Free','test1');`,
 		`INSERT INTO user VALUES (0, 'test1','test1','test1','test1','test2',0,'Free','test1')`,
 	];
-	let results = await runQuery(db.pool, myQueries);
+	let results;
+	try {
+		results = await runQuery(db.pool, myQueries);
+	} catch (error) {
+		console.log(error);
+	}
 	ids = [results[0].insertId, results[1].insertId];
 
 	jsons = [
