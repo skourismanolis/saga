@@ -181,6 +181,15 @@ describe('issue search', () => {
 					idColumn: columnId,
 				}));
 			}
+
+			if (reqURL.searchParams.get('inEpic') != null) {
+				let epicId = Number(reqURL.searchParams.get('inEpic'));
+
+				resp.data = resp.data.map((issue) => ({
+					...issue,
+					idEpic: epicId,
+				}));
+			}
 			return resp;
 		};
 
@@ -275,6 +284,21 @@ describe('issue search', () => {
 		});
 		expect(issues).toBeInstanceOf(PaginatedList);
 		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+	});
+
+	test('inEpic', async () => {
+		disableMock();
+		let epics = await project.getEpics();
+		enableMock();
+
+		let issues = await project.searchIssues({
+			inEpic: epics.content[0],
+		});
+		expect(issues).toBeInstanceOf(PaginatedList);
+		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
+		issues.content.map((i) =>
+			expect(Number(i._idEpic)).toBe(epics.content[0].id)
+		);
 	});
 
 	afterAll(() => disableMock());
