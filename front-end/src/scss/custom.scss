@@ -14,5 +14,5 @@ $theme-colors: (
 	'success': #14cd6f,
 );
 
-@import '../../../../node_modules/bootstrap/scss/bootstrap';
-@import '../../../../node_modules/bootstrap-vue/src/index.scss';
+@import '../../../node_modules/bootstrap/scss/bootstrap';
+@import '../../../node_modules/bootstrap-vue/src/index.scss';

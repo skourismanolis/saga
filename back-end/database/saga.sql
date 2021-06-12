@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`sprint` (
   `idProject` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `start` DATE NULL,
-  `finish` DATE NULL,
+  `deadline` DATE NULL,
   PRIMARY KEY (`idSprint`),
   CONSTRAINT `fk_sprint_project1`
     FOREIGN KEY (`idProject`)

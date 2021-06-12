@@ -318,18 +318,6 @@ paths:
             type: integer
             minimum: 0
           in: query
-          name: withSprint
-          description: Includes the `sprint` field in the results
-        - schema:
-            type: integer
-            minimum: 0
-          in: query
-          name: withEpic
-          description: Includes the `epic` field in the results
-        - schema:
-            type: integer
-            minimum: 0
-          in: query
           name: assignee
           description: User id. Must have access to the project. Shows only issues assigned to the specified user.
         - schema:
@@ -919,7 +907,19 @@ paths:
     put:
       summary: Change epic
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
       operationId: put-projects-idProject-epics-idEpic
       requestBody:
         content:
@@ -1196,7 +1196,7 @@ paths:
         '500':
           description: Internal Server Error
       description: Returns a single label.
-  '/project/{idProject}/columns':
+  '/projects/{idProject}/columns':
     parameters:
       - schema:
           type: integer
@@ -1263,7 +1263,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ColumnPutPost'
-  '/project/{idProject}/columns/{idColumn}':
+  '/projects/{idProject}/columns/{idColumn}':
     parameters:
       - schema:
           type: integer
@@ -1541,6 +1541,8 @@ paths:
           description: OK
         '400':
           description: Bad Request
+        '401':
+          description: Unauthorized
         '403':
           description: Forbidden
         '404':
@@ -1920,7 +1922,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        finish:
+        deadline:
           type: string
           format: date-time
           nullable: true
@@ -1934,7 +1936,7 @@ components:
       required:
         - idSprint
         - start
-        - finish
+        - deadline
         - title
         - issues
     SprintPutPost:
@@ -1945,7 +1947,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        finish:
+        deadline:
           type: string
           format: date-time
           nullable: true
@@ -1953,7 +1955,7 @@ components:
           type: string
       required:
         - start
-        - finish
+        - deadline
         - title
     Epic:
       title: Epic
@@ -2168,12 +2170,13 @@ components:
         idUser:
           type: integer
           minimum: 1
+          description: used for registration
         idProject:
           type: integer
           minimum: 1
+          description: used for member invite
       required:
         - process
-        - idUser
   securitySchemes: {}
   headers:
     X-Pagination-Total:

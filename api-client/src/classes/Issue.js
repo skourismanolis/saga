@@ -61,6 +61,24 @@ module.exports = class Issue extends Base {
 		});
 	}
 
+	async refresh() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/issues/${this.id}`
+		);
+
+		this._idSprint = data.idSprint;
+		this._idColumn = data.idColumn;
+		this._idEpic = data.idEpic;
+		this._idLabel = data.idLabel;
+		this._assigneeIds = data.assignees;
+		this.title = data.title;
+		this.category = data.category;
+		this.points = data.points;
+		this.priority = data.priority;
+		this.description = data.description;
+		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
+	}
+
 	get id() {
 		return this._code;
 	}
@@ -69,8 +87,11 @@ module.exports = class Issue extends Base {
 		return this._code;
 	}
 
-	getProject() {
-		return new Project(this.client, this._idProject);
+	async getProject() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		return new Project(this.client, project);
 	}
 
 	/**
@@ -88,14 +109,35 @@ module.exports = class Issue extends Base {
 	}
 
 	/**
+	 * Get the Epic this Issue belongs in. If it doesn't belong to an epic, returns null
+	 * @returns {Object|Null} the Epic
+	 */
+	async getEpic() {
+		if (this._idEpic == null) return null;
+		else {
+			let { data: epic } = await this.axios.get(
+				`/projects/${this._idProject}/epics/${this._idEpic}`
+			);
+			return new Epic(this.client, epic, this._idProject);
+		}
+	}
+
+	/**
 	 * @returns {Object|Null} If the Issue has a Label assigned, it returns it, else it returns null.
 	 */
 	async getLabel() {
 		if (this._idLabel === null) return null;
-		let { data: label } = this.axios.get(
-			`/project/${this._idProject}/labels/${this._idLabel}`
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${this._idLabel}`
 		);
+
 		return new Label(this.client, label, this._idProject);
+	}
+
+	async getColumn() {
+		if (this._idColumn === null) return null;
+		let p = await this.getProject();
+		return await p.getColumn(this._idColumn);
 	}
 
 	/**
@@ -110,7 +152,9 @@ module.exports = class Issue extends Base {
 			(m) => this._assigneeIds.indexOf(m.id) !== -1
 		);
 
-		return assignees.map((a) => new Member(this.client, a));
+		return assignees.map(
+			(a) => new Member(this.client, a, this._idProject)
+		);
 	}
 
 	/**
@@ -174,6 +218,8 @@ module.exports = class Issue extends Base {
 			`/projects/${this._idProject}/issues/${this._code}`,
 			newIssue
 		);
+
+		await this.refresh();
 	}
 };
 
@@ -181,3 +227,4 @@ const Label = require('./Label');
 const Member = require('./Member');
 const Project = require('./Project');
 const Sprint = require('./Sprint');
+const Epic = require('./Epic');

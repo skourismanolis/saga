@@ -19,7 +19,7 @@ module.exports = class SagaClient {
 		let list = new PaginatedList(this, {
 			url: '/projects',
 			dataTransformer: (projects) =>
-				projects.map((proj) => new Project(this, proj.id)),
+				projects.map((proj) => new Project(this, proj)),
 		});
 		await list.refresh();
 		return list;

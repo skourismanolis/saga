@@ -1,3 +1,4 @@
+const URLSearchParams = require('url').URLSearchParams;
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -11,9 +12,11 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, idProject) {
+	constructor(client, { idProject, title, picture }) {
 		super(client);
 		this._idProject = idProject;
+		this.title = title;
+		this.picture = picture || null;
 	}
 
 	get id() {
@@ -21,7 +24,11 @@ module.exports = class Project extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({ idProject: this._idProject });
+		return JSON.stringify({
+			idProject: this._idProject,
+			title: this.title,
+			picture: this.picture,
+		});
 	}
 
 	/**
@@ -39,6 +46,20 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get all the epics belonging to the project
+	 * @returns {Object[]} array of Epics
+	 */
+	async getEpics() {
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/epics`,
+			dataTransformer: (epics) =>
+				epics.map((e) => new Epic(this.client, e, this._idProject)),
+		});
+		await list.refresh();
+		return list;
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
@@ -48,12 +69,38 @@ module.exports = class Project extends Base {
 		return labels.map((l) => new Label(this.client, l, this._idProject));
 	}
 
+	/**
+	 * @returns {Object[]} array of Columns belonging to this project
+	 */
+	async getColumns() {
+		let { data: columns } = await this.axios.get(
+			`/projects/${this._idProject}/columns`
+		);
+
+		return columns.map((c) => new Column(this.client, c, this._idProject));
+	}
+
+	/**
+	 * Get a specific column from the api
+	 * @param {Number} idColumn
+	 * @returns {Object} Column
+	 */
+	async getColumn(idColumn) {
+		let { data: column } = await this.axios.get(
+			`/projects/${this._idProject}/columns/${idColumn}`
+		);
+
+		return new Column(this.client, column, this._idProject);
+	}
+
 	async getMembers() {
 		let { data: members } = await this.axios.get(
 			`/projects/${this._idProject}/members`
 		);
 
-		return members.map((member) => new Member(this.client, member));
+		return members.map(
+			(member) => new Member(this.client, member, this._idProject)
+		);
 	}
 
 	async getAdmins() {
@@ -61,7 +108,7 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.ADMIN);
 	}
 
@@ -70,8 +117,90 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/members`
 		);
 		return members
-			.map((member) => new Member(this.client, member))
+			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.MEMBER);
+	}
+
+	/**
+	 * Search all the issues of this project. Search terms are applied using AND.
+	 * @param {Object} config
+	 * @param {Object=} config.inSprint include only issues belonging to the given sprint
+	 * @param {Object=} config.inEpic include only issues belonging to the given epic
+	 * @param {Object[]=} config.labels include only issues with one of the given labels
+	 * @param {Object=} config.assignee include issues assigned to the given user
+	 * @param {Object|Null=} config.column include only issues on the given column. Null means the to-do column
+	 * @param {Object=} config.search full-text search string on the issues
+	 * @returns {Object} PaginatedList of Issues
+	 */
+	async searchIssues({ inSprint, labels, assignee, column, inEpic, search }) {
+		let query = {};
+		if (inSprint !== undefined) {
+			query.inSprint = inSprint === null ? null : inSprint.id;
+		}
+
+		if (labels != null) {
+			if (!(labels instanceof Array)) throw 'Labels must be an array';
+			query.labels = labels.map((l) => l.id);
+		}
+
+		if (assignee != null) {
+			query.assignee = assignee.id;
+		}
+
+		if (column !== undefined) {
+			query.column = column === null ? null : column.id;
+		}
+
+		if (inEpic !== undefined) {
+			query.inEpic = inEpic === null ? null : inEpic.id;
+		}
+
+		if (search != null) {
+			query.search = search;
+		}
+
+		let queryParams = new URLSearchParams(query);
+		let url =
+			`/projects/${this._idProject}/issues?` + queryParams.toString();
+
+		let ret = new PaginatedList(this.client, {
+			url,
+			dataTransformer: (issues) =>
+				issues.map((i) => new Issue(this.client, i, this._idProject)),
+		});
+
+		await ret.refresh();
+		return ret;
+	}
+
+	/**
+	 * Create a new epic
+	 * @param {Object} epicConf epic configuration
+	 * @param {String} epicConf.title the title of the epic
+	 * @param {Date|Null=} epicConf.start When did this epic start
+	 * @param {Date|Null=} epicConf.deadline when will this epic end
+	 * @param {Date|Null=} epicConf.description the description of the epic
+	 */
+	async createEpic({ start, deadline, title, description }) {
+		let newEpic = {
+			title: title,
+			start: start || null,
+			deadline: deadline || null,
+			description: description || null,
+		};
+
+		let {
+			data: { idEpic },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/epics`,
+			newEpic
+		);
+
+		return new Epic(
+			this.client,
+			{ ...newEpic, issues: [], idEpic },
+			this._idProject
+		);
 	}
 
 	/**
@@ -79,13 +208,13 @@ module.exports = class Project extends Base {
 	 * @param {Object} sprintConf sprint configuration
 	 * @param {String} sprintConf.title the title of the sprint
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
-	 * @param {Date|Null=} sprintConf.finish when will this sprint end
+	 * @param {Date|Null=} sprintConf.deadline when will this sprint end
 	 */
-	async createSprint({ start, finish, title }) {
+	async createSprint({ start, deadline, title }) {
 		let newSprint = {
 			title: title,
 			start: start || null,
-			finish: finish || null,
+			deadline: deadline || null,
 		};
 
 		let {
@@ -126,12 +255,44 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * @param {object} columnConf
+	 * @param {string} columnConf.name the name of the column
+	 * @param {Number} columnConf.order the order of the column. Must be greater than 0.
+	 * @returns {object} the newly created column
+	 */
+	async createColumn({ name, order }) {
+		let newColumn = { name, order };
+		let {
+			data: { idColumn },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/columns`,
+			newColumn
+		);
+
+		return new Column(
+			this.client,
+			{ idColumn, name, order },
+			this._idProject
+		);
+	}
+
+	/**
 	 * deletes the given sprint.
 	 * @param {Object} sprint the sprint to delete
 	 */
 	async deleteSprint(sprint) {
 		await this.axios.delete(
 			`/projects/${this._idProject}/sprints/${sprint.id}`
+		);
+	}
+
+	/**
+	 * deletes the given epic.
+	 * @param {Object} epic the epic to delete
+	 */
+	async deleteEpic(epic) {
+		await this.axios.delete(
+			`/projects/${this._idProject}/epics/${epic.id}`
 		);
 	}
 
@@ -151,6 +312,16 @@ module.exports = class Project extends Base {
 	async deleteIssue(issue) {
 		await this.axios.delete(
 			`projects/${this._idProject}/issues/${issue.code}`
+		);
+	}
+
+	/**
+	 * remove a column from the project.
+	 * @param {object} column Column object
+	 */
+	async deleteColumn(column) {
+		await this.axios.delete(
+			`projects/${this._idProject}/columns/${column.id}`
 		);
 	}
 
@@ -212,11 +383,21 @@ module.exports = class Project extends Base {
 		return await this.getIssue(code);
 	}
 
+	async refresh() {
+		let { data: projects } = await this.axios.get(`/projects`);
+
+		let project = projects.find((m) => m.idProject == this._idProject);
+		this.title = project.title;
+		this.picture = project.picture;
+	}
+
 	async update({ title, picture }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
 			picture,
 		});
+
+		await this.refresh();
 	}
 };
 
@@ -225,3 +406,5 @@ const Label = require('./Label');
 const Member = require('./Member');
 const Sprint = require('./Sprint');
 const UserRole = require('./UserRoles');
+const Column = require('./Column');
+const Epic = require('./Epic');

@@ -8,6 +8,6 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: 'saga1234'
         volumes:
-            - ./database:/docker-entrypoint-initdb.d
+            - ../database:/docker-entrypoint-initdb.d
         ports:
-            - '3306:3306'
+            - '3307:3306'
