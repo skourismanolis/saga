@@ -103,29 +103,31 @@ app.post('/', async (req, res) => {
 		if (result.length == 0) {
 			throw new Error('Not in db');
 		}
-		const emailToken = jwt.sign(
-			{
-				process: 'register',
-				id: result[0].idUser,
-			},
-			process.env.EMAIL_SECRET
-		);
+		if (process.env.NODE_ENV != 'test') {
+			const emailToken = jwt.sign(
+				{
+					process: 'register',
+					id: result[0].idUser,
+				},
+				process.env.EMAIL_SECRET
+			);
 
-		const url = `http://localhost:8080/token/${emailToken}`;
+			const url = `http://localhost:8080/token/${emailToken}`;
 
-		var transporter = nodemailer.createTransport({
-			service: 'gmail', // hostname
-			auth: {
-				user: process.env.GMAIL_EMAIL,
-				pass: process.env.GMAIL_PASS,
-			},
-		});
+			var transporter = nodemailer.createTransport({
+				service: 'gmail', // hostname
+				auth: {
+					user: process.env.GMAIL_EMAIL,
+					pass: process.env.GMAIL_PASS,
+				},
+			});
 
-		await transporter.sendMail({
-			to: result[0].email,
-			subject: 'Confirm Email for Saga Account',
-			html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
-		});
+			await transporter.sendMail({
+				to: result[0].email,
+				subject: 'Confirm Email for Saga Account',
+				html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
+			});
+		}
 
 		res.status(200).send('Ok');
 	} catch (err) {
