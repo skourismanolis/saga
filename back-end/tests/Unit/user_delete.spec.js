@@ -40,16 +40,21 @@ describe('Delete /users    delete_user', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		const response = await request
 			.post('/users/login')
 			.send({
 				email: 'klaininc@gmail.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		UserToken = response.body.token;
-		console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   ' + UserToken);
 	});
 
 	test('Bad Request ', async () => {
@@ -59,7 +64,10 @@ describe('Delete /users    delete_user', () => {
 			.send({
 				WRONG_FIELDS: 'string',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(400);
 	});
@@ -71,7 +79,10 @@ describe('Delete /users    delete_user', () => {
 			.send({
 				password: 'WRONG_PASSWORD',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(401);
 	});
@@ -83,7 +94,10 @@ describe('Delete /users    delete_user', () => {
 			.send({
 				password: 'string',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(200);
 		let result;

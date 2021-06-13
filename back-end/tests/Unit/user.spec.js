@@ -45,7 +45,11 @@ describe('POST /users registration:', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
+
 		expect(response.status).toBe(200);
 		let results;
 		try {
@@ -70,7 +74,10 @@ describe('POST /users registration:', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(403);
 	});
 	test('Not sufficient parameters ', async () => {
@@ -82,7 +89,10 @@ describe('POST /users registration:', () => {
 				email: 'azalea@zone10electric.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(400);
 	});
 });
@@ -96,7 +106,10 @@ describe('POST /users/login login:', () => {
 				email: 'INVALID_EMAIL',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(400);
 	});
 	test('Wrong Email ', async () => {
@@ -107,7 +120,10 @@ describe('POST /users/login login:', () => {
 				email: 'WRONG_EMAIL@haha.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(404);
 	});
 	test('Wrong Password ', async () => {
@@ -118,7 +134,10 @@ describe('POST /users/login login:', () => {
 				email: 'azalea@zone10electric.com',
 				password: 'WRONG_PASSWORD',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(404);
 	});
 	test('Valid Login ', async () => {
@@ -129,7 +148,10 @@ describe('POST /users/login login:', () => {
 				email: 'azalea@zone10electric.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		expect(response.status).toBe(200);
 		UserToken = response.body.token;
 	});
@@ -143,7 +165,10 @@ describe('PUT /users Profile settings:', () => {
 				email: 'azalea@zone10electric.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json');
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			});
 		UserToken = response.body.token;
 	})();
 
@@ -156,7 +181,10 @@ describe('PUT /users Profile settings:', () => {
 				email: 'azalea@zone10electric.com',
 				password: 'string',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(400);
 	});
@@ -174,7 +202,10 @@ describe('PUT /users Profile settings:', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth('INVALID_TOKEN', { type: 'bearer' });
 		expect(response.status).toBe(403);
 	});
@@ -192,7 +223,10 @@ describe('PUT /users Profile settings:', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(401);
 	});
@@ -210,7 +244,10 @@ describe('PUT /users Profile settings:', () => {
 				picture: 'string',
 				plan: 'Free',
 			})
-			.set('Accept', 'application/json')
+			.set({
+				'Content-Type': 'application/json',
+				Accept: '*/*',
+			})
 			.auth(UserToken, { type: 'bearer' });
 		expect(response.status).toBe(200);
 		let results;
