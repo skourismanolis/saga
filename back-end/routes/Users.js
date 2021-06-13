@@ -14,13 +14,19 @@ const schemas = require('../schemas/schemas_export');
 app.post('/login', async (req, res) => {
 	try {
 		Joi.attempt(req.body, schemas.UserLoginPost);
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('Bad request');
+		return;
+	}
+	try {
 		// prettier-ignore
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE email = ?',
 			[req.body.email]
 		);
 		if (result.length == 0) {
-			return res.status(404).send('Not Found');
+			return res.sendStatus(404);
 		}
 		const users = result[0];
 		if (await bcrypt.compare(req.body.password, users.password)) {
@@ -37,11 +43,11 @@ app.post('/login', async (req, res) => {
 			);
 			res.status(200).send({ token: accessToken });
 		} else {
-			res.status(400).send('Invalid username or password');
+			res.sendStatus(404);
 		}
 	} catch (err) {
 		console.log(err);
-		res.status(500).send('Internal Server Error');
+		res.sendStatus(500);
 	}
 });
 
@@ -141,18 +147,18 @@ app.put('/', async (req, res) => {
 
 	try {
 		// prettier-ignore
-		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ? , password = ?', 
+		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
 		[
 			req.user.id,
 		]);
 
 		if (result.length == 0) {
-			res.status(401).send('Unauthorized');
+			res.sendStatus(403);
 			return;
 		}
 		// prettier-ignore
 		if ( (await bcrypt.compare(req.body.password, result[0].password) ) == false ) {
-			res.status(403).send('Forbidden');
+			res.sendStatus(401);
 			return;
 		}
 		await db.pool.query(
@@ -184,7 +190,12 @@ app.delete('/', async (req, res) => {
 			res.status(400).send('Bad request');
 			return;
 		}
-		if (bcrypt.compare(req.body.password, result[0].password) == false) {
+		if (req.body.password == null) {
+			res.sendStatus(400);
+			return;
+		}
+		// prettier-ignore
+		if ( (await bcrypt.compare(req.body.password, result[0].password) ) == false ) {
 			res.status(401).send('Unauthorized');
 			return;
 		}
@@ -193,7 +204,7 @@ app.delete('/', async (req, res) => {
 			[req.user.id, 'Admin']
 		);
 		if (admin.length > 0) {
-			res.status(403).send('Forbidden');
+			res.status(403).send('Admin');
 			return;
 		}
 		conn = await db.pool.getConnection();
