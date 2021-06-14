@@ -3,7 +3,7 @@ const express = require('express');
 const app = express.Router();
 // const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const Project_auth = require('../functions');
+const { Project_auth } = require('../functions');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
@@ -133,16 +133,80 @@ app.post('/', async (req, res) => {
 	}
 });
 
-// app.put(
-// 	'/:idProject',
-// 	Project_auth(req.params.idProject, 'Admin'),
-// 	async (req, res) => {
-// 		// try {
-// 		// 	Joi.attempt(req.body, schemas.ProjectUpdate);
-// 		// } catch (error) {
-// 		// 	return res.sendStatus(400);
-// 		// }
-// 	}
-// );
+app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
+	try {
+		Joi.attempt(req.body, schemas.ProjectUpdate);
+	} catch (error) {
+		return res.sendStatus(400);
+	}
+	try {
+		const [project] = await db.pool.query(
+			'SELECT * FROM project WHERE idProject = ?',
+			[req.params.idProject]
+		);
+		if (project.length == 0) {
+			res.sendStatus(404);
+		}
+		let picture_name;
+		if (req.body.picture == null) {
+			picture_name = project[0].picture;
+		} else {
+			picture_name = req.body.picture;
+		}
+		await db.pool.query(
+			'UPDATE project SET picture = ?, title = ? WHERE idProject = ?',
+			[picture_name, req.body.title, req.params.idProject]
+		);
+		res.sendStatus(200);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+});
+
+app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		await conn.query(
+			'DELETE FROM assignee WHERE code IN (SELECT code FROM issue WHERE idProject = ?)',
+			[req.params.idProject]
+		);
+		await conn.query('DELETE FROM column WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query(
+			'DELETE FROM comment WHERE code IN (SELECT code FROM issue WHERE idProject = ?)',
+			[req.params.idProject]
+		);
+		await conn.query('DELETE FROM epic WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM label WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM member WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM sprint WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM issue WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM project WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.rollback();
+	}
+});
 
 module.exports = app;
