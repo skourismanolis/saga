@@ -1,3 +1,4 @@
+const URLSearchParams = require('url').URLSearchParams;
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -118,6 +119,58 @@ module.exports = class Project extends Base {
 		return members
 			.map((member) => new Member(this.client, member, this._idProject))
 			.filter((member) => member.role === UserRole.MEMBER);
+	}
+
+	/**
+	 * Search all the issues of this project. Search terms are applied using AND.
+	 * @param {Object} config
+	 * @param {Object=} config.inSprint include only issues belonging to the given sprint
+	 * @param {Object=} config.inEpic include only issues belonging to the given epic
+	 * @param {Object[]=} config.labels include only issues with one of the given labels
+	 * @param {Object=} config.assignee include issues assigned to the given user
+	 * @param {Object|Null=} config.column include only issues on the given column. Null means the to-do column
+	 * @param {Object=} config.search full-text search string on the issues
+	 * @returns {Object} PaginatedList of Issues
+	 */
+	async searchIssues({ inSprint, labels, assignee, column, inEpic, search }) {
+		let query = {};
+		if (inSprint !== undefined) {
+			query.inSprint = inSprint === null ? null : inSprint.id;
+		}
+
+		if (labels != null) {
+			if (!(labels instanceof Array)) throw 'Labels must be an array';
+			query.labels = labels.map((l) => l.id);
+		}
+
+		if (assignee != null) {
+			query.assignee = assignee.id;
+		}
+
+		if (column !== undefined) {
+			query.column = column === null ? null : column.id;
+		}
+
+		if (inEpic !== undefined) {
+			query.inEpic = inEpic === null ? null : inEpic.id;
+		}
+
+		if (search != null) {
+			query.search = search;
+		}
+
+		let queryParams = new URLSearchParams(query);
+		let url =
+			`/projects/${this._idProject}/issues?` + queryParams.toString();
+
+		let ret = new PaginatedList(this.client, {
+			url,
+			dataTransformer: (issues) =>
+				issues.map((i) => new Issue(this.client, i, this._idProject)),
+		});
+
+		await ret.refresh();
+		return ret;
 	}
 
 	/**
