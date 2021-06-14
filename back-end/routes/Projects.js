@@ -119,6 +119,18 @@ app.post('/', async (req, res) => {
 		);
 
 		await conn.query(
+			'INSERT INTO column (idProject,name,order) VALUES (?,?,?)',
+			[project.insertId, 'TO-DO', 1]
+		);
+		await conn.query(
+			'INSERT INTO column (idProject,name,order) VALUES (?,?,?)',
+			[project.insertId, 'IN PROGRESS', 2]
+		);
+		await conn.query(
+			'INSERT INTO column (idProject,name,order) VALUES (?,?,3)',
+			[project.insertId, 'DONE']
+		);
+		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,(SELECT max(idProject) FROM project),?)',
 			[req.user.idUser, 'Admin']
 		);

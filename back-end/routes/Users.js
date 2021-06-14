@@ -31,7 +31,7 @@ app.post('/login', async (req, res) => {
 		const users = result[0];
 		if (await bcrypt.compare(req.body.password, users.password)) {
 			const user = {
-				id: users.idUser,
+				idUser: users.idUser,
 				plan: users.plan,
 			};
 			const accessToken = jwt.sign(
