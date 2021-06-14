@@ -13,7 +13,7 @@ app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
 	let conn;
 	let projects;
-	let projects_number;
+	let projects_number = 0;
 	try {
 		let users;
 		conn = await db.pool.getConnection();
@@ -28,7 +28,6 @@ app.get('/', async (req, res) => {
 				WHERE idUser = ?)',
 			[req.user.id]
 		);
-		projects_number = projects.length;
 		[users] = await conn.query(
 			'																							\
 			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture	\
@@ -40,12 +39,27 @@ app.get('/', async (req, res) => {
 					SELECT idProject 																	\
 					FROM member 																		\
 					WHERE idUser = ?))																	\
-				AND user.idUser = member.idUser',
+					AND user.idUser = member.idUser',
 			[req.user.id]
 		);
 		await conn.commit();
+		if (req.query.search == null) {
+			projects_number = projects.length;
+		}
 		// create correct project objects
 		projects.forEach((project) => {
+			// clear out the ones with no match
+			if (req.query.search != null) {
+				if (project.title.search(req.query.search) < 0) {
+					// remove project from list, and go to check project
+					projects = projects.filter(
+						(pro) => pro.idProject != project.idProject
+					);
+					return;
+				} else {
+					projects_number++;
+				}
+			}
 			// add members property inside projcet
 			project.members = [];
 			// find the members to add them
@@ -67,16 +81,15 @@ app.get('/', async (req, res) => {
 		req.headers['x-pagination-limit'] != null &&
 		req.headers['x-pagination-offset'] != null
 	) {
-		res.status(200)
-			.header('X-Pagination-Total', projects_number)
-			.send(
-				projects.slice(
-					req.headers['x-pagination-offset'],
-					req.headers['x-pagination-offset'] +
-						req.headers['x-pagination-limit']
-				)
-			);
+		projects = projects.slice(
+			req.headers['x-pagination-offset'],
+			req.headers['x-pagination-offset'] +
+				req.headers['x-pagination-limit']
+		);
 	}
+	res.status(200)
+		.header('X-Pagination-Total', projects_number)
+		.send(projects);
 });
 
 // CREATE PROJECT
