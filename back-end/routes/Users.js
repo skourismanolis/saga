@@ -107,7 +107,7 @@ app.post('/', async (req, res) => {
 			const emailToken = jwt.sign(
 				{
 					process: 'registration',
-					id: result[0].idUser,
+					idUser: result[0].idUser,
 				},
 				process.env.EMAIL_SECRET
 			);
@@ -151,7 +151,7 @@ app.put('/', async (req, res) => {
 		// prettier-ignore
 		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
 		[
-			req.user.id,
+			req.user.idUser,
 		]);
 
 		if (result.length == 0) {
@@ -172,7 +172,7 @@ app.put('/', async (req, res) => {
 				req.body.surname,
 				req.body.plan,
 				req.body.picture,
-				req.user.id,
+				req.user.idUser,
 			]
 		);
 		res.status(200).send('Ok');
@@ -186,7 +186,7 @@ app.delete('/', async (req, res) => {
 	try {
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE idUser = ?',
-			[req.user.id]
+			[req.user.idUser]
 		);
 		if (result.length == 0) {
 			res.status(400).send('Bad request');
@@ -203,7 +203,7 @@ app.delete('/', async (req, res) => {
 		}
 		const [admin] = await db.pool.query(
 			'SELECT * FROM member WHERE idUser = ? AND role = ?',
-			[req.user.id, 'Admin']
+			[req.user.idUser, 'Admin']
 		);
 		if (admin.length > 0) {
 			res.status(403).send('Admin');
@@ -212,11 +212,17 @@ app.delete('/', async (req, res) => {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		await conn.query('DELETE FROM assignee WHERE idUser = ?', [
-			req.user.id,
+			req.user.idUser,
 		]);
-		await conn.query('DELETE FROM payment WHERE idUser = ?', [req.user.id]);
-		await conn.query('DELETE FROM member WHERE idUser = ?', [req.user.id]);
-		await conn.query('DELETE FROM user WHERE idUser = ?', [req.user.id]);
+		await conn.query('DELETE FROM payment WHERE idUser = ?', [
+			req.user.idUser,
+		]);
+		await conn.query('DELETE FROM member WHERE idUser = ?', [
+			req.user.idUser,
+		]);
+		await conn.query('DELETE FROM user WHERE idUser = ?', [
+			req.user.idUser,
+		]);
 
 		await conn.commit();
 		res.status(200).send('Ok');

@@ -19,7 +19,7 @@ app.use('/', (req, res, next) => {
 	const token = header && header.split(' ')[1];
 	if (token == null) {
 		req.user = {
-			id: -1,
+			idUser: -1,
 			plan: 'none',
 		};
 		next();

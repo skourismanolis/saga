@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
 				SELECT idProject 	\
 				FROM member 		\
 				WHERE idUser = ?)',
-			[req.user.id]
+			[req.user.idUser]
 		);
 		[users] = await conn.query(
 			'																							\
@@ -40,7 +40,7 @@ app.get('/', async (req, res) => {
 					FROM member 																		\
 					WHERE idUser = ?))																	\
 					AND user.idUser = member.idUser',
-			[req.user.id]
+			[req.user.idUser]
 		);
 		await conn.commit();
 		if (req.query.search == null) {
@@ -103,7 +103,7 @@ app.post('/', async (req, res) => {
 	try {
 		const [result] = await db.pool.query(
 			'SELECT idUser,verified FROM user WHERE idUser = ?',
-			[req.user.id]
+			[req.user.idUser]
 		);
 		if (result.length == 0) {
 			return res.sendStatus(404);
@@ -120,7 +120,7 @@ app.post('/', async (req, res) => {
 
 		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,(SELECT max(idProject) FROM project),?)',
-			[req.user.id, 'Admin']
+			[req.user.idUser, 'Admin']
 		);
 		await conn.commit();
 		res.status(200).send({ message: 'OK', idProject: project.insertId });
