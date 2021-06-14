@@ -173,13 +173,16 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 			'DELETE FROM assignee WHERE code IN (SELECT code FROM issue WHERE idProject = ?)',
 			[req.params.idProject]
 		);
-		await conn.query('DELETE FROM column WHERE idProject = ?', [
-			req.params.idProject,
-		]);
 		await conn.query(
 			'DELETE FROM comment WHERE code IN (SELECT code FROM issue WHERE idProject = ?)',
 			[req.params.idProject]
 		);
+		await conn.query('DELETE FROM issue WHERE idProject = ?', [
+			req.params.idProject,
+		]);
+		await conn.query('DELETE FROM column WHERE idProject = ?', [
+			req.params.idProject,
+		]);
 		await conn.query('DELETE FROM epic WHERE idProject = ?', [
 			req.params.idProject,
 		]);
@@ -190,9 +193,6 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 			req.params.idProject,
 		]);
 		await conn.query('DELETE FROM sprint WHERE idProject = ?', [
-			req.params.idProject,
-		]);
-		await conn.query('DELETE FROM issue WHERE idProject = ?', [
 			req.params.idProject,
 		]);
 		await conn.query('DELETE FROM project WHERE idProject = ?', [
