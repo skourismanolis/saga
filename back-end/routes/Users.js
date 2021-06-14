@@ -106,7 +106,7 @@ app.post('/', async (req, res) => {
 		if (process.env.NODE_ENV != 'test') {
 			const emailToken = jwt.sign(
 				{
-					process: 'register',
+					process: 'registration',
 					id: result[0].idUser,
 				},
 				process.env.EMAIL_SECRET

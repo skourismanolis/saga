@@ -11,7 +11,7 @@ const Label = require('./Label');
 const LabelPutPost = require('./LabelPutPost');
 const Payment = require('./Payment');
 const ProjectCreate = require('./ProjectCreate');
-const ProjectUpdate = require('./ProjectUpdate');
+const Project = require('./Project');
 const ProjectMember = require('./ProjectMember');
 const ProjectMemberShort = require('./ProjectMemberShort');
 const Sprint = require('./Sprint');
@@ -35,7 +35,7 @@ module.exports = {
 	LabelPutPost,
 	Payment,
 	ProjectCreate,
-	ProjectUpdate,
+	Project,
 	ProjectMember,
 	ProjectMemberShort,
 	Sprint,
