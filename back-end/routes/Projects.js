@@ -117,15 +117,15 @@ app.post('/', async (req, res) => {
 			[req.body.title]
 		);
 		await conn.query(
-			'INSERT INTO kanban  (idProject, name, order_line) VALUES (?,?,?)',
+			'INSERT INTO kanban  (idProject, name, column_order) VALUES (?,?,?)',
 			[project.insertId, 'TO-DO', 1]
 		);
 		await conn.query(
-			'INSERT INTO kanban (idProject, name, order_line) VALUES (?,?,?)',
+			'INSERT INTO kanban (idProject, name, column_order) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
 		await conn.query(
-			'INSERT INTO kanban (idProject, name, order_line) VALUES (?,?,?)',
+			'INSERT INTO kanban (idProject, name, column_order) VALUES (?,?,?)',
 			[project.insertId, 'DONE', 3]
 		);
 		await conn.query(
