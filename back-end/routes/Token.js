@@ -69,10 +69,10 @@ async function registration(req, res, tokenRequest) {
 async function invite(req, res, tokenRequest) {
 	try {
 		//if not logged in, return 401 unauthorized
-		if (req.user.id == -1) return res.sendStatus(401);
+		if (req.user.idUser == -1) return res.sendStatus(401);
 
 		//if project doesn't exist, return 404 non found
-		let results = await db.query(
+		let results = await db.pool.query(
 			`SELECT idProject FROM project WHERE idProject = ?;`,
 			[tokenRequest.idProject]
 		);
@@ -81,19 +81,26 @@ async function invite(req, res, tokenRequest) {
 		}
 
 		//if user doesn't exist (eg. recently deleted user), return 403 forbidden
-		results = await db.query(
+		results = await db.pool.query(
 			`SELECT idUser  FROM user  WHERE idUser = ?;`,
-			[req.user.id]
+			[req.user.idUser]
 		);
 		if (results[0].length == 0) {
 			return res.sendStatus(403);
 		}
 
-		//inser new member
-		results = await db.query(
+		results = await db.pool.query(
+			'SELECT idUser FROM member WHERE idUser = ? AND idProject = ?',
+			[req.user.idUser, tokenRequest.idProject]
+		);
+		if (results[0].length > 0) {
+			return res.sendStatus(400);
+		}
+		//insert new member
+		results = await db.pool.query(
 			`INSERT INTO member
 			VALUES (?, ?, 'Member');`,
-			[req.user.id, tokenRequest.idProject]
+			[req.user.idUser, tokenRequest.idProject]
 		);
 
 		//OK

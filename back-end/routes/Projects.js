@@ -1,7 +1,7 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const app = express.Router();
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const { Project_auth } = require('../functions');
 
@@ -108,7 +108,7 @@ app.post('/', async (req, res) => {
 			return res.sendStatus(404);
 		}
 		if (result[0].verified == 0) {
-			return res.sendStatus(401);
+			return res.sendStatus(403);
 		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -219,4 +219,21 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 	}
 });
 
+app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
+	try {
+		const emailToken = jwt.sign(
+			{
+				process: 'invite',
+				idProject: req.params.idProject,
+			},
+			process.env.EMAIL_SECRET
+		);
+
+		const url = `http://localhost:8080/token/${emailToken}`;
+		res.status(200).send({ inviteLink: url });
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+});
 module.exports = app;
