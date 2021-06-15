@@ -1229,7 +1229,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Column'
       operationId: get-project-idProject-columns
-      description: Get all columns in project (except from done) in an array.
+      description: Get all kanban_columns in project (except from done) in an array.
     post:
       summary: new column
       tags: []
@@ -1257,7 +1257,7 @@ paths:
         '500':
           description: Internal Server Error
       operationId: post-project-idProject-columns
-      description: Create a new column.
+      description: Create a new kanban_column.
       requestBody:
         content:
           application/json:
@@ -1295,7 +1295,7 @@ paths:
           description: Internal Server Error
       operationId: delete-project-idProject-columns-idColumn
       description: |-
-        Delete a column.
+        Delete a kanban_column.
         Must have access to project.
     put:
       summary: Change Column
@@ -1315,7 +1315,7 @@ paths:
           description: Internal Server Error
       operationId: put-project-idProject-columns-idColumn
       description: |-
-        Change details of a column.
+        Change details of a kanban_column.
         Must have access to project.
       requestBody:
         content:
@@ -1342,7 +1342,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-      description: Returns a single column that belongs to the project.
+      description: Returns a single kanban column that belongs to the project.
   /users:
     post:
       summary: Create new user
@@ -1761,7 +1761,7 @@ components:
             - Task
             - Bug
           type: string
-        idColumn:
+        idKanban:
           type: integer
           minimum: 0
           nullable: true
@@ -1797,7 +1797,7 @@ components:
         - idLabel
         - idSprint
         - category
-        - idColumn
+        - idKanban
         - priority
         - assignees
         - title
@@ -1820,7 +1820,7 @@ components:
             - Task
             - Bug
           type: string
-        idColumn:
+        idKanban:
           type: integer
           minimum: 0
           nullable: true
@@ -1853,7 +1853,7 @@ components:
       required:
         - idLabel
         - category
-        - idColumn
+        - idKanban
         - priority
         - assignees
         - title
@@ -2065,34 +2065,34 @@ components:
         - idUser
         - amount
         - timestamp
-    Column:
-      title: Column
+    Kanban:
+      title: Kanban_column
       type: object
       description: ''
       properties:
         name:
           type: string
-        order:
+        column_order:
           type: integer
-        idColumn:
+        idKanban:
           type: integer
           minimum: 0
       required:
         - name
-        - order
-        - idColumn
-    ColumnPutPost:
-      title: Column Put Post
+        - column_order
+        - idKanban
+    KanbanPutPost:
+      title: Kanban_column Put Post
       type: object
-      description: Column without the id
+      description: Kanban_column without the id
       properties:
         name:
           type: string
-        order:
+        column_order:
           type: integer
       required:
         - name
-        - order
+        - column_order
     CommentPost:
       title: Comment Post
       type: object
