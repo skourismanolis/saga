@@ -15,7 +15,7 @@ app.post('/login', async (req, res) => {
 	try {
 		Joi.attempt(req.body, schemas.UserLoginPost);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(400).send('Bad request');
 		return;
 	}
@@ -31,7 +31,7 @@ app.post('/login', async (req, res) => {
 		const users = result[0];
 		if (await bcrypt.compare(req.body.password, users.password)) {
 			const user = {
-				id: users.idUser,
+				idUser: users.idUser,
 				plan: users.plan,
 			};
 			const accessToken = jwt.sign(
@@ -46,7 +46,7 @@ app.post('/login', async (req, res) => {
 			res.sendStatus(404);
 		}
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.sendStatus(500);
 	}
 });
@@ -60,7 +60,7 @@ app.post('/', async (req, res) => {
 			throw new Error('Invalid email.');
 		}
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(400).send('Bad request');
 		return;
 	}
@@ -72,7 +72,7 @@ app.post('/', async (req, res) => {
 			throw new Error('Email exists');
 		}
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.status(403).send('Forbidden');
 		return;
 	}
@@ -106,8 +106,8 @@ app.post('/', async (req, res) => {
 		if (process.env.NODE_ENV != 'test') {
 			const emailToken = jwt.sign(
 				{
-					process: 'register',
-					id: result[0].idUser,
+					process: 'registration',
+					idUser: result[0].idUser,
 				},
 				process.env.EMAIL_SECRET
 			);
@@ -151,7 +151,7 @@ app.put('/', async (req, res) => {
 		// prettier-ignore
 		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
 		[
-			req.user.id,
+			req.user.idUser,
 		]);
 
 		if (result.length == 0) {
@@ -172,7 +172,7 @@ app.put('/', async (req, res) => {
 				req.body.surname,
 				req.body.plan,
 				req.body.picture,
-				req.user.id,
+				req.user.idUser,
 			]
 		);
 		res.status(200).send('Ok');
@@ -186,7 +186,7 @@ app.delete('/', async (req, res) => {
 	try {
 		const [result] = await db.pool.query(
 			'SELECT * FROM user WHERE idUser = ?',
-			[req.user.id]
+			[req.user.idUser]
 		);
 		if (result.length == 0) {
 			res.status(400).send('Bad request');
@@ -203,7 +203,7 @@ app.delete('/', async (req, res) => {
 		}
 		const [admin] = await db.pool.query(
 			'SELECT * FROM member WHERE idUser = ? AND role = ?',
-			[req.user.id, 'Admin']
+			[req.user.idUser, 'Admin']
 		);
 		if (admin.length > 0) {
 			res.status(403).send('Admin');
@@ -212,11 +212,17 @@ app.delete('/', async (req, res) => {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		await conn.query('DELETE FROM assignee WHERE idUser = ?', [
-			req.user.id,
+			req.user.idUser,
 		]);
-		await conn.query('DELETE FROM payment WHERE idUser = ?', [req.user.id]);
-		await conn.query('DELETE FROM member WHERE idUser = ?', [req.user.id]);
-		await conn.query('DELETE FROM user WHERE idUser = ?', [req.user.id]);
+		await conn.query('DELETE FROM payment WHERE idUser = ?', [
+			req.user.idUser,
+		]);
+		await conn.query('DELETE FROM member WHERE idUser = ?', [
+			req.user.idUser,
+		]);
+		await conn.query('DELETE FROM user WHERE idUser = ?', [
+			req.user.idUser,
+		]);
 
 		await conn.commit();
 		res.status(200).send('Ok');

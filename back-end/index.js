@@ -4,15 +4,22 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 const cors = require('cors');
-app.use(cors());
 const jwt = require('jsonwebtoken');
+
+var corsOptions = {
+	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+	allowedHeaders: ['X-Pagination-Limit', 'X-Pagination-Offset'],
+	exposedHeaders: ['X-Pagination-Total'],
+};
+
+app.use(cors(corsOptions));
 
 app.use('/', (req, res, next) => {
 	const header = req.get('authorization');
 	const token = header && header.split(' ')[1];
 	if (token == null) {
 		req.user = {
-			id: -1,
+			idUser: -1,
 			plan: 'none',
 		};
 		next();
@@ -32,5 +39,6 @@ app.get('/', async (req, res) => {
 
 app.use('/users', require('./routes/Users'));
 app.use('/token', require('./routes/Token'));
+app.use('/projects', require('./routes/Projects'));
 
 module.exports = app;
