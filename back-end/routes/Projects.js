@@ -117,15 +117,15 @@ app.post('/', async (req, res) => {
 			[req.body.title]
 		);
 		await conn.query(
-			'INSERT INTO kanban  (idProject, name, column_order) VALUES (?,?,?)',
+			'INSERT INTO `column`  (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'TO-DO', 1]
 		);
 		await conn.query(
-			'INSERT INTO kanban (idProject, name, column_order) VALUES (?,?,?)',
+			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
 		await conn.query(
-			'INSERT INTO kanban (idProject, name, column_order) VALUES (?,?,?)',
+			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'DONE', 3]
 		);
 		await conn.query(
@@ -190,7 +190,7 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		await conn.query('DELETE FROM issue WHERE idProject = ?', [
 			req.params.idProject,
 		]);
-		await conn.query('DELETE FROM kanban WHERE idProject = ?', [
+		await conn.query('DELETE FROM `column` WHERE idProject = ?', [
 			req.params.idProject,
 		]);
 		await conn.query('DELETE FROM epic WHERE idProject = ?', [

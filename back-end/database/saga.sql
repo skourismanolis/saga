@@ -105,14 +105,14 @@ CREATE TABLE IF NOT EXISTS `saga`.`epic` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `saga`.`kanban`
+-- Table `saga`.`column`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `saga`.`kanban` (
-  `idKanban` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `saga`.`column` (
+  `idColumn` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `idProject` INT UNSIGNED NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  `column_order` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`idKanban`),
+  `order` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`idColumn`),
   CONSTRAINT `fk_column_project1`
     FOREIGN KEY (`idProject`)
     REFERENCES `saga`.`project` (`idProject`)
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
   `idEpic` INT UNSIGNED NULL,
   `idLabel` INT UNSIGNED NULL,
   `idSprint` INT UNSIGNED NULL,
-  `idKanban` INT UNSIGNED NULL,
+  `idColumn` INT UNSIGNED NULL,
   `title` VARCHAR(255) NULL,
   `category` ENUM("Story", "Task", "Bug") NULL,
   `points` INT NULL,
@@ -158,8 +158,8 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_issue_column1`
-    FOREIGN KEY (`idKanban`)
-    REFERENCES `saga`.`column` (`idKanban`)
+    FOREIGN KEY (`idColumn`)
+    REFERENCES `saga`.`column` (`idColumn`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
