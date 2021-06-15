@@ -117,22 +117,21 @@ app.post('/', async (req, res) => {
 			'INSERT INTO project (title) VALUES (?)',
 			[req.body.title]
 		);
-
 		await conn.query(
-			'INSERT INTO column (idProject,name,order) VALUES (?,?,?)',
+			'INSERT INTO kanban  (idProject, name, order_line) VALUES (?,?,?)',
 			[project.insertId, 'TO-DO', 1]
 		);
 		await conn.query(
-			'INSERT INTO column (idProject,name,order) VALUES (?,?,?)',
+			'INSERT INTO kanban (idProject, name, order_line) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
 		await conn.query(
-			'INSERT INTO column (idProject,name,order) VALUES (?,?,3)',
-			[project.insertId, 'DONE']
+			'INSERT INTO kanban (idProject, name, order_line) VALUES (?,?,?)',
+			[project.insertId, 'DONE', 3]
 		);
 		await conn.query(
-			'INSERT INTO member (idUser, idProject , role) VALUES (?,(SELECT max(idProject) FROM project),?)',
-			[req.user.idUser, 'Admin']
+			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
+			[req.user.idUser, project.insertId, 'Admin']
 		);
 		await conn.commit();
 		res.status(200).send({ message: 'OK', idProject: project.insertId });
@@ -192,7 +191,7 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		await conn.query('DELETE FROM issue WHERE idProject = ?', [
 			req.params.idProject,
 		]);
-		await conn.query('DELETE FROM column WHERE idProject = ?', [
+		await conn.query('DELETE FROM kanban WHERE idProject = ?', [
 			req.params.idProject,
 		]);
 		await conn.query('DELETE FROM epic WHERE idProject = ?', [
