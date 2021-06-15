@@ -7,6 +7,7 @@ const { Project_auth } = require('../functions');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const members = require('./Members');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -236,4 +237,7 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+app.get('/:idProject/members/', members.members_get);
+
 module.exports = app;
