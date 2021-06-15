@@ -27,7 +27,7 @@ app.use('/', (req, res, next) => {
 	}
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		if (err) return res.status(403).send('Forbidden');
+		if (err) return res.sendStatus(401);
 		req.user = user;
 		next();
 	});

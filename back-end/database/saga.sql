@@ -90,7 +90,7 @@ ENGINE = InnoDB;
 -- Table `saga`.`epic`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `saga`.`epic` (
-  `idEpic` INT NOT NULL,
+  `idEpic` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `idProject` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `start` DATE NULL,
@@ -126,7 +126,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `saga`.`issue` (
   `code` VARCHAR(45) NOT NULL,
   `idProject` INT UNSIGNED NOT NULL,
-  `idEpic` INT NULL,
+  `idEpic` INT UNSIGNED NULL,
   `idLabel` INT UNSIGNED NULL,
   `idSprint` INT UNSIGNED NULL,
   `idColumn` INT UNSIGNED NULL,

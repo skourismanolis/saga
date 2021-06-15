@@ -160,7 +160,7 @@ app.put('/', async (req, res) => {
 		}
 		// prettier-ignore
 		if ( (await bcrypt.compare(req.body.password, result[0].password) ) == false ) {
-			res.sendStatus(401);
+			res.sendStatus(403);
 			return;
 		}
 		await db.pool.query(
@@ -198,7 +198,7 @@ app.delete('/', async (req, res) => {
 		}
 		// prettier-ignore
 		if ( (await bcrypt.compare(req.body.password, result[0].password) ) == false ) {
-			res.status(401).send('Unauthorized');
+			res.sendStatus(403);
 			return;
 		}
 		const [admin] = await db.pool.query(
