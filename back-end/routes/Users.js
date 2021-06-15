@@ -15,7 +15,7 @@ app.post('/login', async (req, res) => {
 	try {
 		Joi.attempt(req.body, schemas.UserLoginPost);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(400).send('Bad request');
 		return;
 	}
@@ -46,7 +46,7 @@ app.post('/login', async (req, res) => {
 			res.sendStatus(404);
 		}
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.sendStatus(500);
 	}
 });
@@ -60,7 +60,7 @@ app.post('/', async (req, res) => {
 			throw new Error('Invalid email.');
 		}
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(400).send('Bad request');
 		return;
 	}
@@ -72,7 +72,7 @@ app.post('/', async (req, res) => {
 			throw new Error('Email exists');
 		}
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.status(403).send('Forbidden');
 		return;
 	}

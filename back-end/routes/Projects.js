@@ -9,7 +9,6 @@ const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 
 app.get('/', async (req, res) => {
-	console.log(req.headers);
 	// if (req.params.search == null){}
 	let conn;
 	let projects;
