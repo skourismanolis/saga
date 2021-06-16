@@ -8,6 +8,7 @@ const { Project_auth } = require('../functions');
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
+const issues = require('./Issues');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -266,6 +267,12 @@ app.delete(
 	'/:idProject/members/admin/',
 	Project_auth(['Admin']),
 	members.members_demote
+);
+
+app.post(
+	'/:idProject/issues/',
+	Project_auth(['Admin', 'Member']),
+	issues.issues_create
 );
 
 module.exports = app;
