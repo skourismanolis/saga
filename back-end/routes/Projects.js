@@ -256,4 +256,10 @@ app.delete(
 	members.members_delete
 );
 
+app.post(
+	'/:idProject/members/admin/',
+	Project_auth(['Admin']),
+	members.members_promote
+);
+
 module.exports = app;

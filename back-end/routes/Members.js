@@ -84,7 +84,41 @@ async function members_delete(req, res) {
 	}
 }
 
+async function members_promote(req, res) {
+	try {
+		if (req.body.idUser == null) {
+			res.sendStatus(400);
+			return;
+		}
+		let [result] = await db.pool.query(
+			'SELECT * FROM member WHERE idUser = ? AND idProject = ?',
+			[req.body.idUser, req.params.idProject]
+		);
+		if (result.length == 0) {
+			res.status(404).send({ message: 'Not a member' });
+			return;
+		}
+		[result] = await db.pool.query(
+			'SELECT * FROM member WHERE idUser = ? AND idProject = ? AND role = ?',
+			[req.body.idUser, req.params.idProject, 'Admin']
+		);
+		if (result.length == 1) {
+			res.sendStatus(200);
+			return;
+		}
+		await db.pool.query(
+			'UPDATE member SET role = ? WHERE idUser = ? AND idProject = ?',
+			['Admin', req.body.idUser, req.params.idProject]
+		);
+		res.sendStatus(200);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
 module.exports = {
 	members_get,
 	members_delete,
+	members_promote,
 };
