@@ -7,6 +7,7 @@ const { Project_auth } = require('../functions');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const members = require('./Members');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -86,6 +87,12 @@ app.get('/', async (req, res) => {
 				req.headers['x-pagination-limit']
 		);
 	}
+	// Rename property "title" to "name"
+	projects = projects.map(function (obj) {
+		obj['name'] = obj['title']; // Assign new key
+		delete obj['title']; // Delete old key
+		return obj;
+	});
 	res.status(200)
 		.header('X-Pagination-Total', projects_number)
 		.send(projects);
@@ -236,4 +243,29 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+app.get(
+	'/:idProject/members/',
+	Project_auth(['Admin', 'Member']),
+	members.members_get
+);
+
+app.delete(
+	'/:idProject/members/',
+	Project_auth(['Admin']),
+	members.members_delete
+);
+
+app.post(
+	'/:idProject/members/admin/',
+	Project_auth(['Admin']),
+	members.members_promote
+);
+
+app.delete(
+	'/:idProject/members/admin/',
+	Project_auth(['Admin']),
+	members.members_demote
+);
+
 module.exports = app;
