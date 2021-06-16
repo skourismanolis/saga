@@ -10,22 +10,6 @@ const db = require('../db').db;
 
 async function members_get(req, res) {
 	try {
-		let [result] = await db.pool.query(
-			'SELECT * FROM project WHERE idProject = ?',
-			[req.params.idProject]
-		);
-		if (result.length == 0) {
-			res.sendStatus(404);
-			return;
-		}
-		[result] = await db.pool.query(
-			'SELECT * FROM member WHERE idUser = ? AND idProject = ?',
-			[req.user.idUser, req.params.idProject]
-		);
-		if (result.length == 0) {
-			res.sendStatus(403);
-			return;
-		}
 		let [users] = await db.pool.query(
 			'SELECT idUser, name, surname, email, picture FROM user WHERE idUser IN(SELECT idUser FROM member WHERE idProject = ?)',
 			[req.params.idProject]
@@ -34,13 +18,17 @@ async function members_get(req, res) {
 			'SELECT role,idUser FROM member WHERE idProject = ?',
 			[req.params.idProject]
 		);
+		// Add Role property in users objects
 		let member;
 		users.forEach((user) => {
-			member = roles.filter((role) => {
+			user.role;
+			// find user's role
+			[member] = roles.filter((role) => {
 				return role.idUser === user.idUser;
 			});
 			user.role = member.role;
-			roles = roles.filter((role) => role.idUser != role.idUser);
+			// delete user from roles list (makes next search easier)
+			roles = roles.filter((role) => user.idUser != role.idUser);
 		});
 		res.status(200).send(users);
 		return;
@@ -51,6 +39,52 @@ async function members_get(req, res) {
 	}
 }
 
+async function members_delete(req, res) {
+	let conn;
+	try {
+		if (req.body.idUser == null) {
+			res.sendStatus(400);
+			return;
+		}
+		// comment assignee member
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		conn.query(
+			'UPDATE comment 				\
+			SET idUser = 0 					\
+			WHERE idUser = ? AND code IN (	\
+				 SELECT code 				\
+				 FROM issue 				\
+				 WHERE idProject = ?)',
+			[req.body.idUser, req.params.idProject]
+		);
+		conn.query(
+			'DELETE \
+			FROM assignee \
+			WHERE idUser = ? AND code IN (\
+				SELECT code \
+				FROM issue \
+				WHERE idProject = ?)',
+			[req.body.idUser, req.params.idProject]
+		);
+		conn.query('DELETE FROM member WHERE idUser = ? AND idProject = ?', [
+			req.body.idUser,
+			req.params.idProject,
+		]);
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	} finally {
+		if (conn != null) conn.rollback();
+	}
+}
+
 module.exports = {
 	members_get,
+	members_delete,
 };
