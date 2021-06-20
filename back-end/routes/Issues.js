@@ -12,23 +12,18 @@ async function issues_create(req, res) {
 		return;
 	}
 	let conn;
+	let code = uuidv4();
 	try {
-		const [members] = db.pool.query(
+		const [members] = await db.pool.query(
 			'SELECT idUser FROM member WHERE idProject = ?',
 			[req.params.idProject]
 		);
-		let assign = [];
-		body.assignees.forEach((assignee) => {
-			if (members.find(assignee.idUser)) {
-				assign.push(assignee);
-			}
-		});
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		await conn.query(
-			'INSERT INTO issue SET (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
+			'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
 			[
-				uuidv4(),
+				code,
 				req.params.idProject,
 				body.title,
 				body.category,
@@ -39,8 +34,24 @@ async function issues_create(req, res) {
 				body.idLabel,
 			]
 		);
-		// TODO add assign INTO SQL assignee
+		if (body.assignees != null) {
+			let assign = [];
+			body.assignees.forEach((assignee) => {
+				console.log(members);
+				if (members.find(assignee.idUser)) {
+					assign.push(assignee);
+				}
+			});
+			// TODO add assign INTO SQL assignee
+			assign.forEach(async (assignee) => {
+				await conn.query(
+					'INSERT INTO assignee SET (code , idUser) VALUES (?,?)',
+					[code, assignee.idUser]
+				);
+			});
+		}
 		await conn.commit();
+		res.status(200).send({ code });
 	} catch (error) {
 		if (conn != null) conn.rollback();
 		console.error(error);
