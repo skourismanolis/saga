@@ -1,13 +1,18 @@
 <template>
 	<div>
-		<b-navbar>
-			<img src="@/assets/logo.png" id="sagalogo" alt="" />
-			<div class="rcorner_top">
-				<div>
-					<b-button href="#">Σύνδεση / Εγγραφή</b-button>
+		<div class="navbar-container">
+			<b-navbar>
+				<img src="@/assets/logo.png" id="sagalogo" alt="" />
+				<div class="rcorner_top">
+					<div>
+						<button type="button" class="btn btn-primary" href="#">
+							Σύνδεση / Εγγραφή
+						</button>
+					</div>
 				</div>
-			</div>
-		</b-navbar>
+			</b-navbar>
+		</div>
+		<div class="breadcrump-container"></div>
 	</div>
 </template>
 
@@ -18,6 +23,16 @@ export default {
 </script>
 
 <style scoped>
+.navbar-container {
+	background-color: #fedc97;
+}
+
+.breadcrump-container {
+	width: 100%;
+	height: 15px;
+	background-color: #564787;
+}
+
 b-navbar {
 	justify-content: none;
 }
