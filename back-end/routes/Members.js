@@ -49,7 +49,7 @@ async function members_delete(req, res) {
 		// comment assignee member
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		conn.query(
+		await conn.query(
 			'UPDATE comment 				\
 			SET idUser = 0 					\
 			WHERE idUser = ? AND code IN (	\
@@ -58,7 +58,7 @@ async function members_delete(req, res) {
 				 WHERE idProject = ?)',
 			[req.body.idUser, req.params.idProject]
 		);
-		conn.query(
+		await conn.query(
 			'DELETE \
 			FROM assignee \
 			WHERE idUser = ? AND code IN (\
@@ -67,7 +67,7 @@ async function members_delete(req, res) {
 				WHERE idProject = ?)',
 			[req.body.idUser, req.params.idProject]
 		);
-		conn.query('DELETE FROM member WHERE idUser = ? AND idProject = ?', [
+		await conn.query('DELETE FROM member WHERE idUser = ? AND idProject = ?', [
 			req.body.idUser,
 			req.params.idProject,
 		]);
