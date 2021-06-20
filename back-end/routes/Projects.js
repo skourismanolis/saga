@@ -8,6 +8,7 @@ const { Project_auth } = require('../functions');
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
+const epics = require('./Epics');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -244,6 +245,7 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 	}
 });
 
+// members
 app.get(
 	'/:idProject/members/',
 	Project_auth(['Admin', 'Member']),
@@ -266,6 +268,19 @@ app.delete(
 	'/:idProject/members/admin/',
 	Project_auth(['Admin']),
 	members.members_demote
+);
+
+// epics
+app.get(
+	'/:idProject/epics/',
+	Project_auth(['Admin', 'Member']),
+	epics.epics_get
+);
+
+app.post(
+	'/:idProject/epics/',
+	Project_auth(['Admin', 'Member']),
+	epics.epics_post
 );
 
 module.exports = app;
