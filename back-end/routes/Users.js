@@ -214,9 +214,13 @@ app.delete('/', async (req, res) => {
 		await conn.query('DELETE FROM assignee WHERE idUser = ?', [
 			req.user.idUser,
 		]);
-		await conn.query('DELETE FROM payment WHERE idUser = ?', [
+		await conn.query('UPDATE comment SET idUser = ? WHERE idUser = ?', [
+			0,
 			req.user.idUser,
 		]);
+		// await conn.query('DELETE FROM payment WHERE idUser = ?', [
+		// 	req.user.idUser,
+		// ]);
 		await conn.query('DELETE FROM member WHERE idUser = ?', [
 			req.user.idUser,
 		]);
@@ -231,6 +235,37 @@ app.delete('/', async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	} finally {
 		if (conn != null) conn.release();
+	}
+});
+
+app.get('/:idUser', async (req, res) => {
+	try {
+		let [result] = await db.pool.query(
+			'SELECT idUser FROM user WHERE idUser = ?',
+			[req.params.idUser]
+		);
+		if (result.length == 0) {
+			res.sendStatus(404);
+		}
+		[result] = await db.pool.query(
+			'SELECT idUser FROM member WHERE idUser = ? AND idProject IN (SELECT idProject FROM member WHERE idUser = ?)',
+			[req.params.idUser, req.user.idUser]
+		);
+		if (result.length == 0) {
+			res.sendStatus(403);
+		}
+		[result] = await db.pool.query(
+			'SELECT idUser,name,surname,email,picture,username,plan FROM user WHERE idUser = ?',
+			[req.params.idUser]
+		);
+
+		if (req.params.idUser == req.user.idUser) {
+			delete result[0]['plan'];
+		}
+		res.status(200).send(result[0]);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
 	}
 });
 
