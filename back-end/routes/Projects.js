@@ -78,7 +78,7 @@ app.get('/', async (req, res) => {
 	} finally {
 		if (conn != null) conn.release();
 	}
-	if (
+	if ( //TODO make pagination in sql
 		req.headers['x-pagination-limit'] != null &&
 		req.headers['x-pagination-offset'] != null
 	) {
@@ -281,6 +281,18 @@ app.post(
 	'/:idProject/epics/',
 	Project_auth(['Admin', 'Member']),
 	epics.epics_post
+);
+
+app.get(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.get_epic_id
+);
+
+app.put(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.put_epic_id
 );
 
 module.exports = app;
