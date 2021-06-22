@@ -16,7 +16,6 @@ const MOCKEPIC = {
 	start: null,
 	deadline: null,
 	description: 'asd',
-	issues: [12, 32, 23, ISSUEID],
 };
 
 const MOCKPROJECT = {
@@ -58,7 +57,6 @@ describe('main functions', () => {
 		}).not.toThrow();
 
 		let matcher = { ...MOCKEPIC };
-		delete matcher.issues;
 
 		expect(epc).toMatchObject(matcher);
 	});
