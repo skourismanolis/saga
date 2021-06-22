@@ -5,6 +5,7 @@ const schemas = require('../schemas/schemas_export');
 
 async function issues_create(req, res) {
 	let body;
+	console.log();
 	try {
 		body = joi.attempt(req.body, schemas.IssuePost);
 	} catch (error) {
@@ -15,8 +16,8 @@ async function issues_create(req, res) {
 	let code = uuidv4();
 	try {
 		const [members] = await db.pool.query(
-			'SELECT idUser FROM member WHERE idProject = ?',
-			[req.params.idProject]
+			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
+			[req.params.idProject, body.assignees]
 		);
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -35,17 +36,9 @@ async function issues_create(req, res) {
 			]
 		);
 		if (body.assignees != null) {
-			let assign = [];
-			body.assignees.forEach((assignee) => {
-				console.log(members);
-				if (members.find(assignee.idUser)) {
-					assign.push(assignee);
-				}
-			});
-			// TODO add assign INTO SQL assignee
-			assign.forEach(async (assignee) => {
+			members.forEach(async (assignee) => {
 				await conn.query(
-					'INSERT INTO assignee SET (code , idUser) VALUES (?,?)',
+					'INSERT INTO assignee (code , idUser) VALUES (?,?)',
 					[code, assignee.idUser]
 				);
 			});
