@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
+		<ProjectNavbar v-if="projectNavbarFlag" />
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -11,11 +12,13 @@
 <script>
 import Footer from './components/Footer';
 import Navbar from './components/navbar_off';
+import ProjectNavbar from './components/ProjectNavbar.vue';
 
 export default {
 	components: {
 		Footer,
 		Navbar,
+		ProjectNavbar,
 	},
 	data() {
 		return {};
@@ -27,6 +30,17 @@ export default {
 	computed: {
 		navbarFlag() {
 			if (this.$route.meta != null && this.$route.meta.navbar == false) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+
+		projectNavbarFlag() {
+			if (
+				this.$route.meta != null &&
+				this.$route.meta.projectNavbar == false
+			) {
 				return false;
 			} else {
 				return true;
