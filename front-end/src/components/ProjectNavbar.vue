@@ -21,6 +21,8 @@
 	width: 100%;
 	border-radius: 0;
 	padding: 0 0;
+
+	position: relative;
 }
 
 .line {
@@ -28,7 +30,7 @@
 	width: 110%;
 	height: 3px;
 
-	position: relative;
+	position: absolute;
 	bottom: 0;
 }
 
