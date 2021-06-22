@@ -8,7 +8,7 @@ const PaginatedList = require('./PaginatedList');
 
 let client;
 
-const ISSUEID = 33;
+// const ISSUEID = 33;
 
 const MOCKEPIC = {
 	idEpic: 1,
@@ -16,7 +16,6 @@ const MOCKEPIC = {
 	start: null,
 	deadline: null,
 	description: 'asd',
-	issues: [12, 32, 23, ISSUEID],
 };
 
 const MOCKPROJECT = {
@@ -58,26 +57,25 @@ describe('main functions', () => {
 		}).not.toThrow();
 
 		let matcher = { ...MOCKEPIC };
-		delete matcher.issues;
 
 		expect(epc).toMatchObject(matcher);
 	});
 
-	test('in sprint', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		epic.axios = mockAxios;
-		let project = await epic.getProject();
-		epic.axios = client.axios;
+	// test('in epic', async () => {
+	// 	let mockAxios = {
+	// 		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+	// 	};
+	// 	epic.axios = mockAxios;
+	// 	let project = await epic.getProject();
+	// 	epic.axios = client.axios;
 
-		let issue = await project.getIssue(ISSUEID);
-		//THIS IS BECAUSE THE MOCK SERVER IS DUMB
-		issue._code = ISSUEID;
-		expect(epic.includes(issue)).toBe(true);
-		issue._code = 'loemrm 3-9r 9iefefj9euf';
-		expect(epic.includes(issue)).toBe(false);
-	});
+	// 	let issue = await project.getIssue(ISSUEID);
+	// 	//THIS IS BECAUSE THE MOCK SERVER IS DUMB
+	// 	issue._code = ISSUEID;
+	// 	expect(epic.includes(issue)).toBe(true);
+	// 	issue._code = 'loemrm 3-9r 9iefefj9euf';
+	// 	expect(epic.includes(issue)).toBe(false);
+	// });
 
 	test('started', () => {
 		expect(epic.started()).toBe(false);

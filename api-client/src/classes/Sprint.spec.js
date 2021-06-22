@@ -8,14 +8,13 @@ const PaginatedList = require('./PaginatedList');
 
 let client;
 
-const ISSUEID = 33;
+// const ISSUEID = 33;
 
 const MOCKSPRINT = {
 	idSprint: 1,
 	title: 'mansd',
 	start: null,
 	deadline: null,
-	issues: [12, 32, 23, ISSUEID],
 };
 
 const MOCKPROJECT = {
@@ -57,26 +56,25 @@ describe('main functions', () => {
 		}).not.toThrow();
 
 		let matcher = { ...MOCKSPRINT };
-		delete matcher.issues;
 
 		expect(spr).toMatchObject(matcher);
 	});
 
-	test('in sprint', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		sprint.axios = mockAxios;
-		let project = await sprint.getProject();
-		sprint.axios = client.axios;
+	// test('in sprint', async () => {
+	// 	let mockAxios = {
+	// 		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+	// 	};
+	// 	sprint.axios = mockAxios;
+	// 	let project = await sprint.getProject();
+	// 	sprint.axios = client.axios;
 
-		let issue = await project.getIssue(ISSUEID);
-		//THIS IS BECAUSE THE MOCK SERVER IS DUMB
-		issue._code = ISSUEID;
-		expect(sprint.includes(issue)).toBe(true);
-		issue._code = 'loemrm 3-9r 9iefefj9euf';
-		expect(sprint.includes(issue)).toBe(false);
-	});
+	// 	let issue = await project.getIssue(ISSUEID);
+	// 	//THIS IS BECAUSE THE MOCK SERVER IS DUMB
+	// 	issue._code = ISSUEID;
+	// 	expect(sprint.includes(issue)).toBe(true);
+	// 	issue._code = 'loemrm 3-9r 9iefefj9euf';
+	// 	expect(sprint.includes(issue)).toBe(false);
+	// });
 
 	test('started', () => {
 		expect(sprint.started()).toBe(false);

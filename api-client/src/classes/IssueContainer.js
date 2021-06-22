@@ -15,17 +15,11 @@ module.exports = class IssueContainer extends Base {
 	 * @param {Number} idProject the project this IssueContainer belongs to
 	 * @param {String} itemUrl the baseurl this IssueContainer has, i.e `/projects/2/sprints/3/`
 	 */
-	constructor(
-		client,
-		{ start, deadline, title, issues },
-		idProject,
-		itemUrl
-	) {
+	constructor(client, { start, deadline, title }, idProject, itemUrl) {
 		super(client);
 		this.start = start != null ? new Date(start) : null;
 		this.deadline = deadline != null ? new Date(deadline) : null;
 		this.title = title;
-		this._issueIds = issues;
 		this._idProject = idProject;
 		this._itemUrl = itemUrl;
 	}
@@ -46,9 +40,9 @@ module.exports = class IssueContainer extends Base {
 	 * @param {Object} issue Issue to check if it belongs to this object.
 	 * @returns {Boolean}
 	 */
-	includes(issue) {
-		return this._issueIds.indexOf(issue.id) !== -1;
-	}
+	// includes(issue) {
+	// 	return this._issueIds.indexOf(issue.id) !== -1;
+	// }
 
 	/**
 	 * Whether this sprint's start date has passed or not.
