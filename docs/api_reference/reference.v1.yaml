@@ -1928,17 +1928,11 @@ components:
           nullable: true
         title:
           type: string
-        issues:
-          type: array
-          description: an array of all issues in sprint that are not in contained epics
-          items:
-            $ref: '#/components/schemas/Issue'
       required:
         - idSprint
         - start
         - deadline
         - title
-        - issues
     SprintPutPost:
       title: Sprint Put Post
       type: object
@@ -1975,11 +1969,6 @@ components:
           type: string
           format: date-time
           nullable: true
-        issues:
-          type: array
-          description: an array of all issues contained
-          items:
-            $ref: '#/components/schemas/Issue'
         description:
           type: string
           nullable: true
@@ -1988,7 +1977,6 @@ components:
         - title
         - deadline
         - start
-        - issues
     EpicPutPost:
       title: Epic Put Post
       type: object
