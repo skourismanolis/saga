@@ -13,6 +13,9 @@ const routes = [
 		path: '/',
 		name: 'Home',
 		component: Home,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 	{
 		path: '/register',
@@ -20,6 +23,7 @@ const routes = [
 		component: Register,
 		meta: {
 			navbar: false,
+			projectNavbar: false,
 		},
 	},
 	{
@@ -28,17 +32,24 @@ const routes = [
 		component: Login,
 		meta: {
 			navbar: false,
+			projectNavbar: false,
 		},
 	},
 	{
 		path: '/profile',
 		name: 'Profile',
 		component: Profile,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 	{
 		path: '/profile-edit',
 		name: 'ProfileEdit',
 		component: ProfileEdit,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 	{
 		path: '/about',
