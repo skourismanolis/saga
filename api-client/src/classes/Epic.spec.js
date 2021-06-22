@@ -8,7 +8,7 @@ const PaginatedList = require('./PaginatedList');
 
 let client;
 
-const ISSUEID = 33;
+// const ISSUEID = 33;
 
 const MOCKEPIC = {
 	idEpic: 1,
