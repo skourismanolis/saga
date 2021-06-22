@@ -9,7 +9,7 @@ const schema = Joi.object().keys({
 	priority: Joi.string()
 		.valid('Very Low', 'Low', 'Neutral', 'High', 'Very High')
 		.required(),
-	deadline: Joi.date().required().allow(null),
+	deadline: Joi.date().required().allow(null).greater('now'),
 	description: Joi.string()
 		.min(c.MIN_TEXT)
 		.max(c.MAX_TEXT)

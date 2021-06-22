@@ -2,6 +2,7 @@ const db = require('../db').db;
 const joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
+const dayjs = require('dayjs');
 
 async function issues_create(req, res) {
 	let body;
@@ -30,7 +31,7 @@ async function issues_create(req, res) {
 				body.category,
 				body.points,
 				body.priority,
-				body.deadline,
+				dayjs(body.end_date).format('YYYY-MM-DD'),
 				body.description,
 				body.idLabel,
 			]
