@@ -25,15 +25,43 @@
 				</div>
 			</div>
 			<div v-else id="epic-container">
-				<table class="table table-striped table-hover">
-					<tbody>
-						<tr v-for="epic in epics" :key="epic.name">
-							<td>Mark</td>
-							<td>Otto</td>
-							<td>@mdo</td>
-						</tr>
-					</tbody>
-				</table>
+				<div
+					v-for="(epic, index) in epics"
+					:key="index"
+					id="epic-entry"
+					class="d-flex flex-row align-items-center"
+					v-bind:class="{ oddrow: index % 2 != 0 }"
+				>
+					<i id="epic-icon" class="bi bi-hourglass"></i>
+					<span id="epic-name">{{ epic.name }}</span>
+					<div
+						id="epic-date"
+						class="
+							d-flex
+							flex-row
+							align-items-center
+							justify-content-center
+							ml-auto
+						"
+					>
+						{{ epic.date }}
+					</div>
+					<div
+						id="epic-points"
+						class="
+							d-flex
+							flex-row
+							align-items-center
+							justify-content-center
+						"
+					>
+						{{ epic.points }}
+					</div>
+					<span id="epic-issues-num">
+						{{ epic.issues.length }}
+					</span>
+					<i id="epic-chevron" class="bi bi-chevron-right"></i>
+				</div>
 			</div>
 		</div>
 		<div class="d-flex flex-column" id="right"></div>
@@ -48,16 +76,29 @@ export default {
 			epics: [
 				{
 					name: 'Example Epic',
-					date: new Date('2012-02-03'),
-					storyPoints: 10,
-					issuesList: [],
+					date: '23 Μαρ',
+					points: 10,
+					issues: [],
 				},
 
 				{
 					name: 'Example Epic',
-					date: new Date('2012-02-03'),
-					storyPoints: 10,
-					issuesList: [],
+					date: '23 Μαρ',
+					points: 10,
+					issues: [],
+				},
+
+				{
+					name: 'Example Epic',
+					date: '23 Μαρ',
+					points: 10,
+					issues: [],
+				},
+				{
+					name: 'Example Epic',
+					date: '23 Μαρ',
+					points: 10,
+					issues: [],
 				},
 			],
 		};
@@ -106,7 +147,58 @@ export default {
 }
 
 #epic-container {
+	/* background-color: #f1f2f8; */
+}
+
+#epic-entry {
+	height: 50px;
+	width: 100%;
+	background-color: #f1f2f8;
+}
+
+#epic-entry:hover {
+	cursor: pointer;
+	-webkit-filter: brightness(90%);
+}
+
+.oddrow {
+	background-color: white !important;
+}
+
+#epic-icon {
+	color: #db5461;
+	font-size: 24px;
+	margin-right: 6px;
+}
+
+#epic-date {
 	background-color: white;
+	font-size: 16px;
+	color: #047c97;
+	padding: 2px 10px;
+	border-radius: 12pt;
+	border-style: solid;
+	border-color: black;
+	border-width: 2px;
+	margin-right: 6px;
+}
+
+#epic-points {
+	background-color: #c4c4c4;
+	padding: 3px;
+	border-radius: 5pt;
+	margin-right: 6px;
+}
+
+#epic-issues-num {
+	color: #808080;
+	font-size: 24px;
+	margin-right: 6px;
+}
+
+#epic-chevron {
+	font-size: 24px;
+	color: black;
 }
 
 #right {
