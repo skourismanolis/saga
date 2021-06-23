@@ -29,10 +29,16 @@ async function epics_get(req, res) {
 		params.push(parseInt(limit));
 		params.push(parseInt(offset));
 
-		// making the queries
+		// // making the queries
 		let [epics] = await db.pool.query(myepicquery, params);
+		let [count] = await db.pool.query(
+			'SELECT COUNT(*) AS count FROM epic WHERE idProject = ?',
+			[req.params.idProject],
+		);
 
-		res.send(epics);
+		console.log(count);
+		res.header('X-Pagination-Total', count[0].count)
+			.send(epics);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
@@ -55,9 +61,14 @@ async function epics_post(req, res) {
 		await conn.beginTransaction();
 
 		let start = req.body.start;
-		if (start != null) start = dayjs().format('YYYY-MM-DD');
+		if (start != null) start = dayjs(start).format('YYYY-MM-DD');
 		let deadline = req.body.deadline;
-		if (deadline != null) deadline = dayjs().format('YYYY-MM-DD');
+		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
+
+		if (start != null && deadline != null && dayjs(deadline).isBefore(start)) {
+			res.status(400).send('Bad request');
+			return;
+		}
 
 		await conn.query('INSERT INTO epic VALUES (?,?,?,?,?,?)', [
 			0,
@@ -149,19 +160,20 @@ async function delete_epic_id(req, res) {
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-
+		
+		let [temp] = await conn.query('UPDATE issue SET idEpic = NULL WHERE idEpic = ? AND idProject = ?', [
+			req.params.idEpic,
+			req.params.idProject,
+		]);
 		let [results] = await conn.query('DELETE FROM epic WHERE idEpic = ? AND idProject = ?;', [
 			req.params.idEpic,
 			req.params.idProject,
 		]);
+		
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
 			return;
 		}
-		await conn.query('UPDATE issue SET idProject = NULL WHERE idProject = ?', [
-			req.params.idEpic,
-			req.params.idProject,
-		]);
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
