@@ -62,6 +62,7 @@
 					</span>
 					<i id="epic-chevron" class="bi bi-chevron-right"></i>
 				</div>
+				<IssueRow :color="'#EE0000'" />
 			</div>
 		</div>
 		<div class="d-flex flex-column" id="right"></div>
@@ -69,7 +70,12 @@
 </template>
 
 <script>
+import IssueRow from '../components/IssueRow.vue';
+
 export default {
+	components: {
+		IssueRow,
+	},
 	data() {
 		return {
 			// epicsList: [],
