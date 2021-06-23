@@ -81,6 +81,11 @@ export default {
 	background-color: white;
 }
 
+#issue-entry:hover {
+	cursor: pointer;
+	-webkit-filter: brightness(90%);
+}
+
 .issue-element {
 	margin-right: 6px;
 }

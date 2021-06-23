@@ -28,41 +28,62 @@
 				<div
 					v-for="(epic, index) in epics"
 					:key="index"
-					id="epic-entry"
-					class="d-flex flex-row align-items-center"
-					v-bind:class="{ oddrow: index % 2 != 0 }"
+					@click="toggleExpanded(index)"
+					class="d-flex flex-column"
 				>
-					<i id="epic-icon" class="bi bi-hourglass"></i>
-					<span id="epic-name">{{ epic.name }}</span>
 					<div
-						id="epic-date"
-						class="
-							d-flex
-							flex-row
-							align-items-center
-							justify-content-center
-							ml-auto
-						"
+						id="epic-entry"
+						class="d-flex flex-row align-items-center"
+						v-bind:class="{ oddrow: index % 2 != 0 }"
 					>
-						{{ epic.date }}
+						<i id="epic-icon" class="bi bi-hourglass"></i>
+						<span id="epic-name">{{ epic.name }}</span>
+						<div
+							id="epic-date"
+							class="
+								d-flex
+								flex-row
+								align-items-center
+								justify-content-center
+								ml-auto
+							"
+						>
+							{{ epic.date }}
+						</div>
+						<div
+							id="epic-points"
+							class="
+								d-flex
+								flex-row
+								align-items-center
+								justify-content-center
+							"
+						>
+							{{ epic.points }}
+						</div>
+						<span id="epic-issues-num">
+							{{ epic.issues.length }}
+						</span>
+						<i
+							v-if="epic.expanded == false"
+							id="epic-chevron"
+							class="bi bi-chevron-right"
+						></i>
+						<i
+							v-else
+							id="epic-chevron"
+							class="bi bi-chevron-down"
+						></i>
 					</div>
-					<div
-						id="epic-points"
-						class="
-							d-flex
-							flex-row
-							align-items-center
-							justify-content-center
-						"
-					>
-						{{ epic.points }}
+					<div v-if="epic.expanded == true">
+						<IssueRow
+							v-for="(issue, index) in epic.issues"
+							:key="index"
+							:issue="issue"
+						>
+						</IssueRow>
 					</div>
-					<span id="epic-issues-num">
-						{{ epic.issues.length }}
-					</span>
-					<i id="epic-chevron" class="bi bi-chevron-right"></i>
 				</div>
-				<IssueRow :color="'#EE0000'" />
 			</div>
 		</div>
 		<div class="d-flex flex-column" id="right"></div>
@@ -84,7 +105,83 @@ export default {
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
-					issues: [],
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+						},
+						{
+							color: '#299D00',
+							type: 'bug',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+						},
+					],
+					expanded: false,
+				},
+
+				{
+					name: 'Example Epic',
+					date: '23 Μαρ',
+					points: 10,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+						},
+					],
+					expanded: false,
 				},
 
 				{
@@ -92,24 +189,27 @@ export default {
 					date: '23 Μαρ',
 					points: 10,
 					issues: [],
-				},
-
-				{
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [],
+					expanded: false,
 				},
 				{
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
 					issues: [],
+					expanded: false,
 				},
 			],
 		};
 	},
-	computed: {},
+	methods: {
+		toggleExpanded(i) {
+			if (this.epics[i].expanded == false) {
+				this.epics[i].expanded = true;
+			} else if (this.epics[i].expanded == true) {
+				this.epics[i].expanded = false;
+			}
+		},
+	},
 };
 </script>
 
@@ -152,10 +252,6 @@ export default {
 	color: #ffd580;
 }
 
-#epic-container {
-	/* background-color: #f1f2f8; */
-}
-
 #epic-entry {
 	height: 50px;
 	width: 100%;
@@ -185,7 +281,7 @@ export default {
 	border-radius: 12pt;
 	border-style: solid;
 	border-color: black;
-	border-width: 2px;
+	border-width: 1px;
 	margin-right: 6px;
 }
 
