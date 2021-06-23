@@ -109,23 +109,32 @@ async function put_epic_id(req, res) {
 		return;
 	}
 
-	let conn;
 	try {
 		let start = req.body.start;
 		if (start != null) start = dayjs(start).format('YYYY-MM-DD');
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		await db.pool.query(
-			'UPDATE epic SET title = ?, start = ?, deadline = ?, description = ? WHERE idEpic = ?',
+		if (start != null && deadline != null && dayjs(deadline).isBefore(start)) {
+			res.status(400).send('Bad request');
+			return;
+		}
+
+		let [results] = await db.pool.query(
+			'UPDATE epic SET title = ?, start = ?, deadline = ?, description = ? WHERE idEpic = ? AND idProject = ?',
 			[
 				req.body.title,
 				start,
 				deadline,
 				req.body.description,
 				req.params.idEpic,
+				req.params.idProject,
 			]
 		);
+		if (results.affectedRows == 0) {
+			res.sendStatus(404);
+			return;
+		}
 
 		res.sendStatus(200);
 	} catch (error) {
@@ -135,9 +144,41 @@ async function put_epic_id(req, res) {
 	}
 }
 
+async function delete_epic_id(req, res) {
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let [results] = await conn.query('DELETE FROM epic WHERE idEpic = ? AND idProject = ?;', [
+			req.params.idEpic,
+			req.params.idProject,
+		]);
+		if (results.affectedRows == 0) {
+			res.sendStatus(404);
+			return;
+		}
+		await conn.query('UPDATE issue SET idProject = NULL WHERE idProject = ?', [
+			req.params.idEpic,
+			req.params.idProject,
+		]);
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	} finally {
+		if (conn != null) conn.rollback();
+	}
+}
+
 module.exports = {
 	epics_get,
 	epics_post,
 	get_epic_id,
 	put_epic_id,
+	delete_epic_id,
 };

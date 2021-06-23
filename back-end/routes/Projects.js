@@ -295,4 +295,10 @@ app.put(
 	epics.put_epic_id
 );
 
+app.delete(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.delete_epic_id
+);
+
 module.exports = app;
