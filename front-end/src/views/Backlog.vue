@@ -117,16 +117,21 @@
 				/>
 				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
 			</div>
+
+			<div id="line"><hr /></div>
+			<BacklogBox class="backlog-box" :issues="issues" />
 		</div>
 	</div>
 </template>
 
 <script>
 import IssueRow from '../components/IssueRow.vue';
+import BacklogBox from '../components/BacklogBox.vue';
 
 export default {
 	components: {
 		IssueRow,
+		BacklogBox,
 	},
 	data() {
 		return {
@@ -232,6 +237,34 @@ export default {
 			],
 
 			sprints: [],
+			issues: [
+				{
+					color: '#EE0000',
+					type: 'task',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+				},
+				{
+					color: '#047C97',
+					type: 'story',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+				},
+			],
 		};
 	},
 	methods: {
@@ -370,5 +403,9 @@ export default {
 #filter-row-container {
 	position: absolute;
 	left: 0;
+}
+
+.backlog-box {
+	margin-bottom: 36px;
 }
 </style>

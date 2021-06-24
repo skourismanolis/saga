@@ -1,5 +1,5 @@
 <template>
-	<div id="issue-entry" class="d-flex flex-row align-items-center">
+	<div class="d-flex flex-row align-items-center issue-entry">
 		<div id="issue-label" :style="labelColor" class="issue-element"></div>
 		<i
 			id="issue-icon"
@@ -76,12 +76,12 @@ export default {
 </script>
 
 <style scoped>
-#issue-entry {
+.issue-entry {
 	height: 40px;
 	background-color: white;
 }
 
-#issue-entry:hover {
+.issue-entry:hover {
 	cursor: pointer;
 	-webkit-filter: brightness(90%);
 }
