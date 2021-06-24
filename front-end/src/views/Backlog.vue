@@ -237,34 +237,7 @@ export default {
 			],
 
 			sprints: [],
-			issues: [
-				{
-					color: '#EE0000',
-					type: 'task',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-				},
-				{
-					color: '#047C97',
-					type: 'story',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-				},
-			],
+			issues: [],
 		};
 	},
 	methods: {

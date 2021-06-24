@@ -10,12 +10,17 @@
 				<i class="bi bi-plus create-epic-button-icon"></i>
 			</button>
 		</div>
-		<IssueRow
-			class="issue"
-			v-for="(issue, index) in issues"
-			:key="index"
-			:issue="issue"
-		/>
+		<div v-if="issues.length > 0">
+			<IssueRow
+				class="issue"
+				v-for="(issue, index) in issues"
+				:key="index"
+				:issue="issue"
+			/>
+		</div>
+		<div v-else class="empty-msg d-flex justify-content-center">
+			<span> Δεν υπάρχουν issues! </span>
+		</div>
 	</div>
 </template>
 
@@ -69,5 +74,10 @@ export default {
 .issue {
 	border-radius: 4pt;
 	margin-bottom: 2px;
+}
+
+.empty-msg {
+	background-color: white;
+	padding: 12px;
 }
 </style>
