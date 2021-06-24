@@ -67,10 +67,10 @@ async function members_delete(req, res) {
 				WHERE idProject = ?)',
 			[req.body.idUser, req.params.idProject]
 		);
-		await conn.query('DELETE FROM member WHERE idUser = ? AND idProject = ?', [
-			req.body.idUser,
-			req.params.idProject,
-		]);
+		await conn.query(
+			'DELETE FROM member WHERE idUser = ? AND idProject = ?',
+			[req.body.idUser, req.params.idProject]
+		);
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {

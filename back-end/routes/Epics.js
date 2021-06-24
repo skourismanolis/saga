@@ -33,11 +33,10 @@ async function epics_get(req, res) {
 		let [epics] = await db.pool.query(myepicquery, params);
 		let [count] = await db.pool.query(
 			'SELECT COUNT(*) AS count FROM epic WHERE idProject = ?',
-			[req.params.idProject],
+			[req.params.idProject]
 		);
 
-		res.header('X-Pagination-Total', count[0].count)
-			.send(epics);
+		res.header('X-Pagination-Total', count[0].count).send(epics);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
@@ -64,7 +63,11 @@ async function epics_post(req, res) {
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		if (start != null && deadline != null && dayjs(deadline).isBefore(start)) {
+		if (
+			start != null &&
+			deadline != null &&
+			dayjs(deadline).isBefore(start)
+		) {
 			res.status(400).send('Bad request');
 			return;
 		}
@@ -125,7 +128,11 @@ async function put_epic_id(req, res) {
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		if (start != null && deadline != null && dayjs(deadline).isBefore(start)) {
+		if (
+			start != null &&
+			deadline != null &&
+			dayjs(deadline).isBefore(start)
+		) {
 			res.status(400).send('Bad request');
 			return;
 		}
@@ -160,14 +167,14 @@ async function delete_epic_id(req, res) {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 
-		let [temp] = await conn.query('UPDATE issue SET idEpic = NULL WHERE idEpic = ? AND idProject = ?', [
-			req.params.idEpic,
-			req.params.idProject,
-		]);
-		let [results] = await conn.query('DELETE FROM epic WHERE idEpic = ? AND idProject = ?;', [
-			req.params.idEpic,
-			req.params.idProject,
-		]);
+		await conn.query(
+			'UPDATE issue SET idEpic = NULL WHERE idEpic = ? AND idProject = ?',
+			[req.params.idEpic, req.params.idProject]
+		);
+		let [results] = await conn.query(
+			'DELETE FROM epic WHERE idEpic = ? AND idProject = ?;',
+			[req.params.idEpic, req.params.idProject]
+		);
 
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
@@ -253,7 +260,7 @@ async function post_add_issues(req, res) {
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		
+
 		let [results] = await conn.query(
 			`UPDATE issue SET idEpic = ?
 			WHERE idProject = ? AND code IN (?) 

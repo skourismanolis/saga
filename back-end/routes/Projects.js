@@ -78,7 +78,8 @@ app.get('/', async (req, res) => {
 	} finally {
 		if (conn != null) conn.release();
 	}
-	if ( //TODO make pagination in sql
+	if (
+		//TODO make pagination in sql
 		req.headers['x-pagination-limit'] != null &&
 		req.headers['x-pagination-offset'] != null
 	) {
