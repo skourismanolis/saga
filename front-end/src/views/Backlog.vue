@@ -1,5 +1,5 @@
 <template>
-	<div class="d-flex justify-content-between">
+	<div class="d-flex justify-content-start">
 		<div class="d-flex flex-column" id="left">
 			<span id="epics-label">Epics</span>
 			<button
@@ -28,13 +28,13 @@
 				<div
 					v-for="(epic, index) in epics"
 					:key="index"
-					@click="toggleExpanded(index)"
 					class="d-flex flex-column"
 				>
 					<div
 						id="epic-entry"
 						class="d-flex flex-row align-items-center"
 						v-bind:class="{ oddrow: index % 2 != 0 }"
+						@click="toggleExpanded(index)"
 					>
 						<i id="epic-icon" class="bi bi-hourglass"></i>
 						<span id="epic-name">{{ epic.name }}</span>
@@ -86,7 +86,38 @@
 				</div>
 			</div>
 		</div>
-		<div class="d-flex flex-column" id="right"></div>
+		<div class="d-flex flex-column" id="right">
+			<span id="sprints-label">Sprints</span>
+			<div class="d-flex flex-row align-items-baseline">
+				<div class="d-flex flex-row" id="filter-row-container">
+					<span id="filter-text" class="filter-element"
+						>Φίλτραρε issues με:</span
+					>
+					<a type="button" class="link filter-element">Epic</a>
+					<a type="button" class="link">Label</a>
+				</div>
+
+				<button
+					id="create-sprint-button"
+					type="button"
+					class="btn btn-primary d-flex align-items-center mx-auto"
+				>
+					Δημιουργία Sprint
+					<i class="bi bi-plus create-epic-button-icon"></i>
+				</button>
+			</div>
+
+			<div
+				class="align-self-center d-flex flex-column"
+				v-if="sprints.length === 0"
+			>
+				<img
+					id="empty-sprint-art"
+					src="../assets/empty-sprint-art.png"
+				/>
+				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -199,6 +230,8 @@ export default {
 					expanded: false,
 				},
 			],
+
+			sprints: [],
 		};
 	},
 	methods: {
@@ -237,6 +270,7 @@ export default {
 	border-radius: 4pt;
 
 	margin-bottom: 24px;
+	height: 36px;
 }
 
 .create-epic-button-icon {
@@ -304,5 +338,37 @@ export default {
 }
 
 #right {
+	margin-top: 36px;
+	margin-left: 36px;
+	margin-right: 36px;
+	width: 865px;
+	position: relative;
+}
+
+#sprints-label {
+	color: black;
+	font-weight: bold;
+	font-size: 32px;
+	margin-bottom: 24px;
+}
+
+.filter-element {
+	margin-right: 12px;
+}
+
+#filter-text {
+	font-size: 16px;
+}
+
+#create-sprint-button {
+	border-radius: 4pt;
+
+	height: 36px;
+	margin-bottom: 24px;
+}
+
+#filter-row-container {
+	position: absolute;
+	left: 0;
 }
 </style>
