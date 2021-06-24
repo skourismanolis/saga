@@ -307,4 +307,10 @@ app.get(
 	epics.get_epic_issues
 );
 
+app.post(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.post_add_issues
+);
+
 module.exports = app;
