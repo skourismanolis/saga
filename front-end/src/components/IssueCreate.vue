@@ -2,7 +2,6 @@
 	<b-container>
 		<h4><strong>Create an issue</strong></h4>
 		<form @submit.prevent="CreateIssue">
-			<h4>Name & Describe the issue</h4>
 			<b-row class="my-1">
 				<b-col sm="3">
 					<label for="input-title"
@@ -13,10 +12,8 @@
 					<b-form-input
 						id="input-title"
 						v-model="issue.title"
-						:state="checkTitleLength"
 						placeholder="Enter title"
 						required
-						@blur="$v.issue.title.$touch()"
 						trim
 					>
 					</b-form-input>
@@ -24,23 +21,25 @@
 			</b-row>
 			<b-row class="my-1">
 				<b-col sm="3">
-					<label for="textarea-limit">Description</label>
+					<label for="textarea-limit"
+						>Description<br />({{
+							getDescriptionLength
+						}}/200)</label
+					>
 				</b-col>
 				<b-col sm="9">
 					<b-form-textarea
 						id="textarea-limit"
 						placeholder="Describe in 200 or less characters."
 						v-model="issue.description"
-						:state="issue.description.length <= 200"
 						trim
 					></b-form-textarea>
 				</b-col>
 			</b-row>
+
 			<h4>Choose category and tags</h4>
 			<b-row class="my-1">
-				<label for="category-selector" style="width: 10%; height: 40px"
-					>Category
-				</label>
+				<label for="category-selector" id="label0">Category </label>
 
 				<b-select
 					id="category-selector"
@@ -55,7 +54,6 @@
 </template>
 
 <script>
-import { required, maxLength, minLength } from 'vuelidate/lib/validators';
 export default {
 	data() {
 		return {
@@ -74,15 +72,8 @@ export default {
 		getTitleLength() {
 			return this.issue.title.length;
 		},
-	},
-	validations: {
-		title: {
-			required,
-			minLength: minLength(2),
-			maxLength: maxLength(30),
-		},
-		description: {
-			maxLength: maxLength(200),
+		getDescriptionLength() {
+			return this.issue.description.length;
 		},
 	},
 };
@@ -107,21 +98,13 @@ div.col-sm-3 {
 
 select#category-selector {
 	flex: 1%;
-	margin-left: 0.75rem;
-	display: block;
+	margin-left: 2rem;
 	width: 100%;
 	padding: 0.375rem 0.75rem;
 	font-size: 1rem;
-	font-weight: 400;
 	line-height: 1.5;
-	color: #212529;
 	background-color: #fff;
-	background-clip: padding-box;
-	border: 1px solid #ced4da;
-	appearance: none;
-	border-radius: 0.25rem;
 	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-	margin-right: 15.65%;
 }
 
 h4 {
@@ -130,10 +113,16 @@ h4 {
 	margin: 12px;
 	margin-bottom: 18px;
 	font-weight: 540;
+	display: flex;
+	justify-content: center;
 }
 
 div.row.my-1 {
 	display: flex;
 	align-items: center;
+}
+
+#label0 {
+	margin-left: 200px;
 }
 </style>
