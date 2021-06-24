@@ -288,6 +288,47 @@ async function post_add_issues(req, res) {
 	}
 }
 
+async function delete_remove_issues(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.StringArray);
+	} catch (error) {
+		console.error(error);
+		res.status(400).send('Bad request');
+		return;
+	}
+
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let [results] = await conn.query(
+			`UPDATE issue SET idEpic = NULL
+			WHERE idEpic = ? AND idProject = ? AND code IN (?)`,
+			[req.params.idEpic, req.params.idProject, req.body]
+		);
+
+		console.log(results);
+
+		if (results.affectedRows != req.body.length) {
+			if (conn != null) conn.rollback();
+			res.sendStatus(404);
+			return;
+		}
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	} finally {
+		if (conn != null) conn.rollback();
+	}
+}
+
 module.exports = {
 	epics_get,
 	epics_post,
@@ -296,4 +337,5 @@ module.exports = {
 	delete_epic_id,
 	get_epic_issues,
 	post_add_issues,
+	delete_remove_issues,
 };

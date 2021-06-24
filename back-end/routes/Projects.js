@@ -313,4 +313,10 @@ app.post(
 	epics.post_add_issues
 );
 
+app.delete(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.delete_remove_issues
+);
+
 module.exports = app;
