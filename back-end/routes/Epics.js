@@ -23,7 +23,7 @@ async function epics_get(req, res) {
 			res.sendStatus(400);
 			return;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15;
+		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
 		let offset = req.headers['x-pagination-offset'] || 0;
 		myepicquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -36,7 +36,6 @@ async function epics_get(req, res) {
 			[req.params.idProject],
 		);
 
-		console.log(count);
 		res.header('X-Pagination-Total', count[0].count)
 			.send(epics);
 	} catch (error) {
@@ -169,7 +168,7 @@ async function delete_epic_id(req, res) {
 			req.params.idEpic,
 			req.params.idProject,
 		]);
-		
+
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
 			return;
@@ -187,10 +186,50 @@ async function delete_epic_id(req, res) {
 	}
 }
 
+async function get_epic_issues(req, res) {
+	try {
+		// building the query
+		let myissuequery =
+			'SELECT code,idEpic,idLabel,idSprint,idColumn,title,category,points,priority,deadline,description FROM issue WHERE idEpic = ? AND idProject = ?';
+		let params = [req.params.idEpic, req.params.idProject];
+
+		// handling pagination headers
+		if (
+			req.headers['x-pagination-limit'] != null &&
+			req.headers['x-pagination-offset'] != null &&
+			(isNaN(req.headers['x-pagination-limit']) ||
+				isNaN(req.headers['x-pagination-offset']))
+		) {
+			res.sendStatus(400);
+			return;
+		}
+		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let offset = req.headers['x-pagination-offset'] || 0;
+		myissuequery += ' LIMIT ? OFFSET ?';
+		params.push(parseInt(limit));
+		params.push(parseInt(offset));
+
+		// // making the queries
+		let [issues] = await db.pool.query(myissuequery, params);
+		let [count] = await db.pool.query(
+			'SELECT COUNT(*) AS count FROM issue WHERE idEpic = ? AND idProject = ?',
+			[req.params.idEpic, req.params.idProject],
+		);
+
+		res.header('X-Pagination-Total', count[0].count)
+			.send(issues);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	}
+}
+
 module.exports = {
 	epics_get,
 	epics_post,
 	get_epic_id,
 	put_epic_id,
 	delete_epic_id,
+	get_epic_issues,
 };

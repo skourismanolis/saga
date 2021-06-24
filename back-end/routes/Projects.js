@@ -301,4 +301,10 @@ app.delete(
 	epics.delete_epic_id
 );
 
+app.get(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.get_epic_issues
+);
+
 module.exports = app;
