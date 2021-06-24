@@ -98,7 +98,8 @@ div.col-sm-3 {
 
 select#category-selector {
 	flex: 1%;
-	margin-left: 2rem;
+	margin-left: 3%;
+	margin-right: 1%;
 	width: 100%;
 	padding: 0.375rem 0.75rem;
 	font-size: 1rem;
