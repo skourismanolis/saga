@@ -17,6 +17,7 @@ const ProjectMember = require('./ProjectMember');
 const ProjectMemberShort = require('./ProjectMemberShort');
 const Sprint = require('./Sprint');
 const SprintPutPost = require('./SprintPutPost');
+const StringArray = require('./StringArray');
 const TokenObject = require('./TokenObject');
 const User = require('./User');
 const UserLoginPost = require('./UserLoginPost');
@@ -42,6 +43,7 @@ module.exports = {
 	ProjectMemberShort,
 	Sprint,
 	SprintPutPost,
+	StringArray,
 	TokenObject,
 	User,
 	UserLoginPost,
