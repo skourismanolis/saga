@@ -209,21 +209,30 @@ async function get_epic_issues(req, res) {
 		params.push(parseInt(limit));
 		params.push(parseInt(offset));
 
-		// // making the queries
+		// making the queries
 		let [issues] = await db.pool.query(myissuequery, params);
 		let [count] = await db.pool.query(
 			'SELECT COUNT(*) AS count FROM issue WHERE idEpic = ? AND idProject = ?',
-			[req.params.idEpic, req.params.idProject],
+			[req.params.idEpic, req.params.idProject]
 		);
-		let queries = [];
-		issues.forEach(issue => {
-			queries.push(['SELECT idUser FROM assignee WHERE code = ?', [issue.code]]);
-		});
-		let temp = await Promise.all(queries.map((q) => db.pool.query(q[0],q[1])));
-		console.log(temp);
 
-		res.header('X-Pagination-Total', count[0].count)
-			.send(issues);
+		// get and add assignees to response
+		let queries = [];
+		issues.forEach((issue) => {
+			queries.push([
+				'SELECT idUser FROM assignee WHERE code = ?',
+				[issue.code],
+			]);
+		});
+		let temp = await Promise.all(
+			queries.map((q) => db.pool.query(q[0], q[1]))
+		);
+		temp.forEach((element, index) => {
+			let assignees = element[0].map((entry) => entry.idUser);
+			issues[index].assignees = assignees;
+		});
+
+		res.header('X-Pagination-Total', count[0].count).send(issues);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
@@ -250,7 +259,7 @@ async function post_add_issues(req, res) {
 			WHERE idProject = ? AND code IN (?) 
 			AND ? IN (
 				SELECT idEpic FROM epic WHERE idProject = ?
-			)`, 
+			)`,
 			[
 				req.params.idEpic,
 				req.params.idProject,
