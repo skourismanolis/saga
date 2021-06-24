@@ -154,6 +154,7 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
+							priority: 'Low',
 						},
 						{
 							color: '#047C97',
@@ -167,6 +168,7 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
+							priority: 'Neutral',
 						},
 						{
 							color: '#299D00',
@@ -180,6 +182,7 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
+							priority: 'Very High',
 						},
 					],
 					expanded: false,
@@ -202,6 +205,7 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
+							priority: 'Very Low',
 						},
 						{
 							color: '#047C97',
@@ -215,6 +219,7 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
+							priority: 'High',
 						},
 					],
 					expanded: false,
@@ -237,7 +242,36 @@ export default {
 			],
 
 			sprints: [],
-			issues: [],
+			issues: [
+				{
+					color: '#EE0000',
+					type: 'task',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Neutral',
+				},
+				{
+					color: '#047C97',
+					type: 'story',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Low',
+				},
+			],
 		};
 	},
 	methods: {

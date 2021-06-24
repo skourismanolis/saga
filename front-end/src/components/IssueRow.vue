@@ -57,11 +57,16 @@
 		>
 			{{ issue.points }}
 		</div>
+		<IssuePriority class="issue-element" :priority="issue.priority" />
 	</div>
 </template>
 
 <script>
+import IssuePriority from './IssuePriority.vue';
 export default {
+	components: {
+		IssuePriority,
+	},
 	props: {
 		issue: Object,
 	},
