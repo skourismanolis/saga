@@ -21,7 +21,7 @@ describe('projects', () => {
 		client.axios = { post: async () => ({ token: '123' }) };
 		await expect(
 			client.login({ email: 'lorem', password: 'ipsum' })
-		).not.toThrow();
+		).resolves.not.toThrow();
 		client.axios = og;
 	});
 
