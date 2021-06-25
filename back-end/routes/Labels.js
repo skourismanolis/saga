@@ -75,7 +75,27 @@ async function labels_post(req, res) {
 		if (conn != null) conn.rollback();
 	}
 }
+
+async function get_label_id(req, res) {
+	try {
+		let [label] = await db.pool.query(
+			'SELECT  FROM label WHERE idLabel = ?',
+			[req.params.idLabel]
+		);
+
+		if (epic.length == 0) {
+			return res.sendStatus(404);
+		}
+
+		res.send(label);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	}
+}
 module.exports = {
 	labels_get,
 	labels_post,
+	get_label_id,
 };
