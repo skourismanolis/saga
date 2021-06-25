@@ -328,4 +328,28 @@ app.get(
 	labels.labels_get
 );
 
+app.post(
+	'/:idProject/labels/',
+	Project_auth(['Admin', 'Member']),
+	labels.labels_post
+);
+
+app.get(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.get_label_id
+);
+
+app.put(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.put_label_id
+);
+
+app.delete(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.delete_label_id
+);
+
 module.exports = app;

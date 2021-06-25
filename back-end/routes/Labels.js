@@ -30,7 +30,7 @@ async function labels_get(req, res) {
 		// // making the queries
 		let [labels] = await db.pool.query(myquery, params);
 		let [count] = await db.pool.query(
-			'SELECT COUNT(*) AS count FROM epic WHERE idProject = ?',
+			'SELECT COUNT(*) AS count FROM label WHERE idProject = ?',
 			[req.params.idProject]
 		);
 
@@ -83,7 +83,7 @@ async function get_label_id(req, res) {
 			[req.params.idLabel]
 		);
 
-		if (epic.length == 0) {
+		if (label.length == 0) {
 			return res.sendStatus(404);
 		}
 
@@ -126,9 +126,43 @@ async function put_label_id(req, res) {
 		return;
 	}
 }
+
+async function delete_label_id(req, res) {
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		await conn.query(
+			'UPDATE issue SET idLabel = NULL WHERE idLabel = ? AND idProject = ?',
+			[req.params.idLabel, req.params.idProject]
+		);
+		let [label] = await conn.query(
+			'DELETE FROM label WHERE idLabel = ? AND idProject = ?;',
+			[req.params.idLabel, req.params.idProject]
+		);
+
+		if (label.affectedRows == 0) {
+			res.sendStatus(404);
+			return;
+		}
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	} finally {
+		if (conn != null) conn.rollback();
+	}
+}
+
 module.exports = {
 	labels_get,
 	labels_post,
 	get_label_id,
 	put_label_id,
+    delete_label_id,
 };
