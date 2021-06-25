@@ -94,8 +94,41 @@ async function get_label_id(req, res) {
 		return;
 	}
 }
+
+async function put_label_id(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.EpicPutPost);
+	} catch (error) {
+		console.error(error);
+		res.status(400).send('Bad request');
+		return;
+	}
+
+	try {
+		let [results] = await db.pool.query(
+			'UPDATE label SET name = ?, color = ? WHERE idLabel = ? AND idProject = ?',
+			[
+				req.body.name,
+				req.body.color,
+				req.params.idLabel,
+				req.params.idProject,
+			]
+		);
+		if (results.affectedRows == 0) {
+			res.sendStatus(404);
+			return;
+		}
+
+		res.sendStatus(200);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	}
+}
 module.exports = {
 	labels_get,
 	labels_post,
 	get_label_id,
+	put_label_id,
 };
