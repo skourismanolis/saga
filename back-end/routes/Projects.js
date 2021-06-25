@@ -134,10 +134,11 @@ app.post('/', async (req, res) => {
 			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
-		await conn.query(
-			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
-			[project.insertId, 'DONE', 3]
-		);
+		// // removed, done issues have idColumn = NULL
+		// await conn.query(
+		// 	'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
+		// 	[project.insertId, 'DONE', 3]
+		// );
 		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
 			[req.user.idUser, project.insertId, 'Admin']
