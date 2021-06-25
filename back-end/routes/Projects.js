@@ -352,4 +352,35 @@ app.delete(
 	labels.delete_label_id
 );
 
+// columns
+app.get(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	labels.columns_get
+);
+
+app.post(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	labels.columns_post
+);
+
+app.get(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	labels.get_column_id
+);
+
+app.put(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	labels.put_column_id
+);
+
+app.delete(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	labels.delete_column_id
+);
+
 module.exports = app;
