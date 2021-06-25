@@ -11,8 +11,18 @@ describe('constructs correctly', () => {
 
 describe('projects', () => {
 	let client;
-	beforeAll(() => {
+	beforeAll(async () => {
 		client = new SagaClient({ url: __MOCKURL__ });
+		await client.login({ email: 'asd@gmail.com', password: '1234' });
+	});
+
+	it('logins', async () => {
+		let og = client.axios;
+		client.axios = { post: async () => ({ token: '123' }) };
+		await expect(
+			client.login({ email: 'lorem', password: 'ipsum' })
+		).not.toThrow();
+		client.axios = og;
 	});
 
 	it('returns a project list', async () => {
