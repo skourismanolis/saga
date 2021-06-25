@@ -1696,11 +1696,16 @@ components:
         picture:
           type: string
           nullable: true
+        activeSprint:
+          type: number
+          description: 'there can only be one active sprint, when the active sprint ends then this becomes null and another sprint can become active'
+          nullable: true
       required:
         - idProject
         - name
         - members
         - picture
+        - activeSprint
     ProjectMemberShort:
       title: Project Member Short
       type: object
