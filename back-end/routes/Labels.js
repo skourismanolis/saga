@@ -79,7 +79,7 @@ async function labels_post(req, res) {
 async function get_label_id(req, res) {
 	try {
 		let [label] = await db.pool.query(
-			'SELECT  FROM label WHERE idLabel = ?',
+			'SELECT idLabel,name,color FROM label WHERE idLabel = ?',
 			[req.params.idLabel]
 		);
 
@@ -97,7 +97,7 @@ async function get_label_id(req, res) {
 
 async function put_label_id(req, res) {
 	try {
-		Joi.attempt(req.body, schemas.EpicPutPost);
+		Joi.attempt(req.body, schemas.LabelPutPost);
 	} catch (error) {
 		console.error(error);
 		res.status(400).send('Bad request');
