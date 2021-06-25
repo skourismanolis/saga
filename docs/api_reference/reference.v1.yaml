@@ -125,9 +125,13 @@ paths:
                 picture:
                   type: string
                   format: uri
+                activeSprint:
+                  type: integer
+                  nullable: true
               required:
                 - title
                 - picture
+                - activeSprint
   '/projects/{idProject}/members':
     parameters:
       - schema:
