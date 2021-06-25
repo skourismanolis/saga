@@ -5,6 +5,7 @@ import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Profile from '../views/Profile.vue';
 import ProfileEdit from '../views/ProfileEdit.vue';
+import Backlog from '../views/Backlog.vue';
 
 Vue.use(VueRouter);
 
@@ -50,6 +51,11 @@ const routes = [
 		meta: {
 			projectNavbar: false,
 		},
+	},
+	{
+		path: '/backlog',
+		name: 'Backlog',
+		component: Backlog,
 	},
 	{
 		path: '/about',
