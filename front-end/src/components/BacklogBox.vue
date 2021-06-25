@@ -5,9 +5,18 @@
 				<span id="backlog-title"> Backlog </span>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
-			<button type="button" class="btn btn-primary button">
+			<button
+				type="button"
+				class="
+					btn btn-primary
+					button
+					d-flex
+					align-items-center
+					button-container
+				"
+			>
 				Νέο Issue
-				<i class="bi bi-plus create-epic-button-icon"></i>
+				<i class="bi bi-plus button-icon"></i>
 			</button>
 		</div>
 		<div v-if="issues.length > 0">
@@ -79,5 +88,14 @@ export default {
 .empty-msg {
 	background-color: white;
 	padding: 12px;
+}
+
+.button-container {
+	border-radius: 4pt;
+	height: 36px;
+}
+
+.button-icon {
+	font-size: 24px;
 }
 </style>

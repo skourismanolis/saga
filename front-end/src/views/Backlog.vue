@@ -117,6 +117,19 @@
 				/>
 				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
 			</div>
+			<div v-else>
+				<SprintBox
+					class="sprint-box"
+					v-for="(sprint, index) in sprints"
+					:key="index"
+					:name="sprint.name"
+					:start_date="sprint.star_date"
+					:end_date="sprint.end_date"
+					:active="sprint.active"
+					:exists_active="sprint.exists_active"
+					:issues="sprint.issues"
+				/>
+			</div>
 
 			<div id="line"><hr /></div>
 			<BacklogBox class="backlog-box" :issues="issues" />
@@ -127,11 +140,13 @@
 <script>
 import IssueRow from '../components/IssueRow.vue';
 import BacklogBox from '../components/BacklogBox.vue';
+import SprintBox from '../components/SprintBox.vue';
 
 export default {
 	components: {
 		IssueRow,
 		BacklogBox,
+		SprintBox,
 	},
 	data() {
 		return {
@@ -241,7 +256,83 @@ export default {
 				},
 			],
 
-			sprints: [],
+			sprints: [
+				{
+					name: 'Example Sprint',
+					start_date: new Date('08/14/2020'),
+					end_date: new Date('09/14/2020'),
+					active: true,
+					exists_active: true,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
+					],
+				},
+
+				{
+					name: 'Example Sprint',
+					start_date: new Date(1995, 1, 17),
+					end_date: new Date(1995, 11, 17),
+					active: false,
+					exists_active: true,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
+					],
+				},
+			],
 			issues: [
 				{
 					color: '#EE0000',
@@ -414,5 +505,9 @@ export default {
 
 .backlog-box {
 	margin-bottom: 36px;
+}
+
+.sprint-box {
+	margin-bottom: 12px;
 }
 </style>
