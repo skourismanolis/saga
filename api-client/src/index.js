@@ -13,9 +13,20 @@ module.exports = class SagaClient {
 		if (perPage <= 0) throw 'Invalid page size. Must be greater than 0.';
 		this.axios = axios.create({ baseURL: url });
 		this._perPage = perPage;
+		this._isLoggedIn = false;
+	}
+
+	async login({ email, password }) {
+		let { data } = await this.axios.post('/users/login', {
+			email,
+			password,
+		});
+		this.axios.defaults.headers.Authorization = 'Bearer ' + data.token;
+		this._isLoggedIn = true;
 	}
 
 	async getProjects() {
+		if (!this._isLoggedIn) throw 'Please login first';
 		let list = new PaginatedList(this, {
 			url: '/projects',
 			dataTransformer: (projects) =>
