@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
   `category` ENUM("Story", "Task", "Bug") NULL,
   `points` INT NULL,
   `priority` ENUM("Very Low", "Low", "Neutral", "High", "Very High") NULL,
-  `deadline` DATETIME NULL,
+  `deadline` DATE NULL,
   `description` TEXT NULL,
   PRIMARY KEY (`code`),
   CONSTRAINT `fk_issue_label1`
