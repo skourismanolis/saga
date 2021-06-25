@@ -17,11 +17,17 @@ describe('projects', () => {
 	});
 
 	it('logins', async () => {
+		const token = 123;
 		let og = client.axios;
-		client.axios = { post: async () => ({ token: '123' }) };
+		client.axios = {
+			post: async () => ({ token }),
+			defaults: { headers: {} },
+		};
 		await expect(
 			client.login({ email: 'lorem', password: 'ipsum' })
 		).resolves.not.toThrow();
+
+		expect(client.axios.defaults.headers.Authorization).toContain(token);
 		client.axios = og;
 	});
 
