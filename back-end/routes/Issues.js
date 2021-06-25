@@ -20,6 +20,7 @@ async function issues_create(req, res) {
 			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
 			[req.params.idProject, body.assignees]
 		);
+
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		await conn.query(
@@ -37,6 +38,9 @@ async function issues_create(req, res) {
 			]
 		);
 		if (body.assignees != null) {
+			if (members.length != body.assignees.length) {
+				res.sendStatus(404);
+			}
 			members.forEach(async (assignee) => {
 				await conn.query(
 					'INSERT INTO assignee (code , idUser) VALUES (?,?)',
@@ -56,6 +60,46 @@ async function issues_create(req, res) {
 	}
 }
 
+async function issues_get(req, res) {
+	try {
+		let query_string = 'SELECT * FROM issue WHERE idProject = ?';
+		let query_params = [req.params.idProject];
+		if (
+			req.query.inSprint != null &&
+			typeof req.query.inSprint === 'number'
+		) {
+			query_string += ' AND idSprint = ?';
+			query_params.push(req.query.inSprint);
+		}
+		if (req.query.column != null && typeof req.query.column === 'number') {
+			query_string += ' AND idColumn = ?';
+			query_params.push(req.query.column);
+		}
+		if (req.query.inEpic != null && typeof req.query.inEpic === 'number') {
+			query_string += ' AND idEpic = ?';
+			query_params.push(req.query.inEpic);
+		}
+		if (
+			req.query.assignee != null &&
+			typeof req.query.assignee === 'number'
+		) {
+			query_string +=
+				' AND ? IN(SELECT idUser FROM assignee WHERE code = issue.code';
+			query_params.push(req.query.assignee);
+		}
+		if (req.query.label != null && req.query.label.isArray()) {
+			query_string += ' AND idLabel IN ?';
+			query_params.push(req.query.label);
+		}
+		const [result] = await db.pool.query(query_string, query_params);
+		res.status(200).send(result);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
 module.exports = {
 	issues_create,
+	issues_get,
 };

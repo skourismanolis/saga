@@ -275,4 +275,10 @@ app.post(
 	issues.issues_create
 );
 
+app.get(
+	'/:idProject/issues/',
+	Project_auth(['Admin', 'Member']),
+	issues.issues_get
+);
+
 module.exports = app;
