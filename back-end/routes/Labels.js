@@ -164,5 +164,5 @@ module.exports = {
 	labels_post,
 	get_label_id,
 	put_label_id,
-    delete_label_id,
+	delete_label_id,
 };
