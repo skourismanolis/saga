@@ -9,6 +9,7 @@ const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
 const epics = require('./Epics');
+const labels = require('./Labels');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -318,6 +319,37 @@ app.delete(
 	'/:idProject/epics/:idEpic/issues',
 	Project_auth(['Admin', 'Member']),
 	epics.delete_remove_issues
+);
+
+// labels
+app.get(
+	'/:idProject/labels/',
+	Project_auth(['Admin', 'Member']),
+	labels.labels_get
+);
+
+app.post(
+	'/:idProject/labels/',
+	Project_auth(['Admin', 'Member']),
+	labels.labels_post
+);
+
+app.get(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.get_label_id
+);
+
+app.put(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.put_label_id
+);
+
+app.delete(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.delete_label_id
 );
 
 module.exports = app;
