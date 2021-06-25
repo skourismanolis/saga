@@ -1697,7 +1697,7 @@ components:
           type: string
           nullable: true
         activeSprint:
-          type: number
+          type: integer
           description: 'there can only be one active sprint, when the active sprint ends then this becomes null and another sprint can become active'
           nullable: true
       required:
