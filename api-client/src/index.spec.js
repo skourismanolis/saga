@@ -20,7 +20,7 @@ describe('projects', () => {
 		const token = 123;
 		let og = client.axios;
 		client.axios = {
-			post: async () => ({ token }),
+			post: async () => ({ data: { token } }),
 			defaults: { headers: {} },
 		};
 		await expect(
