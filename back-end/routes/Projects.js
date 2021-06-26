@@ -12,6 +12,7 @@ const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
 const epics = require('./Epics');
 const labels = require('./Labels');
+const columns = require('./Columns');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -136,10 +137,11 @@ app.post('/', async (req, res) => {
 			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
-		await conn.query(
-			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
-			[project.insertId, 'DONE', 3]
-		);
+		// // removed, done issues have idColumn = NULL
+		// await conn.query(
+		// 	'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
+		// 	[project.insertId, 'DONE', 3]
+		// );
 		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
 			[req.user.idUser, project.insertId, 'Admin']
@@ -352,6 +354,37 @@ app.delete(
 	'/:idProject/labels/:idLabel/',
 	Project_auth(['Admin', 'Member']),
 	labels.delete_label_id
+);
+
+// columns
+app.get(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	columns.columns_get
+);
+
+app.post(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	columns.columns_post
+);
+
+app.get(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.get_column_id
+);
+
+app.put(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.put_column_id
+);
+
+app.delete(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.delete_column_id
 );
 
 module.exports = app;
