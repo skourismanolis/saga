@@ -1,10 +1,10 @@
-const SagaClient = require('../index');
+const SagaClient = require('@dira/api-client');
 const dayjs = require('dayjs');
 
-const Epic = require('./Epic');
-const Project = require('./Project');
-const Issue = require('./Issue');
-const PaginatedList = require('./PaginatedList');
+const Epic = require('@dira/api-client/src/classes/Epic');
+const Project = require('@dira/api-client/src/classes/Project');
+const Issue = require('@dira/api-client/src/classes/Issue');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 
 let client;
 

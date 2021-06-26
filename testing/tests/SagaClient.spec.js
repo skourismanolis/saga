@@ -1,7 +1,7 @@
-const Project = require('./classes/Project');
-const PaginatedList = require('./classes/PaginatedList');
+const Project = require('@dira/api-client/src/classes/Project');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 
-const SagaClient = require('./index');
+const SagaClient = require('@dira/api-client');
 describe('constructs correctly', () => {
 	test('correct baseURL', () => {
 		let c = new SagaClient({ url: __MOCKURL__ });

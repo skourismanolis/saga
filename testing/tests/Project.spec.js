@@ -1,16 +1,16 @@
 const URL = require('url').URL;
 
-const SagaClient = require('../index');
-const Project = require('./Project');
-const Member = require('./Member');
-const Label = require('./Label');
-const Issue = require('./Issue');
-const Sprint = require('./Sprint.js');
-const PaginatedList = require('./PaginatedList');
-const IssueCategory = require('./IssueCategory');
-const IssuePriority = require('./IssuePriority');
-const Column = require('./Column');
-const Epic = require('./Epic');
+const SagaClient = require('@dira/api-client');
+const Project = require('@dira/api-client/src/classes/Project');
+const Member = require('@dira/api-client/src/classes/Member');
+const Label = require('@dira/api-client/src/classes/Label');
+const Issue = require('@dira/api-client/src/classes/Issue');
+const Sprint = require('@dira/api-client/src/classes/Sprint.js');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
+const IssueCategory = require('@dira/api-client/src/classes/IssueCategory');
+const IssuePriority = require('@dira/api-client/src/classes/IssuePriority');
+const Column = require('@dira/api-client/src/classes/Column');
+const Epic = require('@dira/api-client/src/classes/Epic');
 
 let project;
 let client;

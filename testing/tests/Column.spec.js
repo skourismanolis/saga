@@ -1,6 +1,6 @@
-const SagaClient = require('../index');
-const Column = require('./Column');
-const Project = require('./Project');
+const SagaClient = require('@dira/api-client');
+const Column = require('@dira/api-client/src/classes/Column');
+const Project = require('@dira/api-client/src/classes/Project');
 
 let client;
 let column;

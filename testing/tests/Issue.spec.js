@@ -1,14 +1,14 @@
 const dayjs = require('dayjs');
 
-const SagaClient = require('../index');
-const Issue = require('./Issue');
-const Project = require('./Project');
-const IssuePriority = require('./IssuePriority');
-const Sprint = require('./Sprint');
-const Column = require('./Column');
-const Label = require('./Label');
-const Member = require('./Member');
-const Epic = require('./Epic');
+const SagaClient = require('@dira/api-client');
+const Issue = require('@dira/api-client/src/classes/Issue');
+const Project = require('@dira/api-client/src/classes/Project');
+const IssuePriority = require('@dira/api-client/src/classes/IssuePriority');
+const Sprint = require('@dira/api-client/src/classes/Sprint');
+const Column = require('@dira/api-client/src/classes/Column');
+const Label = require('@dira/api-client/src/classes/Label');
+const Member = require('@dira/api-client/src/classes/Member');
+const Epic = require('@dira/api-client/src/classes/Epic');
 
 const MOCK_ISSUE = {
 	idSprint: 2,

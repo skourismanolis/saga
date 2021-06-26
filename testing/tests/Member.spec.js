@@ -1,6 +1,6 @@
-const SagaClient = require('../index');
-const Member = require('./Member');
-const Project = require('./Project');
+const SagaClient = require('@dira/api-client');
+const Member = require('@dira/api-client/src/classes/Member');
+const Project = require('@dira/api-client/src/classes/Project');
 
 let client;
 let member;

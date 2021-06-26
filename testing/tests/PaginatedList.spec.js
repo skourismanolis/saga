@@ -1,5 +1,5 @@
-const PaginatedList = require('./PaginatedList');
-const SagaClient = require('../index');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
+const SagaClient = require('@dira/api-client');
 
 let client;
 let list;

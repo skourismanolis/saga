@@ -1,0 +1,20 @@
+{
+	"name": "testing",
+	"version": "1.0.0",
+	"main": "index.js",
+	"private": "true",
+	"scripts": {
+		"mock": "prism mock -d ../docs/api_reference/reference.v1.yaml",
+		"lint": "eslint . --fix",
+		"test": "jest",
+		"test-dev": "jest --watch"
+	},
+	"devDependencies": {
+		"@stoplight/prism-cli": "^4.2.6",
+		"eslint": "^7.29.0",
+		"eslint-plugin-jest": "^24.3.6",
+		"eslint-plugin-prettier": "^3.4.0",
+		"jest": "^27.0.5",
+		"prettier": "^2.3.2"
+	}
+}
