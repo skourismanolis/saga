@@ -4,15 +4,15 @@ const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 const SagaClient = require('@dira/api-client');
 describe('constructs correctly', () => {
 	test('correct baseURL', () => {
-		let c = new SagaClient({ url: __MOCKURL__ });
-		expect(c.axios.defaults.baseURL).toBe(__MOCKURL__);
+		let c = new SagaClient({ url: __APIURL__ });
+		expect(c.axios.defaults.baseURL).toBe(__APIURL__);
 	});
 });
 
 describe('projects', () => {
 	let client;
 	beforeAll(async () => {
-		client = new SagaClient({ url: __MOCKURL__ });
+		client = new SagaClient({ url: __APIURL__ });
 		await client.login({ email: 'asd@gmail.com', password: '1234' });
 	});
 

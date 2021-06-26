@@ -34,7 +34,7 @@ function testMockCallHeaderOffset(offset) {
 }
 
 beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+	client = new SagaClient({ url: __APIURL__ });
 	client.axios = mockAxios;
 });
 

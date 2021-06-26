@@ -35,7 +35,7 @@ let client;
 let issue;
 describe('Issue', () => {
 	beforeAll(() => {
-		client = new SagaClient({ url: __MOCKURL__ });
+		client = new SagaClient({ url: __APIURL__ });
 	});
 
 	it('constructs correctly', () => {

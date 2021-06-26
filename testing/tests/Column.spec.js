@@ -13,7 +13,7 @@ const MOCKPROJECT = {
 };
 
 beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+	client = new SagaClient({ url: __APIURL__ });
 });
 
 test('constructs', () => {
