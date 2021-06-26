@@ -16,11 +16,9 @@ module.exports = async function setup() {
 		picture: 'string',
 		plan: 'Free',
 	});
-	console.log('rere');
 
 	await runQuery(db.pool, [
 		'UPDATE user SET verified=1 WHERE username="admin"',
 	]);
-	console.log('rara');
 	await db.pool.end();
 };
