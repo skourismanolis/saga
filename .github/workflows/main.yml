@@ -83,6 +83,23 @@ jobs:
               run: npx eslint .
               working-directory: ./api-client
 
+    lint-testing:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./testing
+            - name: run linter
+              run: npx eslint .
+              working-directory: ./testing
+
     test-api-client:
         runs-on: ubuntu-latest
 
@@ -121,6 +138,6 @@ jobs:
               working-directory: ./back-end
             - name: run backend
               run: |
-                  NODE_ENV=test node ./back-end/server.js &
+                  NODE_ENV=test node ./server.js &
                   yarn run test
               working-directory: ./back-end
