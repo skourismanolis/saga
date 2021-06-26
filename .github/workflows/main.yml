@@ -137,8 +137,7 @@ jobs:
               run: yarn
               working-directory: ./testing
             - name: run backend
-              run: node server.js
-              working-directory: ./back-end
-            - name: run tests
-              run: yarn test-rest
-              working-directory: ./testing
+              run: |
+                  node ./back-end/server.js &
+                  yarn workflow testing run test-rest
+              working-directory: ./
