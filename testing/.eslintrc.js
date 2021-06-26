@@ -1,7 +1,14 @@
-const jestGlobals = require('./jest.config.js').globals;
+const clientJestGlobals = require('./client.jest.config').globals;
+const restJestGlobals = require('./rest.jest.config').globals;
 
+// inform eslint of the global variables set in the jest configs
 let globals = {};
-Object.keys(jestGlobals).forEach((global) => (globals[global] = 'readonly'));
+Object.keys(clientJestGlobals).forEach(
+	(global) => (globals[global] = 'readonly')
+);
+Object.keys(restJestGlobals).forEach(
+	(global) => (globals[global] = 'readonly')
+);
 
 module.exports = {
 	globals,
