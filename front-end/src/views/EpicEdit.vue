@@ -7,6 +7,7 @@
 					type="text"
 					class="form-control epic-title-input"
 					placeholder="Εισάγετε τίτλο..."
+					v-model="epic.name"
 				/>
 			</div>
 			<div class="d-flex flex-row container-element">
@@ -15,6 +16,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
+						v-model="epic.start_date"
 					></b-form-datepicker>
 				</div>
 				<div class="d-flex flex-column date-col-container">
@@ -22,6 +24,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
+						v-model="epic.end_date"
 					></b-form-datepicker>
 				</div>
 			</div>
@@ -30,25 +33,35 @@
 				<textarea
 					class="form-control"
 					placeholder="Εισάγετε περιγραφή..."
+					v-model="epic.description"
 				></textarea>
 			</div>
 			<div class="d-flex flex-column container-element">
 				<span class="label-text">ΣΥΝΟΛΟΛΙΚΟΙ ΠΟΝΤΟΙ</span>
 				<span>{{ totalPoints }}</span>
 			</div>
-			<EpicIssueBox class="box container-element" :issues="epic_issues" />
+			<EpicIssueBox class="box container-element" :issues="epic.issues" />
 			<BacklogBox
 				class="box container-element"
 				:issues="issues"
 				:buttonActive="false"
 			/>
-			<button
-				type="submit"
-				class="btn btn-primary align-self-end submit-button"
-				@click="true"
-			>
-				Δημιουργία Epic
-			</button>
+			<div class="d-flex flex-row justify-content-end">
+				<button
+					type="submit"
+					class="btn btn-danger button"
+					@click="true"
+				>
+					Ακύρωση
+				</button>
+				<button
+					type="submit"
+					class="btn btn-primary button"
+					@click="true"
+				>
+					Αποθήκευση
+				</button>
+			</div>
 		</form>
 	</div>
 </template>
@@ -64,7 +77,43 @@ export default {
 	},
 	data() {
 		return {
-			epic_issues: [],
+			epic: {
+				name: 'Example Epic',
+				start_date: '28 Μαρτίου 2021',
+				end_date: '28 Μαρτίου 2021',
+				description:
+					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eros magna, finibus sit amet tellus quis, consequat tempus ligula. Fusce ante diam, facilisis sed dui quis, tristique fermentum purus. Proin iaculis mauris vel maximus vestibulum. Curabitur ut sem vitae mauris interdum sagittis sit amet eu enim. Phasellus a condimentum est. Proin diam nisl, gravida id pulvinar vel, tempor eleifend nunc. Nulla porttitor nunc ut ultricies fermentum. ',
+				issues: [
+					{
+						color: '#EE0000',
+						type: 'task',
+						id: 1,
+						assignees: [
+							require('../assets/profile pics/default-profile-pic.png'),
+							require('../assets/profile pics/default-profile-pic.png'),
+							require('../assets/profile pics/default-profile-pic.png'),
+						],
+						name: 'Example Issue',
+						date: '23 Μαρ',
+						points: 2,
+						priority: 'Neutral',
+					},
+					{
+						color: '#047C97',
+						type: 'story',
+						id: 1,
+						assignees: [
+							require('../assets/profile pics/default-profile-pic.png'),
+							require('../assets/profile pics/default-profile-pic.png'),
+							require('../assets/profile pics/default-profile-pic.png'),
+						],
+						name: 'Example Issue',
+						date: '23 Μαρ',
+						points: 2,
+						priority: 'Low',
+					},
+				],
+			},
 			issues: [
 				{
 					color: '#EE0000',
@@ -99,11 +148,11 @@ export default {
 	},
 	computed: {
 		totalPoints() {
-			if (this.issues.length > 0) {
+			if (this.epic.issues.length > 0) {
 				let points = 0;
 
-				for (let i in this.epic_issues) {
-					points += this.epic_issues[i].points;
+				for (let i in this.epic.issues) {
+					points += this.epic.issues[i].points;
 				}
 				return points;
 			}
@@ -150,8 +199,9 @@ export default {
 	width: 147px;
 }
 
-.submit-button {
+.button {
 	width: 200px;
 	border-radius: 4pt;
+	margin-left: 12px;
 }
 </style>
