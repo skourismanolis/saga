@@ -132,7 +132,13 @@ jobs:
             - uses: c-hive/gha-yarn-cache@v1
             - name: install modules
               run: yarn
-              working-directory: ./
+              working-directory: ./back-end
+            - name: install modules
+              run: yarn
+              working-directory: ./testing
+            - name: run backend
+              run: node server.js
+              working-directory: ./back-end
             - name: run tests
               run: yarn test-rest
               working-directory: ./testing
