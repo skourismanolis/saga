@@ -36,7 +36,7 @@
 			<button
 				type="submit"
 				class="btn btn-primary align-self-end edit-button"
-				@click="true"
+				@click="redirectEpicEdit()"
 			>
 				Επεξεργασία Epic
 			</button>
@@ -105,7 +105,14 @@ export default {
 			return 0;
 		},
 	},
-	methods: {},
+	methods: {
+		redirectEpicEdit() {
+			// let query = { activePlan: value };
+			this.$router
+				.push({ path: '/epic-edit' /*, query: query*/ })
+				.catch(() => {});
+		},
+	},
 };
 </script>
 
