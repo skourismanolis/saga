@@ -7,6 +7,7 @@ import Profile from '../views/Profile.vue';
 import ProfileEdit from '../views/ProfileEdit.vue';
 import Backlog from '../views/Backlog.vue';
 import EpicCreate from '../views/EpicCreate.vue';
+import EpicView from '../views/EpicView.vue';
 
 Vue.use(VueRouter);
 
@@ -62,6 +63,14 @@ const routes = [
 		path: '/epic-create',
 		name: 'EpicCreate',
 		component: EpicCreate,
+		meta: {
+			projectNavbar: false,
+		},
+	},
+	{
+		path: '/epic-view',
+		name: 'EpicView',
+		component: EpicView,
 		meta: {
 			projectNavbar: false,
 		},

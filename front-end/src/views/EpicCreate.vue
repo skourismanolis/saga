@@ -9,7 +9,7 @@
 					placeholder="Εισάγετε τίτλο..."
 				/>
 			</div>
-			<div class="d-flex flex-row align-items-center container-element">
+			<div class="d-flex flex-row container-element">
 				<div class="d-flex flex-column date-col-container">
 					<span class="label-text">ΗΜΕΡΟΜΗΝΙΑ ΕΝΑΡΞΗΣ</span>
 					<b-form-datepicker
