@@ -63,16 +63,14 @@ async function columns_post(req, res) {
 		maxOrder = maxOrder[0].max;
 		if (maxOrder + 1 < req.body.order) req.body.order = maxOrder + 1;
 
-		await conn.query('UPDATE `column` SET `order` = `order` + 1 WHERE `order` >= ? AND idProject = ?',[
-			req.body.order,
-			req.params.idProject,
-		]);
 		await conn.query(
-			'INSERT INTO `column` (idProject,`name`,`order`) VALUES (?,?,?)', [
-			req.params.idProject,
-			req.body.name,
-			req.body.order,
-		]);
+			'UPDATE `column` SET `order` = `order` + 1 WHERE `order` >= ? AND idProject = ?',
+			[req.body.order, req.params.idProject]
+		);
+		await conn.query(
+			'INSERT INTO `column` (idProject,`name`,`order`) VALUES (?,?,?)',
+			[req.params.idProject, req.body.name, req.body.order]
+		);
 
 		await conn.commit();
 		res.sendStatus(200);
@@ -90,10 +88,8 @@ async function columns_post(req, res) {
 async function get_column_id(req, res) {
 	try {
 		let [column] = await db.pool.query(
-			'SELECT idColumn,`name`,`order` FROM `column` WHERE idColumn = ? AND idProject = ?', [
-				req.params.idColumn,
-				req.params.idProject,
-			]
+			'SELECT idColumn,`name`,`order` FROM `column` WHERE idColumn = ? AND idProject = ?',
+			[req.params.idColumn, req.params.idProject]
 		);
 
 		if (column.length == 0) {
@@ -117,6 +113,7 @@ async function put_column_id(req, res) {
 		return;
 	}
 
+	let conn;
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -128,10 +125,8 @@ async function put_column_id(req, res) {
 		maxOrder = maxOrder[0].max;
 		if (maxOrder + 1 < req.body.order) req.body.order = maxOrder;
 		let [currentOrder] = await conn.query(
-			'SELECT `order` FROM `column` WHERE idColumn = ? AND idProject = ?', [
-				req.params.idColumn,
-				req.params.idProject,
-			]
+			'SELECT `order` FROM `column` WHERE idColumn = ? AND idProject = ?',
+			[req.params.idColumn, req.params.idProject]
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
@@ -142,21 +137,12 @@ async function put_column_id(req, res) {
 		if (req.body.order > currentOrder) {
 			await conn.query(
 				'UPDATE `column` SET `order` = `order`-1 WHERE `order` > ? AND `order` <= ? AND idProject = ?',
-				[
-					currentOrder,
-					req.body.order,
-					req.params.idProject,
-				]
+				[currentOrder, req.body.order, req.params.idProject]
 			);
-		}
-		else if (req.body.order < currentOrder) {
+		} else if (req.body.order < currentOrder) {
 			await conn.query(
 				'UPDATE `column` SET `order` = `order`+1 WHERE `order` < ? AND `order` >= ? AND idProject = ?',
-				[
-					currentOrder,
-					req.body.order,
-					req.params.idProject,
-				]
+				[currentOrder, req.body.order, req.params.idProject]
 			);
 		}
 		let [results] = await conn.query(
@@ -168,7 +154,7 @@ async function put_column_id(req, res) {
 				req.params.idProject,
 			]
 		);
-		
+
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
 			return;
@@ -194,10 +180,8 @@ async function delete_column_id(req, res) {
 		await conn.beginTransaction();
 
 		let [currentOrder] = await conn.query(
-			'SELECT `order` FROM `column` WHERE idColumn = ? AND idProject = ?', [
-				req.params.idColumn,
-				req.params.idProject,
-			]
+			'SELECT `order` FROM `column` WHERE idColumn = ? AND idProject = ?',
+			[req.params.idColumn, req.params.idProject]
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
@@ -214,10 +198,8 @@ async function delete_column_id(req, res) {
 			[req.params.idColumn, req.params.idProject]
 		);
 		await conn.query(
-			'UPDATE `column` SET `order` = `order`-1 WHERE `order` > ? AND idProject = ?', [
-				currentOrder,
-				req.params.idProject
-			]
+			'UPDATE `column` SET `order` = `order`-1 WHERE `order` > ? AND idProject = ?',
+			[currentOrder, req.params.idProject]
 		);
 
 		if (column.affectedRows == 0) {
