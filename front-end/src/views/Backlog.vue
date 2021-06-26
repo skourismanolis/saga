@@ -133,7 +133,11 @@
 			</div>
 
 			<div id="line"><hr /></div>
-			<BacklogBox class="backlog-box" :issues="issues" />
+			<BacklogBox
+				class="backlog-box"
+				:issues="issues"
+				:buttonActive="true"
+			/>
 		</div>
 	</div>
 </template>

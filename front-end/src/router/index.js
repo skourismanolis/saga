@@ -62,6 +62,9 @@ const routes = [
 		path: '/epic-create',
 		name: 'EpicCreate',
 		component: EpicCreate,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 	{
 		path: '/about',
