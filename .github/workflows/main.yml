@@ -83,7 +83,7 @@ jobs:
               run: npx eslint .
               working-directory: ./api-client
 
-    test-api-client-unit:
+    test-api-client:
         runs-on: ubuntu-latest
 
         steps:
@@ -96,28 +96,11 @@ jobs:
             - name: install modules
               run: yarn
               working-directory: ./api-client
-            - name: run tests
-              run: yarn test
-              working-directory: ./api-client
-
-    test-api-client-integration:
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: checkout
-              uses: actions/checkout@v2
-            - uses: actions/setup-node@v2
-              with:
-                  node-version: '14'
-            - uses: c-hive/gha-yarn-cache@v1
-            - name: install modules
-              run: yarn
-              working-directory: ./testing
             - name: run tests
               run: |
                   yarn mock > /dev/null &
-                  yarn test-client
-              working-directory: ./testing
+                  yarn test
+              working-directory: ./api-client
     test-backend:
         runs-on: ubuntu-latest
         steps:
@@ -135,9 +118,9 @@ jobs:
               working-directory: ./back-end
             - name: install modules
               run: yarn
-              working-directory: ./testing
+              working-directory: ./back-end
             - name: run backend
               run: |
                   NODE_ENV=test node ./back-end/server.js &
-                  yarn workspace testing run test-rest
-              working-directory: ./
+                  yarn run test
+              working-directory: ./back-end
