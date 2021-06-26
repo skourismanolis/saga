@@ -4,119 +4,135 @@ name: CI
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    # Triggers the workflow on push or pull request events but only for the master branch
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  lint-frontend:
-    runs-on: ubuntu-latest
+    lint-frontend:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./front-end
-      - name: run linter
-        run: npx eslint .
-        working-directory: ./front-end
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./front-end
+            - name: run linter
+              run: npx eslint .
+              working-directory: ./front-end
 
-  lint-cli:
-    runs-on: ubuntu-latest
+    lint-cli:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./cli-app
-      - name: run linter
-        run: npx eslint .
-        working-directory: ./cli-app
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./cli-app
+            - name: run linter
+              run: npx eslint .
+              working-directory: ./cli-app
 
-  lint-backend:
-    runs-on: ubuntu-latest
+    lint-backend:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./back-end
-      - name: run linter
-        run: npx eslint .
-        working-directory: ./back-end
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./back-end
+            - name: run linter
+              run: npx eslint .
+              working-directory: ./back-end
 
-  lint-api-client:
-    runs-on: ubuntu-latest
+    lint-api-client:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./api-client
-      - name: run linter
-        run: npx eslint .
-        working-directory: ./api-client
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./api-client
+            - name: run linter
+              run: npx eslint .
+              working-directory: ./api-client
 
-  test-api-client:
-    runs-on: ubuntu-latest
+    test-api-client-unit:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./api-client
-      - name: run tests
-        run: |
-          yarn mock &
-          yarn test
-        working-directory: ./api-client
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./api-client
+            - name: run tests
+              run: yarn test
+              working-directory: ./api-client
 
-  test-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: initialize docker
-        run: docker-compose up -d
-        working-directory: ./back-end/tests
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - uses: c-hive/gha-yarn-cache@v1
-      - name: install modules
-        run: yarn
-        working-directory: ./back-end
-      - name: run tests
-        run: yarn jest
-        working-directory: ./back-end
+    test-api-client-integration:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./testing
+            - name: run tests
+              run: |
+                  yarn mock > /dev/null &
+                  yarn test
+              working-directory: ./testing
+    test-backend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - name: initialize docker
+              run: docker-compose up -d
+              working-directory: ./back-end/tests
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./back-end
+            - name: run tests
+              run: yarn jest
+              working-directory: ./back-end
