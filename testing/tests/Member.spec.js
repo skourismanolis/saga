@@ -19,38 +19,42 @@ const MOCKPROJECT = {
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __APIURL__ });
-});
+if (__TEST_MODE__ === 'REST') {
+	it('suite disabled', () => expect(1).toBe(1));
+} else {
+	beforeAll(() => {
+		client = new SagaClient({ url: __APIURL__ });
+	});
 
-test('constructs', () => {
-	member = new Member(client, MOCK_MEMBER, 2);
-	expect(member).toBeInstanceOf(Member);
-});
+	test('constructs', () => {
+		member = new Member(client, MOCK_MEMBER, 2);
+		expect(member).toBeInstanceOf(Member);
+	});
 
-test('id', () => {
-	expect(member.id).toBe(MOCK_MEMBER.idUser);
-});
+	test('id', () => {
+		expect(member.id).toBe(MOCK_MEMBER.idUser);
+	});
 
-test('toJSON', () => {
-	let mem = member.toJSON();
-	expect(mem).toBeTruthy();
-	expect(() => {
-		mem = JSON.parse(mem);
-	}).not.toThrow();
+	test('toJSON', () => {
+		let mem = member.toJSON();
+		expect(mem).toBeTruthy();
+		expect(() => {
+			mem = JSON.parse(mem);
+		}).not.toThrow();
 
-	expect(mem).toMatchObject(MOCK_MEMBER);
-});
+		expect(mem).toMatchObject(MOCK_MEMBER);
+	});
 
-test('get project', async () => {
-	let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
-	member.axios = mockAxios;
-	await expect(member.getProject()).resolves.toBeInstanceOf(Project);
-	member.axios = client.axios;
-});
+	test('get project', async () => {
+		let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
+		member.axios = mockAxios;
+		await expect(member.getProject()).resolves.toBeInstanceOf(Project);
+		member.axios = client.axios;
+	});
 
-test('refresh', async () => {
-	let mockAxios = { get: jest.fn(async () => ({ data: [MOCK_MEMBER] })) };
-	member.axios = mockAxios;
-	await expect(member.refresh()).resolves.not.toThrow();
-});
+	test('refresh', async () => {
+		let mockAxios = { get: jest.fn(async () => ({ data: [MOCK_MEMBER] })) };
+		member.axios = mockAxios;
+		await expect(member.refresh()).resolves.not.toThrow();
+	});
+}

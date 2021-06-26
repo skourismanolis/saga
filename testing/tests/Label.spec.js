@@ -17,40 +17,44 @@ const MOCKPROJECT = {
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __APIURL__ });
-});
+if (__TEST_MODE__ === 'REST') {
+	it('suite disabled', () => expect(1).toBe(1));
+} else {
+	beforeAll(() => {
+		client = new SagaClient({ url: __APIURL__ });
+	});
 
-it('constructs', async () => {
-	label = new Label(client, MOCKLABEL, 2);
-	expect(label).toBeTruthy();
-});
+	it('constructs', async () => {
+		label = new Label(client, MOCKLABEL, 2);
+		expect(label).toBeTruthy();
+	});
 
-test('id', () => {
-	expect(label.id).toBe(MOCKLABEL.idLabel);
-});
+	test('id', () => {
+		expect(label.id).toBe(MOCKLABEL.idLabel);
+	});
 
-test('toJSON', () => {
-	let lab = label.toJSON();
-	expect(lab).toBeTruthy();
-	expect(() => {
-		lab = JSON.parse(lab);
-	}).not.toThrow();
+	test('toJSON', () => {
+		let lab = label.toJSON();
+		expect(lab).toBeTruthy();
+		expect(() => {
+			lab = JSON.parse(lab);
+		}).not.toThrow();
 
-	expect(lab).toMatchObject(MOCKLABEL);
-});
+		expect(lab).toMatchObject(MOCKLABEL);
+	});
 
-test('refresh', async () => {
-	await expect(label.refresh()).resolves.not.toThrow();
-});
+	test('refresh', async () => {
+		await expect(label.refresh()).resolves.not.toThrow();
+	});
 
-test('get project', async () => {
-	let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
-	label.axios = mockAxios;
-	await expect(label.getProject()).resolves.toBeInstanceOf(Project);
-	label.axios = client.axios;
-});
+	test('get project', async () => {
+		let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
+		label.axios = mockAxios;
+		await expect(label.getProject()).resolves.toBeInstanceOf(Project);
+		label.axios = client.axios;
+	});
 
-it('updates', async () => {
-	await expect(label.update({ title: 'asdsad' })).resolves.not.toThrow();
-});
+	it('updates', async () => {
+		await expect(label.update({ title: 'asdsad' })).resolves.not.toThrow();
+	});
+}

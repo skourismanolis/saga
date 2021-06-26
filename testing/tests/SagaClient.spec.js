@@ -9,26 +9,38 @@ describe('constructs correctly', () => {
 	});
 });
 
-describe('projects', () => {
-	let client;
-	beforeAll(async () => {
-		client = new SagaClient({ url: __APIURL__ });
-		await client.login({ email: 'asd@gmail.com', password: '1234' });
-	});
-
-	it('logins', async () => {
-		const token = 123;
-		let og = client.axios;
+it('logins', async () => {
+	let client = new SagaClient({ url: __APIURL__ });
+	let og;
+	const token = 123;
+	if (__TEST_MODE__ === 'CLIENT') {
+		og = client.axios;
 		client.axios = {
 			post: async () => ({ data: { token } }),
 			defaults: { headers: {} },
 		};
-		await expect(
-			client.login({ email: 'lorem', password: 'ipsum' })
-		).resolves.not.toThrow();
+	}
+	await expect(
+		client.login({
+			email: __APIUNAME__ || 'lorem',
+			password: __APIPWD__ || 'ipsum',
+		})
+	).resolves.not.toThrow();
 
+	if (__TEST_MODE__ === 'CLIENT') {
 		expect(client.axios.defaults.headers.Authorization).toContain(token);
 		client.axios = og;
+	}
+});
+
+describe('projects', () => {
+	let client;
+	beforeAll(async () => {
+		client = new SagaClient({ url: __APIURL__ });
+		await client.login({
+			email: __APIUNAME__ || 'asd@gmail.com',
+			password: __APIPWD__ || '1234',
+		});
 	});
 
 	it('returns a project list', async () => {
@@ -36,7 +48,8 @@ describe('projects', () => {
 
 		expect(projects).toBeInstanceOf(PaginatedList);
 
-		expect(projects.total).toBeGreaterThan(0);
+		if (__TEST_MODE__ === 'CLIENT')
+			expect(projects.total).toBeGreaterThan(0);
 
 		projects.content.forEach((p) => expect(p).toBeInstanceOf(Project));
 	});

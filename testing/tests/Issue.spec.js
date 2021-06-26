@@ -33,96 +33,102 @@ const MOCKPROJECT = {
 
 let client;
 let issue;
-describe('Issue', () => {
-	beforeAll(() => {
-		client = new SagaClient({ url: __APIURL__ });
+
+if (__TEST_MODE__ === 'REST') {
+	it('suite disabled', () => expect(1).toBe(1));
+} else {
+	describe('Issue', () => {
+		beforeAll(() => {
+			client = new SagaClient({ url: __APIURL__ });
+		});
+
+		it('constructs correctly', () => {
+			issue = new Issue(client, MOCK_ISSUE, 2);
+			expect(issue).toBeTruthy();
+		});
+
+		it('has toJSON', () => {
+			let is = issue.toJSON();
+			expect(is).toBeTruthy();
+			expect(() => {
+				is = JSON.parse(is);
+			}).not.toThrow();
+
+			expect(is).toMatchObject(MOCK_ISSUE);
+		});
+
+		it('refreshes', async () => {
+			let is = new Issue(client, MOCK_ISSUE, 2);
+			await expect(is.refresh()).resolves.not.toThrow();
+		});
+
+		it('is done', () => {
+			issue._idColumn = null;
+			expect(issue.isDone()).toBe(true);
+		});
+
+		it("isn't done", () => {
+			let is = new Issue(client, { ...MOCK_ISSUE, idColumn: 2 }, 2);
+			expect(is.isDone()).toBe(false);
+		});
+
+		it('calculates the deadline', () => {
+			expect(issue.dueIn()).toBeGreaterThan(0);
+		});
+
+		test("dueIn returns null when there's no deadline", () => {
+			let is = new Issue(client, { ...MOCK_ISSUE, deadline: null });
+			expect(is.dueIn()).toBe(null);
+		});
+
+		it('returns the project', async () => {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			};
+			issue.axios = mockAxios;
+			await expect(issue.getProject()).resolves.toBeInstanceOf(Project);
+			issue.axios = client.axios;
+		});
+
+		it('returns assignees', async () => {
+			let assignees = await issue.getAssignees();
+			assignees.forEach((a) => expect(a).toBeInstanceOf(Member));
+		});
+
+		it('updates fields', async () => {
+			let is = new Issue(client, MOCK_ISSUE, 2);
+
+			await expect(
+				is.update({ title: 'asd', description: 'testing', label: null })
+			).resolves.not.toThrow();
+		});
+
+		it('returns the sprint', async () => {
+			await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
+		});
+
+		it('returns the epic', async () => {
+			await expect(issue.getEpic()).resolves.toBeInstanceOf(Epic);
+		});
+
+		it('returns the label', async () => {
+			await expect(issue.getLabel()).resolves.toBeInstanceOf(Label);
+		});
+
+		it('returns the column', async () => {
+			let mockGet = async (...args) => {
+				if (!args[0].includes('columns'))
+					return { data: [MOCKPROJECT] };
+				else return client.axios.get(args);
+			};
+			let mockAxios = {
+				get: jest.fn(mockGet),
+			};
+			issue.axios = mockAxios;
+			issue._idColumn = 2;
+			let c = await issue.getColumn();
+			expect(c).toBeInstanceOf(Column);
+			issue.axios = client.axios;
+		});
 	});
-
-	it('constructs correctly', () => {
-		issue = new Issue(client, MOCK_ISSUE, 2);
-		expect(issue).toBeTruthy();
-	});
-
-	it('has toJSON', () => {
-		let is = issue.toJSON();
-		expect(is).toBeTruthy();
-		expect(() => {
-			is = JSON.parse(is);
-		}).not.toThrow();
-
-		expect(is).toMatchObject(MOCK_ISSUE);
-	});
-
-	it('refreshes', async () => {
-		let is = new Issue(client, MOCK_ISSUE, 2);
-		await expect(is.refresh()).resolves.not.toThrow();
-	});
-
-	it('is done', () => {
-		issue._idColumn = null;
-		expect(issue.isDone()).toBe(true);
-	});
-
-	it("isn't done", () => {
-		let is = new Issue(client, { ...MOCK_ISSUE, idColumn: 2 }, 2);
-		expect(is.isDone()).toBe(false);
-	});
-
-	it('calculates the deadline', () => {
-		expect(issue.dueIn()).toBeGreaterThan(0);
-	});
-
-	test("dueIn returns null when there's no deadline", () => {
-		let is = new Issue(client, { ...MOCK_ISSUE, deadline: null });
-		expect(is.dueIn()).toBe(null);
-	});
-
-	it('returns the project', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		issue.axios = mockAxios;
-		await expect(issue.getProject()).resolves.toBeInstanceOf(Project);
-		issue.axios = client.axios;
-	});
-
-	it('returns assignees', async () => {
-		let assignees = await issue.getAssignees();
-		assignees.forEach((a) => expect(a).toBeInstanceOf(Member));
-	});
-
-	it('updates fields', async () => {
-		let is = new Issue(client, MOCK_ISSUE, 2);
-
-		await expect(
-			is.update({ title: 'asd', description: 'testing', label: null })
-		).resolves.not.toThrow();
-	});
-
-	it('returns the sprint', async () => {
-		await expect(issue.getSprint()).resolves.toBeInstanceOf(Sprint);
-	});
-
-	it('returns the epic', async () => {
-		await expect(issue.getEpic()).resolves.toBeInstanceOf(Epic);
-	});
-
-	it('returns the label', async () => {
-		await expect(issue.getLabel()).resolves.toBeInstanceOf(Label);
-	});
-
-	it('returns the column', async () => {
-		let mockGet = async (...args) => {
-			if (!args[0].includes('columns')) return { data: [MOCKPROJECT] };
-			else return client.axios.get(args);
-		};
-		let mockAxios = {
-			get: jest.fn(mockGet),
-		};
-		issue.axios = mockAxios;
-		issue._idColumn = 2;
-		let c = await issue.getColumn();
-		expect(c).toBeInstanceOf(Column);
-		issue.axios = client.axios;
-	});
-});
+}
