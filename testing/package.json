@@ -4,19 +4,12 @@
 	"main": "index.js",
 	"private": "true",
 	"scripts": {
-		"mock": "prism mock -d ../docs/api_reference/reference.v1.yaml",
-		"lint": "eslint . --fix",
-		"test-client": "jest -c ./client.jest.config.js",
-		"test-client-dev": "jest -c ./client.jest.config.js --watch",
-		"test-rest": "jest -c ./rest.jest.config.js",
-		"test-rest-dev": "jest -c ./rest.jest.config.js --watch"
+		"lint": "eslint . --fix"
 	},
 	"devDependencies": {
-		"@stoplight/prism-cli": "^4.2.6",
 		"eslint": "^7.29.0",
 		"eslint-plugin-jest": "^24.3.6",
 		"eslint-plugin-prettier": "^3.4.0",
-		"jest": "^27.0.5",
 		"prettier": "^2.3.2"
 	}
 }

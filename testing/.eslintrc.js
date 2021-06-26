@@ -1,17 +1,10 @@
-const clientJestGlobals = require('./client.jest.config').globals;
-const restJestGlobals = require('./rest.jest.config').globals;
-
-// inform eslint of the global variables set in the jest configs
-let globals = {};
-Object.keys(clientJestGlobals).forEach(
-	(global) => (globals[global] = 'readonly')
-);
-Object.keys(restJestGlobals).forEach(
-	(global) => (globals[global] = 'readonly')
-);
-
 module.exports = {
-	globals,
+	globals: {
+		__APIURL__: 'readonly',
+		__TEST_MODE__: 'readonly',
+		__APIUNAME__: 'readonly',
+		__APIPWD__: 'readonly',
+	},
 	plugins: ['prettier', 'jest'],
 	env: {
 		node: true,
@@ -21,6 +14,7 @@ module.exports = {
 	extends: ['eslint:recommended', 'plugin:jest/recommended', 'prettier'],
 	rules: {
 		'prettier/prettier': 'error',
+		'jest/no-conditional-expect': 'off',
 	},
 	parserOptions: {
 		ecmaVersion: 2018,
