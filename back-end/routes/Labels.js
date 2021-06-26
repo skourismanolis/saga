@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 const Joi = require('joi');
 
 const db = require('../db').db;
