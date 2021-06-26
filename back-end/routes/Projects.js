@@ -10,6 +10,7 @@ const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
 const epics = require('./Epics');
 const labels = require('./Labels');
+const columns = require('./Columns');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -357,31 +358,31 @@ app.delete(
 app.get(
 	'/:idProject/columns/',
 	Project_auth(['Admin', 'Member']),
-	labels.columns_get
+	columns.columns_get
 );
 
 app.post(
 	'/:idProject/columns/',
 	Project_auth(['Admin', 'Member']),
-	labels.columns_post
+	columns.columns_post
 );
 
 app.get(
 	'/:idProject/columns/:idColumn/',
 	Project_auth(['Admin', 'Member']),
-	labels.get_column_id
+	columns.get_column_id
 );
 
 app.put(
 	'/:idProject/columns/:idColumn/',
 	Project_auth(['Admin', 'Member']),
-	labels.put_column_id
+	columns.put_column_id
 );
 
 app.delete(
 	'/:idProject/columns/:idColumn/',
 	Project_auth(['Admin', 'Member']),
-	labels.delete_column_id
+	columns.delete_column_id
 );
 
 module.exports = app;
