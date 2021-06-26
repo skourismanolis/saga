@@ -1,54 +1,78 @@
 <template>
 	<div class="d-flex justify-content-center">
 		<form class="d-flex flex-column justify-content-start container">
-			<div class="d-flex flex-row align-items-baseline container-element">
+			<div class="d-flex flex-row align-items-center container-element">
 				<i class="bi bi-hourglass epic-icon"></i>
-				<span class="epic-title-input">
-					{{ epic.name }}
-				</span>
+				<input
+					type="text"
+					class="form-control epic-title-input"
+					placeholder="Εισάγετε τίτλο..."
+					v-model="epic.name"
+				/>
 			</div>
 			<div class="d-flex flex-row container-element">
 				<div class="d-flex flex-column date-col-container">
 					<span class="label-text">ΗΜΕΡΟΜΗΝΙΑ ΕΝΑΡΞΗΣ</span>
-					<span class="epic-title-input label-text">
-						<i class="bi bi-calendar-date"></i>
-						{{ epic.start_date }}
-					</span>
+					<b-form-datepicker
+						id="datepicker"
+						class="mb-2"
+						v-model="epic.start_date"
+					></b-form-datepicker>
 				</div>
 				<div class="d-flex flex-column date-col-container">
 					<span class="label-text">ΗΜΕΡΟΜΗΝΙΑ ΛΗΞΗΣ</span>
-					<span class="epic-title-input label-text">
-						<i class="bi bi-calendar-date"></i>
-						{{ epic.end_date }}
-					</span>
+					<b-form-datepicker
+						id="datepicker"
+						class="mb-2"
+						v-model="epic.end_date"
+					></b-form-datepicker>
 				</div>
 			</div>
 			<div class="d-flex flex-column container-element">
 				<span class="label-text">ΠΕΡΙΓΡΑΦΗ</span>
-				<span class="label-text">{{ epic.description }}</span>
+				<textarea
+					class="form-control"
+					placeholder="Εισάγετε περιγραφή..."
+					v-model="epic.description"
+				></textarea>
 			</div>
 			<div class="d-flex flex-column container-element">
 				<span class="label-text">ΣΥΝΟΛΟΛΙΚΟΙ ΠΟΝΤΟΙ</span>
 				<span>{{ totalPoints }}</span>
 			</div>
 			<EpicIssueBox class="box container-element" :issues="epic.issues" />
-
-			<button
-				type="submit"
-				class="btn btn-primary align-self-end edit-button"
-				@click="redirectEpicEdit()"
-			>
-				Επεξεργασία Epic
-			</button>
+			<BacklogBox
+				class="box container-element"
+				:issues="issues"
+				:buttonActive="false"
+			/>
+			<div class="d-flex flex-row justify-content-end">
+				<button
+					type="submit"
+					class="btn btn-danger button"
+					@click="true"
+				>
+					Ακύρωση
+				</button>
+				<button
+					type="submit"
+					class="btn btn-primary button"
+					@click="true"
+				>
+					Αποθήκευση
+				</button>
+			</div>
 		</form>
 	</div>
 </template>
 
 <script>
+import BacklogBox from '../components/BacklogBox.vue';
 import EpicIssueBox from '../components/EpicIssueBox.vue';
 
 export default {
 	components: {
+		BacklogBox,
 		EpicIssueBox,
 	},
 	data() {
@@ -90,6 +114,36 @@ export default {
 					},
 				],
 			},
+			issues: [
+				{
+					color: '#EE0000',
+					type: 'task',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Neutral',
+				},
+				{
+					color: '#047C97',
+					type: 'story',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Low',
+				},
+			],
 		};
 	},
 	computed: {
@@ -105,14 +159,7 @@ export default {
 			return 0;
 		},
 	},
-	methods: {
-		redirectEpicEdit() {
-			// let query = { activePlan: value };
-			this.$router
-				.push({ path: '/epic-edit' /*, query: query*/ })
-				.catch(() => {});
-		},
-	},
+	methods: {},
 };
 </script>
 
@@ -152,8 +199,9 @@ export default {
 	width: 147px;
 }
 
-.edit-button {
+.button {
 	width: 200px;
 	border-radius: 4pt;
+	margin-left: 12px;
 }
 </style>
