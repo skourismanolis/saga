@@ -138,6 +138,6 @@ jobs:
               working-directory: ./testing
             - name: run backend
               run: |
-                  node ./back-end/server.js &
+                  NODE_ENV=test node ./back-end/server.js &
                   yarn workspace testing run test-rest
               working-directory: ./
