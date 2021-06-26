@@ -11,6 +11,7 @@
 					align-items-center
 					justify-content-center
 				"
+				@click="redirectEpicCreate()"
 			>
 				Νέο Epic
 				<i class="bi bi-plus create-epic-button-icon"></i>
@@ -132,7 +133,11 @@
 			</div>
 
 			<div id="line"><hr /></div>
-			<BacklogBox class="backlog-box" :issues="issues" />
+			<BacklogBox
+				class="backlog-box"
+				:issues="issues"
+				:buttonActive="true"
+			/>
 		</div>
 	</div>
 </template>
@@ -372,6 +377,12 @@ export default {
 			} else if (this.epics[i].expanded == true) {
 				this.epics[i].expanded = false;
 			}
+		},
+		redirectEpicCreate() {
+			// let query = { activePlan: value };
+			this.$router
+				.push({ path: '/epic-create' /*, query: query*/ })
+				.catch(() => {});
 		},
 	},
 };

@@ -1,24 +1,10 @@
 <template>
-	<div class="backlog-container">
+	<div class="epic-issue-container">
 		<div class="d-flex flex-row top justify-content-between">
 			<div>
-				<span id="backlog-title"> Backlog </span>
+				<span id="epic-issue-title"> Issues </span>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
-			<button
-				v-if="buttonActive == true"
-				type="button"
-				class="
-					btn btn-primary
-					button
-					d-flex
-					align-items-center
-					button-container
-				"
-			>
-				Νέο Issue
-				<i class="bi bi-plus button-icon"></i>
-			</button>
 		</div>
 		<div v-if="issues.length > 0">
 			<IssueRow
@@ -29,7 +15,9 @@
 			/>
 		</div>
 		<div v-else class="empty-msg d-flex justify-content-center">
-			<span> Δεν υπάρχουν issues! </span>
+			<span>
+				Σείρετε issues απο το backlog για να τα εισάγετε στο epic!
+			</span>
 		</div>
 	</div>
 </template>
@@ -42,7 +30,6 @@ export default {
 	},
 	props: {
 		issues: Array,
-		buttonActive: Boolean,
 	},
 	computed: {
 		issuesNum() {
@@ -56,9 +43,9 @@ export default {
 </script>
 
 <style scoped>
-.backlog-container {
+.epic-issue-container {
 	padding: 12px;
-	background-color: #f3b1b8;
+	background-color: #c4c4c4;
 	border-radius: 4pt;
 }
 
@@ -70,7 +57,7 @@ export default {
 	border-radius: 4pt;
 }
 
-#backlog-title {
+#epic-issue-title {
 	font-size: 24px;
 	font-weight: bold;
 	color: white;
