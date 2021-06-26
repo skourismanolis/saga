@@ -61,6 +61,7 @@ async function issues_create(req, res) {
 }
 
 async function issues_get(req, res) {
+	let conn;
 	try {
 		let query_string = 'SELECT * FROM issue WHERE idProject = ?';
 		let query_params = [req.params.idProject];
@@ -90,21 +91,91 @@ async function issues_get(req, res) {
 				res.sendStatus(400);
 			}
 			query_string +=
-				' AND ? IN(SELECT idUser FROM assignee WHERE code = issue.code';
+				' AND ? IN(SELECT idUser FROM assignee WHERE code = issue.code)';
 			query_params.push(req.query.assignee);
 		}
 		if (req.query.label != null) {
-			if (req.query.label.isArray() == false) {
+			if (Array.isArray(req.query.label) == false) {
 				res.sendStatus(500);
 			}
-			query_string += ' AND idLabel IN ?';
+			query_string += ' AND idLabel IN(?)';
 			query_params.push(req.query.label);
 		}
-		const [result] = await db.pool.query(query_string, query_params);
-		res.status(200).send(result);
+		// handling pagination headers
+		if (
+			req.headers['x-pagination-limit'] != null &&
+			req.headers['x-pagination-offset'] != null &&
+			(isNaN(req.headers['x-pagination-limit']) ||
+				isNaN(req.headers['x-pagination-offset']))
+		) {
+			res.sendStatus(400);
+			return;
+		}
+		let total_pag_query = query_string;
+		let total_pag_params = query_params;
+		let limit = req.headers['x-pagination-limit'] || 15;
+		let offset = req.headers['x-pagination-offset'] || 0;
+		query_string += ' LIMIT ? OFFSET ?';
+		query_params.push(parseInt(limit));
+		query_params.push(parseInt(offset));
+		console.log(query_string);
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		let [result] = await conn.query(query_string, query_params);
+		const [result_pag] = await conn.query(
+			total_pag_query,
+			total_pag_params
+		);
+		conn.commit();
+		console.log(result);
+		if (result.length == 0) {
+			res.sendStatus(404);
+			return;
+		}
+
+		let codes = [];
+		result.forEach((result) => {
+			codes.push(result.code);
+		});
+		let [assignee] = await db.pool.query(
+			'SELECT * FROM assignee WHERE code IN (?)',
+			[codes]
+		);
+		// make assignees arrays
+		result.forEach((results) => {
+			// add assignees property inside result
+			results.assignees = [];
+			// add each assignee to correct issue
+			assignee.forEach((assign) => {
+				if (assign.code == results.code) {
+					delete assign.code;
+					results.assignees.push(assign.idUser);
+				}
+			});
+		});
+		// search via string filter
+		console.log(req.query);
+		if (req.query.search != null) {
+			result.forEach((results) => {
+				// clear out the ones with no match to search-string
+				console.log(results.title);
+				if (results.title.search(req.query.search) < 0) {
+					// remove issue from list
+					result = result.filter(
+						(resu) => resu.title != results.title
+					);
+					return;
+				}
+			});
+		}
+
+		res.status(200).header('X-Pagination-Total', result_pag).send(result);
 	} catch (error) {
 		console.error(error);
+		if (conn != null) conn.rollback();
 		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.rollback();
 	}
 }
 
