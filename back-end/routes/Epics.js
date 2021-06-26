@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 const Joi = require('joi');
 const dayjs = require('dayjs');
 
@@ -263,7 +265,7 @@ async function post_add_issues(req, res) {
 
 		let [results] = await conn.query(
 			`UPDATE issue SET idEpic = ?
-			WHERE idProject = ? AND code IN (?) 
+			WHERE idProject = ? AND code IN (?)
 			AND ? IN (
 				SELECT idEpic FROM epic WHERE idProject = ?
 			)`,
