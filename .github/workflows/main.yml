@@ -116,7 +116,7 @@ jobs:
             - name: run tests
               run: |
                   yarn mock > /dev/null &
-                  yarn test
+                  yarn test-client
               working-directory: ./testing
     test-backend:
         runs-on: ubuntu-latest
@@ -139,5 +139,5 @@ jobs:
             - name: run backend
               run: |
                   node ./back-end/server.js &
-                  yarn workflow testing run test-rest
+                  yarn workspace testing run test-rest
               working-directory: ./
