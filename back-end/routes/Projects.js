@@ -53,7 +53,7 @@ app.get('/', async (req, res) => {
 			Projects_id.push(project.idProject);
 		});
 		if (Projects_id.length == 0) {
-			res.sendStatus(404);
+			res.status(200).send([]);
 			return;
 		}
 		let [users] = await db.pool.query(
