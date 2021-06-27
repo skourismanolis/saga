@@ -152,6 +152,5 @@ export default {
 
 .submit-button {
 	width: 200px;
-	border-radius: 4pt;
 }
 </style>

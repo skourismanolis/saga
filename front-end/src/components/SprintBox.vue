@@ -105,10 +105,6 @@ export default {
 	margin-bottom: 12px;
 }
 
-.button {
-	border-radius: 4pt;
-}
-
 #sprint-title {
 	font-size: 24px;
 	font-weight: bold;
@@ -132,7 +128,6 @@ export default {
 }
 
 .button-container {
-	border-radius: 4pt;
 	height: 36px;
 	padding: 12px;
 }

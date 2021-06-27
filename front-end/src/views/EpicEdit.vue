@@ -201,7 +201,6 @@ export default {
 
 .button {
 	width: 200px;
-	border-radius: 4pt;
 	margin-left: 12px;
 }
 </style>
