@@ -6,7 +6,6 @@ const dayjs = require('dayjs');
 
 async function issues_create(req, res) {
 	let body;
-	console.log();
 	try {
 		body = joi.attempt(req.body, schemas.IssuePost);
 	} catch (error) {
@@ -68,6 +67,7 @@ async function issues_get(req, res) {
 		if (req.query.inSprint != null) {
 			if (isNaN(req.query.inSprint)) {
 				res.sendStatus(400);
+				return;
 			}
 			query_string += ' AND idSprint = ?';
 			query_params.push(req.query.inSprint);
@@ -75,6 +75,7 @@ async function issues_get(req, res) {
 		if (req.query.column != null) {
 			if (isNaN(req.query.column)) {
 				res.sendStatus(400);
+				return;
 			}
 			query_string += ' AND idColumn = ?';
 			query_params.push(req.query.column);
@@ -82,6 +83,7 @@ async function issues_get(req, res) {
 		if (req.query.inEpic != null) {
 			if (isNaN(req.query.inEpic)) {
 				res.sendStatus(400);
+				return;
 			}
 			query_string += ' AND idEpic = ?';
 			query_params.push(req.query.inEpic);
@@ -89,17 +91,23 @@ async function issues_get(req, res) {
 		if (req.query.assignee != null) {
 			if (isNaN(req.query.assignee)) {
 				res.sendStatus(400);
+				return;
 			}
 			query_string +=
 				' AND ? IN(SELECT idUser FROM assignee WHERE code = issue.code)';
 			query_params.push(req.query.assignee);
 		}
 		if (req.query.label != null) {
-			if (Array.isArray(req.query.label) == false) {
-				res.sendStatus(500);
-			}
+			let label = req.query.label
+				.substr(1, req.query.label.length - 2)
+				.split(',');
 			query_string += ' AND idLabel IN(?)';
-			query_params.push(req.query.label);
+			query_params.push(label);
+		}
+		if (req.query.search != null) {
+			req.query.search = '%' + req.query.search + '%';
+			query_string += ' AND title LIKE ?';
+			query_params.push(req.query.search);
 		}
 		// handling pagination headers
 		if (
@@ -118,7 +126,6 @@ async function issues_get(req, res) {
 		query_string += ' LIMIT ? OFFSET ?';
 		query_params.push(parseInt(limit));
 		query_params.push(parseInt(offset));
-		console.log(query_string);
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		let [result] = await conn.query(query_string, query_params);
@@ -127,7 +134,6 @@ async function issues_get(req, res) {
 			total_pag_params
 		);
 		conn.commit();
-		console.log(result);
 		if (result.length == 0) {
 			res.sendStatus(404);
 			return;
@@ -154,21 +160,6 @@ async function issues_get(req, res) {
 			});
 		});
 		// search via string filter
-		console.log(req.query);
-		if (req.query.search != null) {
-			result.forEach((results) => {
-				// clear out the ones with no match to search-string
-				console.log(results.title);
-				if (results.title.search(req.query.search) < 0) {
-					// remove issue from list
-					result = result.filter(
-						(resu) => resu.title != results.title
-					);
-					return;
-				}
-			});
-		}
-
 		res.status(200).header('X-Pagination-Total', result_pag).send(result);
 	} catch (error) {
 		console.error(error);
