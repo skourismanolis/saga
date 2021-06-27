@@ -53,14 +53,14 @@ app.get('/', async (req, res) => {
 			Projects_id.push(project.idProject);
 		});
 		let [users] = await db.pool.query(
-			`																							
-			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture	
-			FROM user, member																			
-			WHERE user.idUser IN (																		
-					SELECT idUser																		
-					FROM member																			
-					WHERE idProject IN (?))																
-				AND user.idUser = member.idUser`,
+			'\
+			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture\
+			FROM user, member\
+			WHERE user.idUser IN (\
+					SELECT idUser\
+					FROM member\
+					WHERE idProject IN (?))\
+				AND user.idUser = member.idUser',
 			[Projects_id]
 		);
 		// if (req.query.search == null) {
