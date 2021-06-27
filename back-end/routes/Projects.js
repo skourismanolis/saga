@@ -31,6 +31,11 @@ app.get('/', async (req, res) => {
 			res.sendStatus(400);
 			return;
 		}
+		if (req.query.search != null) {
+			req.query.search = '%' + req.query.search + '%';
+			query_string += ' AND title LIKE ?';
+			query_params.push(req.query.search);
+		}
 		let total_pag_query = query_string;
 		let total_pag_params = query_params;
 		let limit = req.headers['x-pagination-limit'] || 15;
