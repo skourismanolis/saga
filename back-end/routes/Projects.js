@@ -10,6 +10,7 @@ const { Project_auth } = require('../functions');
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
+const issues = require('./Issues');
 const epics = require('./Epics');
 const labels = require('./Labels');
 const columns = require('./Columns');
@@ -274,6 +275,18 @@ app.delete(
 	'/:idProject/members/admin/',
 	Project_auth(['Admin']),
 	members.members_demote
+);
+
+app.post(
+	'/:idProject/issues/',
+	Project_auth(['Admin', 'Member']),
+	issues.issues_create
+);
+
+app.get(
+	'/:idProject/issues/',
+	Project_auth(['Admin', 'Member']),
+	issues.issues_get
 );
 
 // epics
