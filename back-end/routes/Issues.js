@@ -19,7 +19,16 @@ async function issues_create(req, res) {
 			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
 			[req.params.idProject, body.assignees]
 		);
-
+		if (req.body.idLabel != null) {
+			let [label] = await db.pool.query(
+				'SELECT * FROM label WHERE idLabel = ?',
+				[req.body.idLabel]
+			);
+			if (label.length == 0) {
+				res.sendStatus(404);
+				return;
+			}
+		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		await conn.query(
