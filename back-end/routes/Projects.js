@@ -52,6 +52,10 @@ app.get('/', async (req, res) => {
 		projects.forEach((project) => {
 			Projects_id.push(project.idProject);
 		});
+		if (Projects_id.length == 0) {
+			res.sendStatus(404);
+			return;
+		}
 		let [users] = await db.pool.query(
 			`
 			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture
