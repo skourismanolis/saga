@@ -179,7 +179,32 @@ async function issues_get(req, res) {
 	}
 }
 
+async function get_issue_code(req, res) {
+	try {
+		let [issue] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ?',
+			[req.params.code]
+		);
+		if (issue.length == 0) {
+			return res.sendStatus(404);
+		}
+		let [members] = await db.pool.query(
+			'SELECT idUser FROM assignee WHERE code = ?',
+			[req.params.code]
+		);
+		issue.assignees = [];
+		members.forEach((member) => {
+			issue.assignees.push(member.id);
+		});
+		res.status(200).send(issue);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
 module.exports = {
 	issues_create,
 	issues_get,
+	get_issue_code,
 };

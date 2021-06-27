@@ -268,6 +268,8 @@ app.delete(
 	members.members_demote
 );
 
+// issues
+
 app.post(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
@@ -278,6 +280,12 @@ app.get(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
 	issues.issues_get
+);
+
+app.get(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.get_issue_code
 );
 
 // epics
