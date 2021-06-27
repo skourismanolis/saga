@@ -60,7 +60,7 @@ app.get('/', async (req, res) => {
 					SELECT idUser
 					FROM member
 					WHERE idProject IN (?))
-				AND user.idUser = member.idUser`,
+					AND user.idUser = member.idUser`,
 			[Projects_id]
 		);
 		// if (req.query.search == null) {
