@@ -288,6 +288,12 @@ app.get(
 	issues.get_issue_code
 );
 
+app.delete(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.delete_issue
+);
+
 // epics
 app.get(
 	'/:idProject/epics/',

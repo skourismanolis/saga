@@ -182,8 +182,8 @@ async function issues_get(req, res) {
 async function get_issue_code(req, res) {
 	try {
 		let [issue] = await db.pool.query(
-			'SELECT * FROM issue WHERE code = ?',
-			[req.params.code]
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
 		);
 		if (issue.length == 0) {
 			return res.sendStatus(404);
@@ -193,9 +193,11 @@ async function get_issue_code(req, res) {
 			[req.params.code]
 		);
 		issue.assignees = [];
-		members.forEach((member) => {
-			issue.assignees.push(member.id);
-		});
+		if (members.length > 0) {
+			members.forEach((member) => {
+				issue.assignees.push(member.id);
+			});
+		}
 		res.status(200).send(issue);
 	} catch (error) {
 		console.error(error);
@@ -203,8 +205,39 @@ async function get_issue_code(req, res) {
 	}
 }
 
+async function delete_issue(req, res) {
+	let conn;
+	try {
+		const [issue] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (issue.length == 0) {
+			return res.sendStatus(404);
+		}
+		// comment assignee issue
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		// prettier-ignore
+		await conn.query('DELETE FROM comment WHERE code = ?', [req.params.code]);
+		//prettier-ignore
+		await conn.query('DELETE FROM assignee WHERE code = ?', [req.params.code]);
+		await conn.query('DELETE FROM issue WHERE code = ?', [req.params.code]);
+
+		conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.release();
+		console.error(error);
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	issues_create,
 	issues_get,
 	get_issue_code,
+	delete_issue,
 };
