@@ -17,55 +17,60 @@ const columns = require('./Columns');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
-	let conn;
-	let projects;
-	let projects_number = 0;
 	try {
-		let users;
-		conn = await db.pool.getConnection();
-		await conn.beginTransaction();
-		[projects] = await conn.query(
-			'						\
-			SELECT *				\
-			FROM project 			\
-			WHERE idProject IN (	\
-				SELECT idProject 	\
-				FROM member 		\
-				WHERE idUser = ?)',
-			[req.user.idUser]
-		);
-		[users] = await conn.query(
-			'																							\
-			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture	\
-			FROM user as user,member as member															\
-			WHERE user.idUser IN (																		\
-				SELECT idUser																			\
-				FROM member																				\
-				WHERE idProject IN (																	\
-					SELECT idProject 																	\
-					FROM member 																		\
-					WHERE idUser = ?))																	\
-					AND user.idUser = member.idUser',
-			[req.user.idUser]
-		);
-		await conn.commit();
-		if (req.query.search == null) {
-			projects_number = projects.length;
+		let query_string =
+			'SELECT * FROM project WHERE idProject IN ( SELECT idProject FROM member WHERE idUser = ?)';
+		let query_params = [req.user.idUser];
+		// handling pagination headers
+		if (
+			req.headers['x-pagination-limit'] != null &&
+			req.headers['x-pagination-offset'] != null &&
+			(isNaN(req.headers['x-pagination-limit']) ||
+				isNaN(req.headers['x-pagination-offset']))
+		) {
+			res.sendStatus(400);
+			return;
 		}
+		if (req.query.search != null) {
+			req.query.search = '%' + req.query.search + '%';
+			query_string += ' AND title LIKE ?';
+			query_params.push(req.query.search);
+		}
+		let total_pag_query = query_string;
+		let total_pag_params = query_params;
+		let limit = req.headers['x-pagination-limit'] || 15;
+		let offset = req.headers['x-pagination-offset'] || 0;
+		query_string += ' LIMIT ? OFFSET ?';
+		query_params.push(parseInt(limit));
+		query_params.push(parseInt(offset));
+		let [projects] = await db.pool.query(query_string, query_params);
+		const [result_pag] = await db.pool.query(
+			total_pag_query,
+			total_pag_params
+		);
+		let Projects_id = [];
+		projects.forEach((project) => {
+			Projects_id.push(project.idProject);
+		});
+		if (Projects_id.length == 0) {
+			res.status(200).send([]);
+			return;
+		}
+		let [users] = await db.pool.query(
+			`
+			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture
+			FROM user, member
+			WHERE user.idUser IN (
+					SELECT idUser
+					FROM member
+					WHERE idProject IN (?))
+					AND user.idUser = member.idUser`,
+			[Projects_id]
+		);
+		// if (req.query.search == null) {
+		// }
 		// create correct project objects
 		projects.forEach((project) => {
-			// clear out the ones with no match
-			if (req.query.search != null) {
-				if (project.title.search(req.query.search) < 0) {
-					// remove project from list, and go to check project
-					projects = projects.filter(
-						(pro) => pro.idProject != project.idProject
-					);
-					return;
-				} else {
-					projects_number++;
-				}
-			}
 			// add members property inside projcet
 			project.members = [];
 			// find the members to add them
@@ -76,33 +81,19 @@ app.get('/', async (req, res) => {
 				}
 			});
 		});
+		// Rename property "title" to "name"
+		projects = projects.map(function (obj) {
+			obj['name'] = obj['title']; // Assign new key
+			delete obj['title']; // Delete old key
+			return obj;
+		});
+		res.status(200)
+			.header('X-Pagination-Total', result_pag.length)
+			.send(projects);
 	} catch (error) {
-		if (conn != null) conn.rollback();
 		console.error(error);
 		res.sendStatus(500);
-	} finally {
-		if (conn != null) conn.release();
 	}
-	if (
-		//TODO make pagination in sql
-		req.headers['x-pagination-limit'] != null &&
-		req.headers['x-pagination-offset'] != null
-	) {
-		projects = projects.slice(
-			req.headers['x-pagination-offset'],
-			req.headers['x-pagination-offset'] +
-				req.headers['x-pagination-limit']
-		);
-	}
-	// Rename property "title" to "name"
-	projects = projects.map(function (obj) {
-		obj['name'] = obj['title']; // Assign new key
-		delete obj['title']; // Delete old key
-		return obj;
-	});
-	res.status(200)
-		.header('X-Pagination-Total', projects_number)
-		.send(projects);
 });
 
 // CREATE PROJECT
