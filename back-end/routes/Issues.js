@@ -144,7 +144,7 @@ async function issues_get(req, res) {
 		);
 		conn.commit();
 		if (result.length == 0) {
-			res.sendStatus(404);
+			res.status(200).send([]);
 			return;
 		}
 
