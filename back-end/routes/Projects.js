@@ -287,6 +287,8 @@ app.get(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
 	issues.issues_get
+);
+
 // epics
 app.get(
 	'/:idProject/epics/',
