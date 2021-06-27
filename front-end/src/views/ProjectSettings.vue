@@ -53,7 +53,7 @@
 			<span class="black-text mb12">
 				Ή στείλε τον παρακάτω σύνδεσμο:
 			</span>
-			<div class="input-group mb12">
+			<div class="input-group mb60">
 				<input
 					type="text"
 					class="form-control"
@@ -87,7 +87,7 @@ export default {
 			return require(`../assets/profile pics/${filename}`);
 		},
 		generatedLink() {
-			return 'htttps://invite.com';
+			return 'htttps://invite.com/w=AagYAFa76%A';
 		},
 	},
 };
@@ -121,5 +121,9 @@ export default {
 
 .mb12 {
 	margin-bottom: 12px;
+}
+
+.mb60 {
+	margin-bottom: 60px;
 }
 </style>
