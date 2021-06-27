@@ -294,6 +294,11 @@ app.delete(
 	issues.delete_issue
 );
 
+app.put(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.put_issue
+);
 // epics
 app.get(
 	'/:idProject/epics/',
