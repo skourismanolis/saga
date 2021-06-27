@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 const express = require('express');
 const app = express.Router();
 const jwt = require('jsonwebtoken');
@@ -9,6 +11,9 @@ const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
 const issues = require('./Issues');
+const epics = require('./Epics');
+const labels = require('./Labels');
+const columns = require('./Columns');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -79,6 +84,7 @@ app.get('/', async (req, res) => {
 		if (conn != null) conn.release();
 	}
 	if (
+		//TODO make pagination in sql
 		req.headers['x-pagination-limit'] != null &&
 		req.headers['x-pagination-offset'] != null
 	) {
@@ -132,10 +138,11 @@ app.post('/', async (req, res) => {
 			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
 			[project.insertId, 'IN PROGRESS', 2]
 		);
-		await conn.query(
-			'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
-			[project.insertId, 'DONE', 3]
-		);
+		// // removed, done issues have idColumn = NULL
+		// await conn.query(
+		// 	'INSERT INTO `column` (idProject, name, `order`) VALUES (?,?,?)',
+		// 	[project.insertId, 'DONE', 3]
+		// );
 		await conn.query(
 			'INSERT INTO member (idUser, idProject , role) VALUES (?,?,?)',
 			[req.user.idUser, project.insertId, 'Admin']
@@ -245,6 +252,7 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 	}
 });
 
+// members
 app.get(
 	'/:idProject/members/',
 	Project_auth(['Admin', 'Member']),
@@ -279,6 +287,115 @@ app.get(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
 	issues.issues_get
+// epics
+app.get(
+	'/:idProject/epics/',
+	Project_auth(['Admin', 'Member']),
+	epics.epics_get
+);
+
+app.post(
+	'/:idProject/epics/',
+	Project_auth(['Admin', 'Member']),
+	epics.epics_post
+);
+
+app.get(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.get_epic_id
+);
+
+app.put(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.put_epic_id
+);
+
+app.delete(
+	'/:idProject/epics/:idEpic/',
+	Project_auth(['Admin', 'Member']),
+	epics.delete_epic_id
+);
+
+app.get(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.get_epic_issues
+);
+
+app.post(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.post_add_issues
+);
+
+app.delete(
+	'/:idProject/epics/:idEpic/issues',
+	Project_auth(['Admin', 'Member']),
+	epics.delete_remove_issues
+);
+
+// labels
+app.get(
+	'/:idProject/labels/',
+	Project_auth(['Admin', 'Member']),
+	labels.labels_get
+);
+
+app.post(
+	'/:idProject/labels/',
+	Project_auth(['Admin', 'Member']),
+	labels.labels_post
+);
+
+app.get(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.get_label_id
+);
+
+app.put(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.put_label_id
+);
+
+app.delete(
+	'/:idProject/labels/:idLabel/',
+	Project_auth(['Admin', 'Member']),
+	labels.delete_label_id
+);
+
+// columns
+app.get(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	columns.columns_get
+);
+
+app.post(
+	'/:idProject/columns/',
+	Project_auth(['Admin', 'Member']),
+	columns.columns_post
+);
+
+app.get(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.get_column_id
+);
+
+app.put(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.put_column_id
+);
+
+app.delete(
+	'/:idProject/columns/:idColumn/',
+	Project_auth(['Admin', 'Member']),
+	columns.delete_column_id
 );
 
 module.exports = app;

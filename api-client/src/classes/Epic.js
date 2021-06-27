@@ -6,10 +6,10 @@ const IssueContainer = require('./IssueContainer');
 /*                                                                                      */
 /****************************************************************************************/
 
-module.exports = class Sprint extends IssueContainer {
+module.exports = class Epic extends IssueContainer {
 	constructor(
 		client,
-		{ idEpic, start, deadline, title, issues, description },
+		{ idEpic, start, deadline, title, description },
 		idProject
 	) {
 		super(
@@ -18,7 +18,6 @@ module.exports = class Sprint extends IssueContainer {
 				start,
 				deadline,
 				title,
-				issues,
 			},
 			idProject,
 			`/projects/${idProject}/epics/${idEpic}`
@@ -34,7 +33,6 @@ module.exports = class Sprint extends IssueContainer {
 	toJSON() {
 		return JSON.stringify({
 			idEpic: this._idEpic,
-			issues: this._issueIds,
 			idProject: this._idProject,
 			start: this.start,
 			deadline: this.deadline,
@@ -48,7 +46,6 @@ module.exports = class Sprint extends IssueContainer {
 			`/projects/${this._idProject}/epics/${this._idEpic}`
 		);
 
-		this._issueIds = data.issues;
 		this.start = data.start != null ? new Date(data.start) : null;
 		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
 		this.description = data.description;
