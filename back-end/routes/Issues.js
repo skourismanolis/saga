@@ -400,7 +400,6 @@ async function create_comment(req, res) {
 			[req.params.code, req.params.idProject]
 		);
 		if (result.length == 0) {
-			console.log(result);
 			return res.sendStatus(404);
 		}
 
@@ -428,7 +427,6 @@ async function create_comment(req, res) {
 
 async function delete_comment(req, res) {
 	try {
-		console.log(req.body.idComment);
 		if (req.body.idComment != null) {
 			if (isNaN(req.body.idComment)) {
 				res.sendStatus(400);
