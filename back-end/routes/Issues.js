@@ -426,6 +426,34 @@ async function create_comment(req, res) {
 	}
 }
 
+async function delete_comment(req, res) {
+	try {
+		console.log(req.body.idComment);
+		if (req.body.idComment != null) {
+			if (isNaN(req.body.idComment)) {
+				res.sendStatus(400);
+				return;
+			}
+		}
+		const [result] = await db.pool.query(
+			'SELECT * FROM comment WHERE code = ? AND idComment = ?',
+			[req.params.code, req.body.idComment]
+		);
+		if (result.length == 0) {
+			return res.sendStatus(404);
+		}
+		if (result[0].idUser != req.user.idUser) {
+			return res.sendStatus(403);
+		}
+		// prettier-ignore
+		await db.pool.query('DELETE FROM comment WHERE  idComment = ?', [req.body.idComment]);
+		res.sendStatus(200);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
 module.exports = {
 	issues_create,
 	issues_get,
@@ -434,4 +462,5 @@ module.exports = {
 	put_issue,
 	get_comments,
 	create_comment,
+	delete_comment,
 };

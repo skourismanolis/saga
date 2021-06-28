@@ -317,6 +317,12 @@ app.post(
 	issues.create_comment
 );
 
+app.delete(
+	'/:idProject/issues/:code/comments/',
+	Project_auth(['Admin', 'Member']),
+	issues.delete_comment
+);
+
 // epics
 
 app.get(
