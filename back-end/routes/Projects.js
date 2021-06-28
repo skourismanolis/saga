@@ -311,6 +311,12 @@ app.get(
 	issues.get_comments
 );
 
+app.post(
+	'/:idProject/issues/:code/comments/',
+	Project_auth(['Admin', 'Member']),
+	issues.create_comment
+);
+
 // epics
 
 app.get(

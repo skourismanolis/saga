@@ -387,6 +387,45 @@ async function get_comments(req, res) {
 	}
 }
 
+async function create_comment(req, res) {
+	try {
+		joi.attempt(req.body, schemas.CommentPost);
+	} catch (error) {
+		return res.sendStatus(400);
+	}
+	let conn;
+	try {
+		const [result] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (result.length == 0) {
+			console.log(result);
+			return res.sendStatus(404);
+		}
+
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		let [project] = await conn.query(
+			'INSERT INTO comment (code,content,idUser,timestamp) VALUES (?,?,?,?)',
+			[
+				req.params.code,
+				req.body.content,
+				req.user.idUser,
+				dayjs().format('YYYY-MM-DD'),
+			]
+		);
+		conn.commit();
+		res.status(200).send({ idComment: project.insertId });
+	} catch (error) {
+		if (conn != null) conn.rollback();
+		console.error(error);
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	issues_create,
 	issues_get,
@@ -394,4 +433,5 @@ module.exports = {
 	delete_issue,
 	put_issue,
 	get_comments,
+	create_comment,
 };
