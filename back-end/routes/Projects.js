@@ -221,7 +221,7 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (conn != null) conn.rollback();
 		res.sendStatus(500);
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 });
 
@@ -299,6 +299,7 @@ app.put(
 	Project_auth(['Admin', 'Member']),
 	issues.put_issue
 );
+
 // epics
 app.get(
 	'/:idProject/epics/',

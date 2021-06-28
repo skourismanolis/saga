@@ -64,7 +64,7 @@ async function issues_create(req, res) {
 		res.sendStatus(500);
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -175,7 +175,7 @@ async function issues_get(req, res) {
 		if (conn != null) conn.rollback();
 		res.sendStatus(500);
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -227,7 +227,7 @@ async function delete_issue(req, res) {
 		conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
-		if (conn != null) conn.release();
+		if (conn != null) conn.rollback();
 		console.error(error);
 		res.sendStatus(500);
 	} finally {
@@ -262,34 +262,34 @@ async function put_issue(req, res) {
 			});
 		}
 		let members_after = [];
-		if (req.params.assignees != null && req.params.assignees.length != 0) {
-			req.params.assignees.forEach((member) => {
-				members_after.push(member.idUser);
+		if (req.body.assignees != null && req.body.assignees.length != 0) {
+			req.body.assignees.forEach((member) => {
+				members_after.push(member);
 			});
 			let [members_after_check] = await db.pool.query(
-				'SELECT * FROM members WHERE idProject = ? AND idUser IN (?)',
+				'SELECT * FROM member WHERE idProject = ? AND idUser IN (?)',
 				[req.params.idProject, members_after]
 			);
-			if (members_after_check.length != members_after) {
+			if (members_after_check.length != members_after.length) {
 				return res.sendStatus(404);
 			}
 		}
 		let check_result;
 		// check if label really exists
-		if (req.params.idLabel != null) {
+		if (req.body.idLabel != null) {
 			[check_result] = await db.pool.query(
 				'SELECT idLabel FROM label WHERE idProject = ? AND idLabel = ?',
-				[req.params.idProject, req.params.idLabel]
+				[req.params.idProject, req.body.idLabel]
 			);
 			if (check_result.length == 0) {
 				return res.sendStatus(404);
 			}
 		}
 		// check if column really exists
-		if (req.params.idColumn != null) {
+		if (req.body.idColumn != null) {
 			[check_result] = await db.pool.query(
 				'SELECT idColumn FROM `column` WHERE idProject = ? AND idColumn = ?',
-				[req.params.idProject, req.params.idColumn]
+				[req.params.idProject, req.body.idColumn]
 			);
 			if (check_result.length == 0) {
 				return res.sendStatus(404);
@@ -300,20 +300,20 @@ async function put_issue(req, res) {
 		await conn.query(
 			'UPDATE issue SET idLabel = ?, category = ?, idColumn = ?, priority = ?, title = ?, points = ?, deadline = ?, description = ? WHERE code = ?',
 			[
-				req.params.idLabel,
-				req.params.category,
-				req.params.idColumn,
-				req.params.priority,
-				req.params.title,
-				req.params.points,
-				dayjs(req.params.deadline).format('YYYY-MM-DD'),
-				req.params.description,
+				req.body.idLabel,
+				req.body.category,
+				req.body.idColumn,
+				req.body.priority,
+				req.body.title,
+				req.body.points,
+				dayjs(req.body.deadline).format('YYYY-MM-DD'),
+				req.body.description,
 				req.params.code,
 			]
 		);
-		// delete ald assignees
-		if (members_before != null) {
-			members_before.forEach(async (member) => {
+		// delete old assignees
+		if (members_before.length > 0) {
+			await members_before.forEach(async (member) => {
 				await conn.query(
 					'DELETE FROM assignee WHERE code = ? AND idUser = ?',
 					[req.params.code, member]
@@ -321,18 +321,18 @@ async function put_issue(req, res) {
 			});
 		}
 		// add new assignees
-		if (members_after != null) {
-			members_after.forEach(async (member) => {
+		if (members_after.length > 0) {
+			await members_after.forEach(async (member) => {
 				await conn.query(
 					'INSERT INTO assignee (code, idUser) VALUES (?, ?)',
 					[req.params.code, member]
 				);
 			});
 		}
-
+		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
-		if (conn != null) conn.release();
+		if (conn != null) conn.rollback();
 		console.error(error);
 		res.sendStatus(500);
 	} finally {
