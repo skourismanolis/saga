@@ -2090,12 +2090,9 @@ components:
       title: Comment Post
       type: object
       properties:
-        code:
-          type: string
         content:
           type: string
       required:
-        - code
         - content
     Comment:
       title: Comment

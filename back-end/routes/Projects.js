@@ -244,6 +244,7 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 });
 
 // members
+
 app.get(
 	'/:idProject/members/',
 	Project_auth(['Admin', 'Member']),
@@ -282,6 +283,8 @@ app.get(
 	issues.issues_get
 );
 
+// issues with single code
+
 app.get(
 	'/:idProject/issues/:code/',
 	Project_auth(['Admin', 'Member']),
@@ -300,7 +303,28 @@ app.put(
 	issues.put_issue
 );
 
+//issue comments
+
+app.get(
+	'/:idProject/issues/:code/comments/',
+	Project_auth(['Admin', 'Member']),
+	issues.get_comments
+);
+
+app.post(
+	'/:idProject/issues/:code/comments/',
+	Project_auth(['Admin', 'Member']),
+	issues.create_comment
+);
+
+app.delete(
+	'/:idProject/issues/:code/comments/',
+	Project_auth(['Admin', 'Member']),
+	issues.delete_comment
+);
+
 // epics
+
 app.get(
 	'/:idProject/epics/',
 	Project_auth(['Admin', 'Member']),
@@ -350,6 +374,7 @@ app.delete(
 );
 
 // labels
+
 app.get(
 	'/:idProject/labels/',
 	Project_auth(['Admin', 'Member']),
@@ -381,6 +406,7 @@ app.delete(
 );
 
 // columns
+
 app.get(
 	'/:idProject/columns/',
 	Project_auth(['Admin', 'Member']),
