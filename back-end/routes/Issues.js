@@ -192,13 +192,13 @@ async function get_issue_code(req, res) {
 			'SELECT idUser FROM assignee WHERE code = ?',
 			[req.params.code]
 		);
-		issue.assignees = [];
+		issue[0].assignees = [];
 		if (members.length > 0) {
 			members.forEach((member) => {
-				issue.assignees.push(member.id);
+				issue[0].assignees.push(member.idUser);
 			});
 		}
-		res.status(200).send(issue);
+		res.status(200).send(issue[0]);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
