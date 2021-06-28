@@ -340,10 +340,58 @@ async function put_issue(req, res) {
 	}
 }
 
+async function get_comments(req, res) {
+	let conn;
+	try {
+		const [result] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (result.length == 0) {
+			return res.sendStatus(404);
+		}
+
+		// handling pagination headers
+		if (
+			req.headers['x-pagination-limit'] != null &&
+			req.headers['x-pagination-offset'] != null &&
+			(isNaN(req.headers['x-pagination-limit']) ||
+				isNaN(req.headers['x-pagination-offset']))
+		) {
+			res.sendStatus(400);
+			return;
+		}
+		let query_string = 'SELECT * FROM comment WHERE code = ?';
+		let query_params = [req.params.code];
+		let total_pag_query = query_string;
+		let total_pag_params = query_params;
+		let limit = req.headers['x-pagination-limit'] || 15;
+		let offset = req.headers['x-pagination-offset'] || 0;
+		query_string += ' LIMIT ? OFFSET ?';
+		query_params.push(parseInt(limit));
+		query_params.push(parseInt(offset));
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		let [comments] = await conn.query(query_string, query_params);
+		const [result_pag] = await conn.query(
+			total_pag_query,
+			total_pag_params
+		);
+		res.status(200).header('X-Pagination-Total', result_pag).send(comments);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+		console.error(error);
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	issues_create,
 	issues_get,
 	get_issue_code,
 	delete_issue,
 	put_issue,
+	get_comments,
 };
