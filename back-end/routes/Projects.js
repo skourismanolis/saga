@@ -221,7 +221,7 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (conn != null) conn.rollback();
 		res.sendStatus(500);
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 });
 
@@ -268,6 +268,8 @@ app.delete(
 	members.members_demote
 );
 
+// issues
+
 app.post(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
@@ -278,6 +280,24 @@ app.get(
 	'/:idProject/issues/',
 	Project_auth(['Admin', 'Member']),
 	issues.issues_get
+);
+
+app.get(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.get_issue_code
+);
+
+app.delete(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.delete_issue
+);
+
+app.put(
+	'/:idProject/issues/:code/',
+	Project_auth(['Admin', 'Member']),
+	issues.put_issue
 );
 
 // epics

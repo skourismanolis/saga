@@ -64,7 +64,7 @@ async function issues_create(req, res) {
 		res.sendStatus(500);
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -175,11 +175,175 @@ async function issues_get(req, res) {
 		if (conn != null) conn.rollback();
 		res.sendStatus(500);
 	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
+async function get_issue_code(req, res) {
+	try {
+		let [issue] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (issue.length == 0) {
+			return res.sendStatus(404);
+		}
+		let [members] = await db.pool.query(
+			'SELECT idUser FROM assignee WHERE code = ?',
+			[req.params.code]
+		);
+		issue[0].assignees = [];
+		if (members.length > 0) {
+			members.forEach((member) => {
+				issue[0].assignees.push(member.idUser);
+			});
+		}
+		res.status(200).send(issue[0]);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+}
+
+async function delete_issue(req, res) {
+	let conn;
+	try {
+		const [issue] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (issue.length == 0) {
+			return res.sendStatus(404);
+		}
+		// comment assignee issue
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		// prettier-ignore
+		await conn.query('DELETE FROM comment WHERE code = ?', [req.params.code]);
+		//prettier-ignore
+		await conn.query('DELETE FROM assignee WHERE code = ?', [req.params.code]);
+		await conn.query('DELETE FROM issue WHERE code = ?', [req.params.code]);
+
+		conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
 		if (conn != null) conn.rollback();
+		console.error(error);
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
+async function put_issue(req, res) {
+	try {
+		joi.attempt(req.body, schemas.IssuePut);
+	} catch (error) {
+		return res.sendStatus(400);
+	}
+
+	let conn;
+	try {
+		const [result] = await db.pool.query(
+			'SELECT * FROM issue WHERE code = ? AND idProject = ?',
+			[req.params.code, req.params.idProject]
+		);
+		if (result.length == 0) {
+			return res.sendStatus(404);
+		}
+		const [query_members_before] = await db.pool.query(
+			'SELECT idUser FROM assignee WHERE code = ?',
+			[req.params.code]
+		);
+		let members_before = [];
+		if (query_members_before.length != 0) {
+			query_members_before.forEach((member) => {
+				members_before.push(member.idUser);
+			});
+		}
+		let members_after = [];
+		if (req.body.assignees != null && req.body.assignees.length != 0) {
+			req.body.assignees.forEach((member) => {
+				members_after.push(member);
+			});
+			let [members_after_check] = await db.pool.query(
+				'SELECT * FROM member WHERE idProject = ? AND idUser IN (?)',
+				[req.params.idProject, members_after]
+			);
+			if (members_after_check.length != members_after.length) {
+				return res.sendStatus(404);
+			}
+		}
+		let check_result;
+		// check if label really exists
+		if (req.body.idLabel != null) {
+			[check_result] = await db.pool.query(
+				'SELECT idLabel FROM label WHERE idProject = ? AND idLabel = ?',
+				[req.params.idProject, req.body.idLabel]
+			);
+			if (check_result.length == 0) {
+				return res.sendStatus(404);
+			}
+		}
+		// check if column really exists
+		if (req.body.idColumn != null) {
+			[check_result] = await db.pool.query(
+				'SELECT idColumn FROM `column` WHERE idProject = ? AND idColumn = ?',
+				[req.params.idProject, req.body.idColumn]
+			);
+			if (check_result.length == 0) {
+				return res.sendStatus(404);
+			}
+		}
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+		await conn.query(
+			'UPDATE issue SET idLabel = ?, category = ?, idColumn = ?, priority = ?, title = ?, points = ?, deadline = ?, description = ? WHERE code = ?',
+			[
+				req.body.idLabel,
+				req.body.category,
+				req.body.idColumn,
+				req.body.priority,
+				req.body.title,
+				req.body.points,
+				dayjs(req.body.deadline).format('YYYY-MM-DD'),
+				req.body.description,
+				req.params.code,
+			]
+		);
+		// delete old assignees
+		if (members_before.length > 0) {
+			await members_before.forEach(async (member) => {
+				await conn.query(
+					'DELETE FROM assignee WHERE code = ? AND idUser = ?',
+					[req.params.code, member]
+				);
+			});
+		}
+		// add new assignees
+		if (members_after.length > 0) {
+			await members_after.forEach(async (member) => {
+				await conn.query(
+					'INSERT INTO assignee (code, idUser) VALUES (?, ?)',
+					[req.params.code, member]
+				);
+			});
+		}
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+		console.error(error);
+		res.sendStatus(500);
+	} finally {
+		if (conn != null) conn.release();
 	}
 }
 
 module.exports = {
 	issues_create,
 	issues_get,
+	get_issue_code,
+	delete_issue,
+	put_issue,
 };
