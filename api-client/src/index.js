@@ -81,7 +81,7 @@ module.exports = class SagaClient {
 	 * @param {String} userOpt.name the user's name
 	 * @param {String} userOpt.surname the user's surname
 	 * @param {String} userOpt.plan the user's payment plan, must be one of "Free", "Premium", "Host"
-	 * @param {String} [userOpt.picture] the user's picture url
+	 * @param {String|Null=} userOpt.picture the user's picture url
 	 */
 	async userEdit({
 		username,
