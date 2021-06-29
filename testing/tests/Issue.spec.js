@@ -9,6 +9,8 @@ const Column = require('@dira/api-client/src/classes/Column');
 const Label = require('@dira/api-client/src/classes/Label');
 const Member = require('@dira/api-client/src/classes/Member');
 const Epic = require('@dira/api-client/src/classes/Epic');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
+const Comment = require('@dira/api-client/src/classes/Comment');
 
 const MOCK_ISSUE = {
 	idSprint: 2,
@@ -93,6 +95,12 @@ if (__TEST_MODE__ === 'REST') {
 		it('returns assignees', async () => {
 			let assignees = await issue.getAssignees();
 			assignees.forEach((a) => expect(a).toBeInstanceOf(Member));
+		});
+
+		it('returns comments', async () => {
+			let comments = await issue.getComments();
+			expect(comments).toBeInstanceOf(PaginatedList);
+			comments.content.forEach((c) => expect(c).toBeInstanceOf(Comment));
 		});
 
 		it('updates fields', async () => {

@@ -87,7 +87,6 @@ describe('users', () => {
 		it('has user payments', async () => {
 			let payments = await client.getPayments();
 			expect(payments).toBeInstanceOf(Array);
-			console.log(payments);
 		});
 
 	it('logs out', () => {
