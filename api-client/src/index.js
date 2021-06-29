@@ -38,6 +38,14 @@ module.exports = class SagaClient {
 		await this.axios.get(`/token/${token}`);
 	}
 
+	async getPayments() {
+		if (!this._isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get(
+			`/users/${this._user.idUser}/payment`
+		);
+		return data;
+	}
+
 	/**
 	 * Create a new user, the user must respond to the verification email in order to do be enabled
 	 * @param {Object} userOpt

@@ -82,6 +82,13 @@ describe('users', () => {
 		).resolves.not.toThrow();
 	});
 
+	if (__TEST_MODE__ === 'CLIENT')
+		it('has user payments', async () => {
+			let payments = await client.getPayments();
+			expect(payments).toBeInstanceOf(Array);
+			console.log(payments);
+		});
+
 	it('logs out', () => {
 		client.logout();
 		expect(client.isLoggedIn).toBe(false);
