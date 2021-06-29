@@ -1,6 +1,7 @@
 const axios = require('axios');
 const Project = require('./classes/Project');
 const PaginatedList = require('./classes/PaginatedList');
+const LOGINERROR = 'Please login first';
 
 module.exports = class SagaClient {
 	/**
@@ -37,9 +38,34 @@ module.exports = class SagaClient {
 		picture = null,
 	}) {
 		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
-			throw 'Erron invalid plan value';
+			throw 'Error invalid plan value';
 
 		await this.axios.post('/users', {
+			username,
+			email,
+			password,
+			name,
+			surname,
+			plan,
+			picture,
+		});
+	}
+
+	async userEdit({
+		username,
+		email,
+		password,
+		name,
+		surname,
+		plan,
+		picture = null,
+	}) {
+		if (!this._isLoggedIn) throw LOGINERROR;
+
+		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
+			throw 'Error invalid plan value';
+
+		await this.axios.put('/users', {
 			username,
 			email,
 			password,
@@ -60,7 +86,7 @@ module.exports = class SagaClient {
 	}
 
 	async getProjects() {
-		if (!this._isLoggedIn) throw 'Please login first';
+		if (!this._isLoggedIn) throw LOGINERROR;
 		let list = new PaginatedList(this, {
 			url: '/projects',
 			dataTransformer: (projects) =>
@@ -71,6 +97,7 @@ module.exports = class SagaClient {
 	}
 
 	async createProject({ title }) {
+		if (!this._isLoggedIn) throw LOGINERROR;
 		let { data } = await this.axios.post('/projects', { title });
 		return new Project(this, {
 			idProject: data.idProject,
