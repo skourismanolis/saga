@@ -42,6 +42,69 @@ it('logins', async () => {
 	}
 });
 
+describe('users', () => {
+	const email = 'lorem@ipsum.com';
+	const password = '1234';
+	beforeAll(async () => {
+		client = new SagaClient({ url: __APIURL__ });
+	});
+
+	it('creates a user', async () => {
+		await expect(
+			client.register({
+				username: '123',
+				password,
+				email,
+				name: 'as',
+				surname: 'asd',
+				plan: 'Free',
+			})
+		).resolves.not.toThrow();
+	});
+
+	it('updates a user', async () => {
+		if (__TEST_MODE__ === 'CLIENT') {
+			mockAxiosLogin(client);
+		}
+		await client.login({ email, password });
+		if (__TEST_MODE__ === 'CLIENT') {
+			restoreAxios(client);
+		}
+		await expect(
+			client.userEdit({
+				username: '123',
+				email,
+				password,
+				name: 'as',
+				surname: 'asd',
+				plan: 'Free',
+			})
+		).resolves.not.toThrow();
+	});
+
+	it('logs out', () => {
+		client.logout();
+		expect(client.isLoggedIn).toBe(false);
+		expect(client.user).toBe(null);
+	});
+
+	it('deletes a user', async () => {
+		if (__TEST_MODE__ === 'CLIENT') {
+			mockAxiosLogin(client);
+		}
+
+		await client.login({ email, password });
+
+		if (__TEST_MODE__ === 'CLIENT') {
+			restoreAxios(client);
+		}
+
+		await expect(client.deleteUser({ password })).resolves.not.toThrow();
+		expect(client.isLoggedIn).toBe(false);
+		expect(client.user).toBe(null);
+	});
+});
+
 describe('projects', () => {
 	let client;
 	beforeAll(async () => {
