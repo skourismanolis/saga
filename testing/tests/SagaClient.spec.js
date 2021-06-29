@@ -54,8 +54,7 @@ describe('projects', () => {
 
 		expect(projects).toBeInstanceOf(PaginatedList);
 
-		if (__TEST_MODE__ === 'CLIENT')
-			expect(projects.total).toBeGreaterThan(0);
+		expect(projects.total).toBeGreaterThan(0);
 
 		projects.content.forEach((p) => expect(p).toBeInstanceOf(Project));
 	});
