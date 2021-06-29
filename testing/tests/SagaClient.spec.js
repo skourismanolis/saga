@@ -12,7 +12,8 @@ describe('constructs correctly', () => {
 it('logins', async () => {
 	let client = new SagaClient({ url: __APIURL__ });
 	let og;
-	const token = 123;
+	const token =
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOjMsInBsYW4iOiJGcmVlIiwiaWF0IjoxNjI0NjQ2MDIxLCJleHAiOjE2MjUyNTA4MjF9.RMn4DytOEU9FjSXpMvAO1vxV8QlD_t92tkfMlou71rg';
 	if (__TEST_MODE__ === 'CLIENT') {
 		og = client.axios;
 		client.axios = {

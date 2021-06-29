@@ -1,6 +1,8 @@
 const axios = require('axios');
 const Project = require('./classes/Project');
 const PaginatedList = require('./classes/PaginatedList');
+const decode64 = require('./parseB64');
+
 const LOGINERROR = 'Please login first';
 
 module.exports = class SagaClient {
