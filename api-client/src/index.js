@@ -115,14 +115,18 @@ module.exports = class SagaClient {
 	 */
 	async deleteUser({ password }) {
 		if (!this._isLoggedIn) throw LOGINERROR;
-		await this.axios.delete('/users', { password });
+		await this.axios({
+			method: 'DELETE',
+			url: '/users',
+			data: { password },
+		});
 		this.logout();
 	}
 
 	logout() {
 		this._isLoggedIn = false;
 		this._user = null;
-		this.axios.defaults.headers.Authorization = '';
+		this.axios.defaults.headers.Authorization = null;
 	}
 
 	async login({ email, password }) {
