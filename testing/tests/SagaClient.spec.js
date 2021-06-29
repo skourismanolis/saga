@@ -45,6 +45,7 @@ it('logins', async () => {
 describe('users', () => {
 	const email = 'lorem@ipsum.com';
 	const password = '1234';
+	let client;
 	beforeAll(async () => {
 		client = new SagaClient({ url: __APIURL__ });
 	});
