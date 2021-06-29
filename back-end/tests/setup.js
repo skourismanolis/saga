@@ -18,7 +18,7 @@ module.exports = async function setup() {
 	});
 
 	await runQuery(db.pool, [
-		'UPDATE user SET verified=1 WHERE username="admin"',
+		'UPDATE user SET verified=1 WHERE email="admin@admin.com"',
 	]);
 	await db.pool.end();
 };
