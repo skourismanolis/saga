@@ -43,13 +43,18 @@ describe('projects', () => {
 		});
 	});
 
+	it('creates a project', async () => {
+		await expect(
+			client.createProject({ title: 'lorem' })
+		).resolves.toBeInstanceOf(Project);
+	});
+
 	it('returns a project list', async () => {
 		let projects = await client.getProjects();
 
 		expect(projects).toBeInstanceOf(PaginatedList);
 
-		if (__TEST_MODE__ === 'CLIENT')
-			expect(projects.total).toBeGreaterThan(0);
+		expect(projects.total).toBeGreaterThan(0);
 
 		projects.content.forEach((p) => expect(p).toBeInstanceOf(Project));
 	});
