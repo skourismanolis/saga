@@ -17,10 +17,15 @@ module.exports = class SagaClient {
 		this.axios = axios.create({ baseURL: url });
 		this._perPage = perPage;
 		this._isLoggedIn = false;
+		this._user = null;
 	}
 
 	get isLoggedIn() {
 		return this._isLoggedIn;
+	}
+
+	get user() {
+		return this._user;
 	}
 
 	/**
@@ -120,6 +125,8 @@ module.exports = class SagaClient {
 		});
 		this.axios.defaults.headers.Authorization = 'Bearer ' + data.token;
 		this._isLoggedIn = true;
+		let jsonStr = decode64(data.token.split('.')[1]);
+		this._user = JSON.parse(jsonStr);
 	}
 
 	async getProjects() {
