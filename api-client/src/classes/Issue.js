@@ -1,4 +1,5 @@
 const Base = require('./Base');
+const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
 /*                                       WARNING                                        */
 /*    Move require's to the end of the file in order to avoid circular references       */
@@ -157,6 +158,20 @@ module.exports = class Issue extends Base {
 		);
 	}
 
+	async getComments() {
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/issues/${this._code}/comments`,
+			dataTransformer: (comments) =>
+				comments.map(
+					(comment) =>
+						new Comment(this.client, comment, this._idProject)
+				),
+		});
+
+		await list.refresh();
+		return list;
+	}
+
 	/**
 	 * The time (in milliseconds) left until the deadline. Can be negative.
 	 * If there's no deadline set, it returns null.
@@ -228,3 +243,4 @@ const Member = require('./Member');
 const Project = require('./Project');
 const Sprint = require('./Sprint');
 const Epic = require('./Epic');
+const Comment = require('./Comment');
