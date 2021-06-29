@@ -17,6 +17,20 @@ module.exports = class SagaClient {
 		this._isLoggedIn = false;
 	}
 
+	get isLoggedIn() {
+		return this._isLoggedIn;
+	}
+
+	/**
+	 * Handles the given token
+	 * @param {Object} handleTokenOpts
+	 * @param {String} handleTokenOpts.token the token to process
+	 */
+	async handleToken({ token }) {
+		if (!this._isLoggedIn) throw LOGINERROR;
+		await this.axios.get(`/token/${token}`);
+	}
+
 	/**
 	 * Create a new user, the user must respond to the verification email in order to do be enabled
 	 * @param {Object} userOpt
