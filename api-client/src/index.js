@@ -87,6 +87,16 @@ module.exports = class SagaClient {
 		});
 	}
 
+	/**
+	 * Delete current user. Comments and issues by this user will have theis creator id set to 0.
+	 * @param {Object} deletUsrOpt
+	 * @param {Object} deletUsrOpt.password the current user's passowrd
+	 */
+	async deleteUser({ password }) {
+		if (!this._isLoggedIn) throw LOGINERROR;
+		await this.axios.delete('/users', { password });
+	}
+
 	async login({ email, password }) {
 		let { data } = await this.axios.post('/users/login', {
 			email,
