@@ -452,4 +452,10 @@ app.post(
 	sprints.sprints_post
 );
 
+app.get(
+	'/:idProject/sprints/:idSprint/',
+	Project_auth(['Admin', 'Member']),
+	sprints.get_sprint_id
+);
+
 module.exports = app;

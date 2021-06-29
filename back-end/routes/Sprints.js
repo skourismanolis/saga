@@ -40,9 +40,10 @@ async function sprints_get(req, res) {
 
 		res.header('X-Pagination-Total', count[0].count).send(epics);
 	} catch (error) {
-		if (error != 'bob') //TODO maybe make global constant
+		if (error != 'bob') { //TODO maybe make global constant
 			console.error(error);
 			res.sendStatus(500);
+		}
 		return;
 	}
 }
@@ -85,7 +86,30 @@ async function sprints_post(req, res) {
 	}
 }
 
+async function get_sprint_id(req, res) {
+	try {
+		let [sprint] = await db.pool.query(
+			'SELECT idSprint,title,start,deadline FROM sprint WHERE idSprint = ? AND idProject = ?',
+			[req.params.idSprint, req.params.idProject]
+		);
+
+		if (sprint.length == 0) {
+			res.sendStatus(404);
+			throw 'bob';
+		}
+
+		res.send(sprint);
+	} catch (error) {
+		if (error != 'bob') { //TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
+	}
+}
+
 module.exports = {
 	sprints_get,
 	sprints_post,
+	get_sprint_id,
 };
