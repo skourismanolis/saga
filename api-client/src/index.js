@@ -35,4 +35,13 @@ module.exports = class SagaClient {
 		await list.refresh();
 		return list;
 	}
+
+	async createProject({ title }) {
+		let { data } = await this.axios.post('/projects', { title });
+		return new Project(this, {
+			idProject: data.idProject,
+			title,
+			picture: null,
+		});
+	}
 };
