@@ -87,4 +87,5 @@ async function sprints_post(req, res) {
 
 module.exports = {
 	sprints_get,
+	sprints_post,
 };
