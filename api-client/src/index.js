@@ -16,6 +16,40 @@ module.exports = class SagaClient {
 		this._isLoggedIn = false;
 	}
 
+	/**
+	 * Create a new user, the user must respond to the verification email in order to do be enabled
+	 * @param {Object} userOpt
+	 * @param {String} userOpt.username the user's username
+	 * @param {String} userOpt.email the user's email
+	 * @param {String} userOpt.password the user's password
+	 * @param {String} userOpt.name the user's name
+	 * @param {String} userOpt.surname the user's surname
+	 * @param {String} userOpt.plan the user's payment plan, must be one of "Free", "Premium", "Host"
+	 * @param {String} [userOpt.picture] the user's picture url
+	 */
+	async register({
+		username,
+		email,
+		password,
+		name,
+		surname,
+		plan,
+		picture = null,
+	}) {
+		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
+			throw 'Erron invalid plan value';
+
+		await this.axios.post('/users', {
+			username,
+			email,
+			password,
+			name,
+			surname,
+			plan,
+			picture,
+		});
+	}
+
 	async login({ email, password }) {
 		let { data } = await this.axios.post('/users/login', {
 			email,
