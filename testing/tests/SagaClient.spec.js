@@ -43,6 +43,12 @@ describe('projects', () => {
 		});
 	});
 
+	it('creates a project', async () => {
+		await expect(
+			client.createProject({ title: 'lorem' })
+		).resolves.toBeInstanceOf(Project);
+	});
+
 	it('returns a project list', async () => {
 		let projects = await client.getProjects();
 
