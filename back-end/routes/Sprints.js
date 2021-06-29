@@ -47,6 +47,44 @@ async function sprints_get(req, res) {
 	}
 }
 
+async function sprints_post(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.SprintPutPost);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(400);
+		return;
+	}
+
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let deadline = req.body.deadline;
+		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
+
+		await conn.query('INSERT INTO sprint VALUES (?,?,?,?,?)', [
+			0,
+			req.params.idProject,
+			req.body.title,
+			null,
+			deadline,
+		]);
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	sprints_get,
 };
