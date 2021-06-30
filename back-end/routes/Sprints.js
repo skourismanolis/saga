@@ -205,6 +205,60 @@ async function delete_sprint_id(req, res) {
 	}
 }
 
+async function get_sprint_issues(req, res) {
+	try {
+		// building the query
+		let myissuequery =
+			'SELECT code,idEpic,idLabel,idSprint,idColumn,title,category,points,priority,deadline,description FROM issue WHERE idSprint = ? AND idProject = ?';
+		let params = [req.params.idSprint, req.params.idProject];
+
+		// handling pagination headers
+		if (
+			req.headers['x-pagination-limit'] != null &&
+			req.headers['x-pagination-offset'] != null &&
+			(isNaN(req.headers['x-pagination-limit']) ||
+				isNaN(req.headers['x-pagination-offset']))
+		) {
+			res.sendStatus(400);
+			throw 'bob'; //TODO maybe make global constant
+		}
+		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let offset = req.headers['x-pagination-offset'] || 0;
+		myissuequery += ' LIMIT ? OFFSET ?';
+		params.push(parseInt(limit));
+		params.push(parseInt(offset));
+
+		// making the queries
+		let [issues] = await db.pool.query(myissuequery, params);
+		let [count] = await db.pool.query(
+			'SELECT COUNT(*) AS count FROM issue WHERE idSprint = ? AND idProject = ?',
+			[req.params.idSprint, req.params.idProject]
+		);
+
+		// get and add assignees to response
+		let queries = [];
+		issues.forEach((issue) => {
+			queries.push([
+				'SELECT idUser FROM assignee WHERE code = ?',
+				[issue.code],
+			]);
+		});
+		let temp = await Promise.all(
+			queries.map((q) => db.pool.query(q[0], q[1]))
+		);
+		temp.forEach((element, index) => {
+			let assignees = element[0].map((entry) => entry.idUser);
+			issues[index].assignees = assignees;
+		});
+
+		res.header('X-Pagination-Total', count[0].count).send(issues);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+		return;
+	}
+}
+
 module.exports = {
 	sprints_get,
 	sprints_post,

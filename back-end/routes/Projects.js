@@ -470,4 +470,10 @@ app.delete(
 	sprints.delete_sprint_id
 );
 
+app.get(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.get_sprint_issues
+);
+
 module.exports = app;
