@@ -434,7 +434,7 @@ export default {
 
 #epic-entry:hover {
 	cursor: pointer;
-	-webkit-filter: brightness(90%);
+	filter: brightness(90%);
 }
 
 .oddrow {
