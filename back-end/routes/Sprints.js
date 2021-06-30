@@ -259,10 +259,114 @@ async function get_sprint_issues(req, res) {
 	}
 }
 
+async function post_add_issues(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.StringArray);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(400);
+		return;
+	}
+
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let [firstColumn] = await conn.query(
+			'SELECT idColumn FROM `column` WHERE idProject = ? AND `order` IN (SELECT MIN(`order`) FROM `column` WHERE idProject = ?)',
+			[req.params.idProject, req.params.idProject]
+		);
+		firstColumn = firstColumn[0].idColumn;
+
+		let [results] = await conn.query(
+			`UPDATE issue SET idSprint = ?, idColumn = ?
+			WHERE idProject = ? AND code IN (?)
+			AND ? IN (
+				SELECT idSprint FROM sprint WHERE idProject = ?
+			)`,
+			[
+				req.params.idSprint,
+				firstColumn,
+				req.params.idProject,
+				req.body,
+				req.params.idSprint,
+				req.params.idProject,
+			]
+		);
+		console.log(results);
+
+		if (results.affectedRows != req.body.length) {
+			if (conn != null) conn.rollback();
+			res.sendStatus(404);
+			throw 'bob'; //TODO maybe make global constant
+		}
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
+async function delete_remove_issues(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.StringArray);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(400);
+		return;
+	}
+
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let [results] = await conn.query(
+			`UPDATE issue SET idSprint = NULL, idColumn = NULL
+			WHERE idSprint = ? AND idProject = ? AND code IN (?)`,
+			[req.params.idSprint, req.params.idProject, req.body]
+		);
+
+		if (results.affectedRows != req.body.length) {
+			if (conn != null) conn.rollback();
+			res.sendStatus(404);
+			throw 'bob' //TODO maybe make global constant
+		}
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	sprints_get,
 	sprints_post,
 	get_sprint_id,
 	put_sprint_id,
 	delete_sprint_id,
+	get_sprint_issues,
+	post_add_issues,
+	delete_remove_issues,
 };

@@ -476,4 +476,16 @@ app.get(
 	sprints.get_sprint_issues
 );
 
+app.post(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.post_add_issues
+);
+
+app.delete(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.delete_remove_issues
+);
+
 module.exports = app;
