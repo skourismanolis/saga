@@ -50,7 +50,13 @@ CREATE TABLE IF NOT EXISTS `saga`.`project` (
   `idProject` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `picture` VARCHAR(45) NULL,
   `title` VARCHAR(255) NULL,
-  PRIMARY KEY (`idProject`))
+  `activeSprint` INT UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`idProject`),
+  CONSTRAINT `fk_project_sprint1`
+    FOREIGN KEY (`activeSprint`)
+    REFERENCES `saga`.`sprint` (`idSprint`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
