@@ -88,7 +88,7 @@ export default {
 
 .issue-entry:hover {
 	cursor: pointer;
-	-webkit-filter: brightness(90%);
+	filter: brightness(90%);
 }
 
 .issue-element {

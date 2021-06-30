@@ -66,10 +66,6 @@ export default {
 	margin-bottom: 12px;
 }
 
-.button {
-	border-radius: 4pt;
-}
-
 #backlog-title {
 	font-size: 24px;
 	font-weight: bold;
@@ -93,7 +89,6 @@ export default {
 }
 
 .button-container {
-	border-radius: 4pt;
 	height: 36px;
 }
 

@@ -9,6 +9,7 @@ import Backlog from '../views/Backlog.vue';
 import EpicCreate from '../views/EpicCreate.vue';
 import EpicView from '../views/EpicView.vue';
 import EpicEdit from '../views/EpicEdit.vue';
+import ProjectSettings from '../views/ProjectSettings.vue';
 
 Vue.use(VueRouter);
 
@@ -83,6 +84,11 @@ const routes = [
 		meta: {
 			projectNavbar: false,
 		},
+	},
+	{
+		path: '/project-settings',
+		name: 'ProjectSettings',
+		component: ProjectSettings,
 	},
 	{
 		path: '/about',

@@ -409,8 +409,6 @@ export default {
 }
 
 .create-epic-button {
-	border-radius: 4pt;
-
 	margin-bottom: 24px;
 	height: 36px;
 }
@@ -436,7 +434,7 @@ export default {
 
 #epic-entry:hover {
 	cursor: pointer;
-	-webkit-filter: brightness(90%);
+	filter: brightness(90%);
 }
 
 .oddrow {
@@ -503,8 +501,6 @@ export default {
 }
 
 #create-sprint-button {
-	border-radius: 4pt;
-
 	height: 36px;
 	margin-bottom: 24px;
 }
