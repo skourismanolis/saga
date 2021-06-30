@@ -123,8 +123,56 @@ async function get_sprint_id(req, res) {
 	}
 }
 
+async function put_sprint_id(req, res) {
+	try {
+		Joi.attempt(req.body, schemas.SprintPutPost);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(400);
+		return;
+	}
+
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		let deadline = req.body.deadline;
+		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
+
+		let [results] = await db.pool.query(
+			'UPDATE sprint SET title = ?, deadline = ? WHERE idSprint = ? AND idProject = ?',
+			[
+				req.body.title,
+				deadline,
+				req.params.idSprint,
+				req.params.idProject,
+			]
+		);
+		if (results.affectedRows == 0) {
+			res.sendStatus(404);
+			throw 'bob'; //TODO maybe make global constant
+		}
+
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	sprints_get,
 	sprints_post,
 	get_sprint_id,
+	put_sprint_id,
 };
