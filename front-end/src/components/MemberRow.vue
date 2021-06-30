@@ -33,7 +33,7 @@ export default {
 <style scoped>
 .member-entry {
 	height: 40px;
-	background-color: white;
+	background-color: #f1f2f8;
 }
 
 .ml12 {
@@ -47,9 +47,6 @@ export default {
 .member-entry:hover {
 	cursor: pointer;
 	filter: brightness(90%);
-}
-
-.member-element {
 }
 
 .icon {
