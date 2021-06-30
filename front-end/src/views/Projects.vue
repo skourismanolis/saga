@@ -30,20 +30,102 @@
 				</div>
 			</div>
 		</div>
+
 		<img
 			v-if="projects.length == 0"
 			class="align-self-center"
 			src="../assets/empty-projects-art.png"
 		/>
+		<div v-else class="list-container">
+			<div class="mb12">
+				<span class="title-label">Τίτλος</span>
+				<span class="admins-label">Διαχειριστές</span>
+				<span class="members-label">Μέλη</span>
+			</div>
+			<ProjectRow
+				class="project-row"
+				v-bind:class="{ oddrow: index % 2 != 0 }"
+				v-for="(project, index) in projects"
+				:key="index"
+				:project="project"
+			/>
+		</div>
 	</div>
 </template>
 
 <script>
+import ProjectRow from '../components/ProjectRow.vue';
 export default {
-	components: {},
+	components: {
+		ProjectRow,
+	},
 	data() {
 		return {
-			projects: [],
+			projects: [
+				{
+					pic: require('../assets/profile pics/default-profile-pic.png'),
+					name: 'Example Project',
+					admins: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					members: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+				},
+				{
+					pic: require('../assets/profile pics/default-profile-pic.png'),
+					name: 'Example Project',
+					admins: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					members: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+				},
+				{
+					pic: require('../assets/profile pics/default-profile-pic.png'),
+					name: 'Example Project',
+					admins: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					members: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+				},
+			],
 		};
 	},
 	computed: {},
@@ -53,6 +135,10 @@ export default {
 <style scoped>
 .mb36 {
 	margin-bottom: 36px;
+}
+
+.mb12 {
+	margin-bottom: 12px;
 }
 
 .empty-projects-message {
@@ -78,7 +164,7 @@ export default {
 }
 
 .view-container {
-	margin: 108px 64px;
+	padding: 108px 64px;
 }
 
 .purple-text {
@@ -92,5 +178,33 @@ export default {
 .black-text {
 	font-weight: bold;
 	font-size: 36px;
+}
+
+.oddrow {
+	background-color: white !important;
+}
+
+.project-row {
+	border-radius: 4pt;
+}
+
+.title-label {
+	margin-left: 12px;
+}
+
+.list-container {
+	position: relative;
+}
+
+.admins-label {
+	position: absolute;
+	right: 0;
+	margin-right: 410px;
+}
+
+.members-label {
+	position: absolute;
+	right: 0;
+	margin-right: 167px;
 }
 </style>
