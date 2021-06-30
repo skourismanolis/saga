@@ -1,14 +1,6 @@
 <template>
-	<div
-		class="
-			d-flex
-			flex-row
-			align-items-center
-			member-entry
-			justify-content-between
-		"
-	>
-		<div>
+	<div class="d-flex flex-row align-items-center member-entry">
+		<div class="text-container">
 			<img
 				:src="member.pic"
 				width="24px"
@@ -18,8 +10,10 @@
 
 			<span class="member-element ml12">{{ member.name }}</span>
 		</div>
-		<span class="member-element ml12">{{ member.email }}</span>
-		<div v-bind:class="{ invisible: member.admin == true }">
+
+		<span class="member-element email">{{ member.email }}</span>
+
+		<div class="ml-auto" v-bind:class="{ invisible: member.admin == true }">
 			<i class="icon bi bi-arrow-up"></i>
 			<i class="icon bi bi-x-circle ml12 mr12 icon"></i>
 		</div>
@@ -56,7 +50,6 @@ export default {
 }
 
 .member-element {
-	margin-right: 6px;
 }
 
 .icon {
@@ -73,5 +66,16 @@ export default {
 
 .invisible {
 	visibility: hidden;
+}
+
+.text-container {
+	width: 190px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.email {
+	margin-left: 124px;
 }
 </style>
