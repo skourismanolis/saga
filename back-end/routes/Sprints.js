@@ -10,10 +10,21 @@ const schemas = require('../schemas/schemas_export');
 async function sprints_get(req, res) {
 	try {
 		// building the query
-		let myepicquery =
-			'SELECT idSprint,title,start,deadline FROM sprint WHERE idProject = ?';
-		let params = [];
-		params.push(req.params.idProject);
+		let mysprintquery =
+			'SELECT s.idSprint,s.title,s.`start`,s.deadline FROM sprint s, project p \
+			WHERE s.idProject = ? AND p.idProject = ?';
+		let params = [req.params.idProject, req.params.idProject];
+
+		//handling query param finished
+		if (req.query.finished == true) {
+			mysprintquery +=
+				' AND s.`start` IS NOT NULL AND (s.idSprint != p.activeSprint OR p.activeSprint IS NULL)';
+		} else if (req.query.finished == false) {
+			mysprintquery += ' AND s.`start` IS NULL';
+		} else if (req.query.finished != undefined) {
+			res.sendStatus(400);
+			throw 'bob'; //TODO maybe make global constant
+		}
 
 		// handling pagination headers
 		if (
@@ -27,20 +38,23 @@ async function sprints_get(req, res) {
 		}
 		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
 		let offset = req.headers['x-pagination-offset'] || 0;
-		myepicquery += ' LIMIT ? OFFSET ?';
+		mysprintquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
 		params.push(parseInt(offset));
 
-		// // making the queries
-		let [epics] = await db.pool.query(myepicquery, params);
+		// making the queries
+		let [sprints] = await db.pool.query(mysprintquery, params);
+
+		mysprintquery = mysprintquery.substring(mysprintquery.search('FROM'));
 		let [count] = await db.pool.query(
-			'SELECT COUNT(*) AS count FROM epic WHERE idProject = ?',
-			[req.params.idProject]
+			'SELECT COUNT(s.idSprint) AS count ' + mysprintquery,
+			params
 		);
 
-		res.header('X-Pagination-Total', count[0].count).send(epics);
+		res.header('X-Pagination-Total', count[0].count).send(sprints);
 	} catch (error) {
-		if (error != 'bob') { //TODO maybe make global constant
+		if (error != 'bob') {
+			//TODO maybe make global constant
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -95,12 +109,13 @@ async function get_sprint_id(req, res) {
 
 		if (sprint.length == 0) {
 			res.sendStatus(404);
-			throw 'bob';
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		res.send(sprint);
 	} catch (error) {
-		if (error != 'bob') { //TODO maybe make global constant
+		if (error != 'bob') {
+			//TODO maybe make global constant
 			console.error(error);
 			res.sendStatus(500);
 		}
