@@ -10,6 +10,7 @@ import EpicCreate from '../views/EpicCreate.vue';
 import EpicView from '../views/EpicView.vue';
 import EpicEdit from '../views/EpicEdit.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
+import Projects from '../views/Projects.vue';
 
 Vue.use(VueRouter);
 
@@ -89,6 +90,14 @@ const routes = [
 		path: '/project-settings',
 		name: 'ProjectSettings',
 		component: ProjectSettings,
+	},
+	{
+		path: '/projects',
+		name: 'Projects',
+		component: Projects,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 	{
 		path: '/about',
