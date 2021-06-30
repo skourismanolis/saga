@@ -81,8 +81,8 @@ async function labels_post(req, res) {
 async function get_label_id(req, res) {
 	try {
 		let [label] = await db.pool.query(
-			'SELECT idLabel,name,color FROM label WHERE idLabel = ?',
-			[req.params.idLabel]
+			'SELECT idLabel,name,color FROM label WHERE idLabel = ? AND idProject = ?',
+			[req.params.idLabel, req.params.idProject]
 		);
 
 		if (label.length == 0) {
@@ -106,7 +106,11 @@ async function put_label_id(req, res) {
 		return;
 	}
 
+	let conn;
 	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
 		let [results] = await db.pool.query(
 			'UPDATE label SET name = ?, color = ? WHERE idLabel = ? AND idProject = ?',
 			[
@@ -121,11 +125,16 @@ async function put_label_id(req, res) {
 			return;
 		}
 
+		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
+		if (conn != null) conn.rollback();
+
 		console.error(error);
 		res.sendStatus(500);
 		return;
+	} finally {
+		if (conn != null) conn.rollback();
 	}
 }
 

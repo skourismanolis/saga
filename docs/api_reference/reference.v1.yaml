@@ -128,6 +128,64 @@ paths:
               required:
                 - title
                 - picture
+  '/projects/{idProject}/active':
+    parameters:
+      - schema:
+          type: string
+        name: idProject
+        in: path
+        required: true
+    get:
+      summary: Get currently active sprint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-projects-idProject-active
+      description: Get currently active sprint of given project
+    put:
+      summary: Change currently active sprint
+      operationId: put-projects-idProject-active
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        Change currently active sprint on given project.
+        Must not have another one active to make one active.
+        If given null, will finish currently active sprint.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  nullable: true
   '/projects/{idProject}/members':
     parameters:
       - schema:
@@ -605,6 +663,11 @@ paths:
       parameters:
         - $ref: '#/components/parameters/X-Pagination-Limit'
         - $ref: '#/components/parameters/X-Pagination-Offset'
+        - schema:
+            type: boolean
+          in: query
+          name: finished
+          description: Show finished or unfinished sprints. If absent show both.
     post:
       summary: Add a new sprint to a Project
       operationId: post-projects-idProject-sprints

@@ -4,6 +4,8 @@ const Comment = require('./Comment');
 const CommentPost = require('./CommentPost');
 const Epic = require('./Epic');
 const EpicPutPost = require('./EpicPutPost');
+const Id = require('./Id');
+const IntegerArray = require('./IntegerArray');
 const Issue = require('./Issue');
 const IssuePost = require('./IssuePost');
 const IssuePut = require('./IssuePut');
@@ -30,6 +32,8 @@ module.exports = {
 	CommentPost,
 	Epic,
 	EpicPutPost,
+	Id,
+	IntegerArray,
 	Issue,
 	IssuePost,
 	IssuePut,
