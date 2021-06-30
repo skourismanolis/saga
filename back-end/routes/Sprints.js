@@ -170,9 +170,45 @@ async function put_sprint_id(req, res) {
 	}
 }
 
+async function delete_sprint_id(req, res) {
+	let conn;
+	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		await conn.query(
+			'UPDATE issue SET idSprint = NULL WHERE idSprint = ? AND idProject = ?',
+			[req.params.idSprint, req.params.idProject]
+		);
+		let [results] = await conn.query(
+			'DELETE FROM sprint WHERE idSprint = ? AND idProject = ?;',
+			[req.params.idSprint, req.params.idProject]
+		);
+
+		if (results.affectedRows == 0) {
+			res.sendStatus(404);
+			throw 'bob'; //TODO maybe make global constant
+		}
+		await conn.commit();
+		res.sendStatus(200);
+	} catch (error) {
+		if (conn != null) conn.rollback();
+
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
+	} finally {
+		if (conn != null) conn.release();
+	}
+}
+
 module.exports = {
 	sprints_get,
 	sprints_post,
 	get_sprint_id,
 	put_sprint_id,
+	delete_sprint_id,
 };
