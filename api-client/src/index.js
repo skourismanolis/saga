@@ -16,16 +16,20 @@ module.exports = class SagaClient {
 		if (perPage <= 0) throw 'Invalid page size. Must be greater than 0.';
 		this.axios = axios.create({ baseURL: url });
 		this._perPage = perPage;
-		this._isLoggedIn = false;
 		this._user = null;
+		this._token = null;
 	}
 
 	get isLoggedIn() {
-		return this._isLoggedIn;
+		return this._token != null;
 	}
 
 	get user() {
 		return this._user;
+	}
+
+	get token() {
+		return this._token;
 	}
 
 	/**
@@ -34,12 +38,12 @@ module.exports = class SagaClient {
 	 * @param {String} handleTokenOpts.token the token to process
 	 */
 	async handleToken({ token }) {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 		await this.axios.get(`/token/${token}`);
 	}
 
 	async getPayments() {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 		let { data } = await this.axios.get(
 			`/users/${this._user.idUser}/payment`
 		);
@@ -100,7 +104,7 @@ module.exports = class SagaClient {
 		plan,
 		picture = null,
 	}) {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 
 		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
 			throw 'Error invalid plan value';
@@ -122,7 +126,7 @@ module.exports = class SagaClient {
 	 * @param {Object} deletUsrOpt.password the current user's passowrd
 	 */
 	async deleteUser({ password }) {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 		await this.axios({
 			method: 'DELETE',
 			url: '/users',
@@ -131,8 +135,14 @@ module.exports = class SagaClient {
 		this.logout();
 	}
 
+	setToken(token) {
+		this._token = token;
+		let jsonStr = decode64(token.split('.')[1]);
+		this._user = JSON.parse(jsonStr);
+	}
+
 	logout() {
-		this._isLoggedIn = false;
+		this._token = null;
 		this._user = null;
 		this.axios.defaults.headers.Authorization = null;
 	}
@@ -143,13 +153,11 @@ module.exports = class SagaClient {
 			password,
 		});
 		this.axios.defaults.headers.Authorization = 'Bearer ' + data.token;
-		this._isLoggedIn = true;
-		let jsonStr = decode64(data.token.split('.')[1]);
-		this._user = JSON.parse(jsonStr);
+		this.setToken(data.token);
 	}
 
 	async getProjects() {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 		let list = new PaginatedList(this, {
 			url: '/projects',
 			dataTransformer: (projects) =>
@@ -160,7 +168,7 @@ module.exports = class SagaClient {
 	}
 
 	async createProject({ title }) {
-		if (!this._isLoggedIn) throw LOGINERROR;
+		if (!this.isLoggedIn) throw LOGINERROR;
 		let { data } = await this.axios.post('/projects', { title });
 		return new Project(this, {
 			idProject: data.idProject,
