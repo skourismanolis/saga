@@ -5,6 +5,10 @@
 			<span class="purple-text">project</span>
 			<span class="black-text">μου</span>
 		</div>
+		<span v-if="projects.length == 0" class="empty-projects-message"
+			>Δεν έχεις ξεκινήσει κανένα project ακόμα, φτιάξε το πρώτο σου
+			project τώρα!
+		</span>
 		<div class="d-flex flex-row buttons-search-container mb36">
 			<button
 				type="button"
@@ -13,7 +17,7 @@
 				Δημιουργία
 				<i class="bi bi-plus align-self-center"></i>
 			</button>
-			<div class="input-group search-field">
+			<div class="input-group search-field" v-if="projects.length > 0">
 				<input
 					type="text"
 					class="form-control"
@@ -26,12 +30,34 @@
 				</div>
 			</div>
 		</div>
+		<img
+			v-if="projects.length == 0"
+			class="align-self-center"
+			src="../assets/empty-projects-art.png"
+		/>
 	</div>
 </template>
+
+<script>
+export default {
+	components: {},
+	data() {
+		return {
+			projects: [],
+		};
+	},
+	computed: {},
+};
+</script>
 
 <style scoped>
 .mb36 {
 	margin-bottom: 36px;
+}
+
+.empty-projects-message {
+	font-size: 18px;
+	margin-bottom: 24px;
 }
 
 .buttons-search-container {
