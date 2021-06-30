@@ -341,7 +341,7 @@ async function delete_remove_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			throw 'bob' //TODO maybe make global constant
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.commit();

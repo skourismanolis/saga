@@ -181,8 +181,11 @@ paths:
         content:
           application/json:
             schema:
-              type: integer
-              nullable: true
+              type: object
+              properties:
+                id:
+                  type: integer
+                  nullable: true
   '/projects/{idProject}/members':
     parameters:
       - schema:

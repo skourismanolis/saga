@@ -15,6 +15,7 @@ const epics = require('./Epics');
 const labels = require('./Labels');
 const columns = require('./Columns');
 const sprints = require('./Sprints');
+const active = require('./Active');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -486,6 +487,20 @@ app.delete(
 	'/:idProject/sprints/:idSprint/issues',
 	Project_auth(['Admin', 'Member']),
 	sprints.delete_remove_issues
+);
+
+//active
+
+app.get(
+	'/:idProject/active',
+	Project_auth(['Admin', 'Member']),
+	active.get_active_sprint
+);
+
+app.put(
+	'/:idProject/active',
+	Project_auth(['Admin', 'Member']),
+	active.put_active_sprint
 );
 
 module.exports = app;
