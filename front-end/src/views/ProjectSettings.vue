@@ -1,6 +1,6 @@
 <template>
-	<form>
-		<div class="left d-flex flex-column">
+	<form class="d-flex flex-row">
+		<div class="left d-flex flex-column mb60">
 			<div classs="d-flex flex-row title-row">
 				<span class="black-text title">Ρυθμίσεις </span>
 				<span class="purple-text title">project </span>
@@ -70,14 +70,113 @@
 				Διαγραφή Project
 			</button>
 		</div>
+		<div class="right">
+			<div class="mb24">
+				<span class="black-text mb12">Διαχειριστές</span>
+				<div class="mb12">
+					<span class="table-sect-name">Όνομα</span>
+					<span class="table-sect-email">E-mail</span>
+				</div>
+				<MemberRow
+					v-for="(admin, index) in admins"
+					:key="index"
+					:member="admin"
+					class="list-item"
+					v-bind:class="{ oddrow: index % 2 != 0 }"
+				/>
+			</div>
+			<div class="mb24">
+				<span class="black-text mb12">Μέλη</span>
+				<div class="mb12">
+					<span class="table-sect-name">Όνομα</span>
+					<span class="table-sect-email">E-mail</span>
+				</div>
+				<MemberRow
+					v-for="(member, index) in members"
+					:key="index"
+					:member="member"
+					class="list-item"
+					v-bind:class="{ oddrow: index % 2 != 0 }"
+				/>
+			</div>
+		</div>
 	</form>
 </template>
 
 <script>
+import MemberRow from '../components/MemberRow.vue';
 export default {
-	components: {},
+	components: {
+		MemberRow,
+	},
 	data() {
-		return {};
+		return {
+			admins: [
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: true,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: true,
+				},
+			],
+
+			members: [
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+				{
+					pic: require(`../assets/profile pics/default-profile-pic.png`),
+					name: 'Example Name',
+					email: 'example@provider.domain',
+					admin: false,
+				},
+			],
+		};
 	},
 	computed: {
 		profilePic: function () {
@@ -123,7 +222,36 @@ export default {
 	margin-bottom: 12px;
 }
 
+.ml12 {
+	margin-left: 12px;
+}
+
 .mb60 {
 	margin-bottom: 60px;
+}
+
+.mb24 {
+	margin-bottom: 24px;
+}
+
+.right {
+	margin-top: 193px;
+	width: 769px;
+}
+
+.table-sect-name {
+	margin-left: 12px;
+}
+
+.table-sect-email {
+	margin-left: 254px;
+}
+
+.oddrow {
+	background-color: white !important;
+}
+
+.list-item {
+	border-radius: 4pt;
 }
 </style>
