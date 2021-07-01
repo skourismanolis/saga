@@ -13,10 +13,97 @@
 			<button
 				type="button"
 				class="btn btn-primary d-flex align-items-center create-button"
+				v-b-modal.create-project-modal
 			>
 				Δημιουργία
 				<i class="bi bi-plus align-self-center"></i>
 			</button>
+
+			<!-- modal -->
+			<b-modal id="create-project-modal">
+				<!-- header -->
+
+				<template #modal-header="{}">
+					<div>
+						<span class="black-text-modal">Δημιουργία</span>
+						<span class="purple-text-modal">project</span>
+					</div>
+				</template>
+				<!-- content -->
+				<div class="d-flex flex-column justify-content-center mb12">
+					<img
+						:src="new_project.pic"
+						width="128px"
+						height="128px"
+						class="rounded-circle align-self-center"
+					/>
+					<div class="input-group">
+						<div class="custom-file">
+							<input
+								type="file"
+								class="custom-file-input"
+								id="inputGroupFile04"
+							/>
+							<label
+								class="custom-file-label"
+								for="inputGroupFile04"
+								>Επέλεξε αρχείο</label
+							>
+						</div>
+					</div>
+				</div>
+				<label for="exampleInputEmail1">Τίτλος Project</label>
+				<input
+					type="text"
+					class="form-control mb12"
+					placeholder="Εισάγετε τίτλο..."
+				/>
+				<label for="exampleInputEmail1"
+					>Προσκάλεσε τα μέλη της ομάδας</label
+				>
+
+				<div class="input-group mb12">
+					<input
+						type="emai"
+						class="form-control mb12"
+						placeholder="Εισάγετε το e-mail του μέλους..."
+					/>
+					<div class="input-group-append">
+						<button class="btn btn-primary" type="button">
+							<i class="bi bi-envelope"></i>
+						</button>
+					</div>
+				</div>
+				<label for="exampleInputEmail1"
+					>Ή στείλτε τον παρακάτω σύνδεσμο</label
+				>
+				<div class="input-group mb12">
+					<input
+						type="text"
+						class="form-control"
+						v-model="generatedLink"
+						disabled
+					/>
+					<div class="input-group-append">
+						<button class="btn btn-primary" type="button">
+							Αντιγραφή
+						</button>
+					</div>
+				</div>
+				<div class="d-flex justify-content-center">
+					<img src="../assets/plant.png" />
+				</div>
+				<!-- footer -->
+				<template #modal-footer="{ cancel, ok }">
+					<b-button size="sm" variant="danger" @click="cancel()">
+						Ακύρωση
+					</b-button>
+					<b-button size="sm" variant="primary" @click="ok()">
+						Αποθήκευση
+					</b-button>
+				</template>
+			</b-modal>
+
 			<div class="input-group search-field" v-if="projects.length > 0">
 				<input
 					type="text"
@@ -61,6 +148,10 @@ export default {
 	},
 	data() {
 		return {
+			new_project: {
+				pic: require('../assets/profile pics/default-profile-pic.png'),
+			},
+
 			projects: [
 				{
 					pic: require('../assets/profile pics/default-profile-pic.png'),
@@ -133,6 +224,10 @@ export default {
 </script>
 
 <style scoped>
+.custom-file {
+	margin: 12px 0;
+}
+
 .mb36 {
 	margin-bottom: 36px;
 }
@@ -176,10 +271,21 @@ export default {
 }
 
 .black-text {
-	font-weight: bold;
 	font-size: 36px;
 }
 
+.black-text-modal {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.purple-text-modal {
+	font-weight: bold;
+
+	font-size: 36px;
+	color: #564787;
+	margin-left: 10px;
+}
 .oddrow {
 	background-color: white !important;
 }
