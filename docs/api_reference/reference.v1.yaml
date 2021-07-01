@@ -125,9 +125,14 @@ paths:
                 picture:
                   type: string
                   format: uri
+                  nullable: true
+                activeSprint:
+                  type: integer
+                  nullable: true
               required:
                 - title
                 - picture
+                - activeSprint
   '/projects/{idProject}/active':
     parameters:
       - schema:
@@ -273,7 +278,7 @@ paths:
           description: Internal Server Error
       operationId: post-projects-idProject-members-admin
       description: |-
-        Promote a member to project admin. 
+        Promote a member to project admin.
         **If the user is already a project admin nothing happens and 200 OK is returned.**
         The user must be a member of the project.
         Project admin only.
@@ -1760,7 +1765,7 @@ components:
           type: string
           nullable: true
         activeSprint:
-          type: number
+          type: integer
           description: 'there can only be one active sprint, when the active sprint ends then this becomes null and another sprint can become active'
           nullable: true
       required:

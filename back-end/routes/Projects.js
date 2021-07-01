@@ -141,7 +141,7 @@ app.post('/', async (req, res) => {
 			[req.user.idUser, project.insertId, 'Admin']
 		);
 		await conn.commit();
-		res.status(200).send({ message: 'OK', idProject: project.insertId });
+		res.status(200).send({ idProject: project.insertId });
 	} catch (error) {
 		console.error(error);
 		if (conn != null) conn.rollback();

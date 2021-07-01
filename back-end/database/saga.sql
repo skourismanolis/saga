@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
   `title` VARCHAR(255) NULL,
   `category` ENUM("Story", "Task", "Bug") NULL,
   `points` INT NULL,
-  `priority` ENUM("Very Low", "Low", "Neutral", "High", "Very High") NULL,
+  `priority` ENUM("Very Low", "Low", "Neutral", "High", "Very High") DEFAULT "Neutral",
   `deadline` DATE NULL,
   `description` TEXT NULL,
   PRIMARY KEY (`code`),
