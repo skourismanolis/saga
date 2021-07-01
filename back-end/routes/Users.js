@@ -304,7 +304,7 @@ app.get('/:idUser', async (req, res) => {
 app.put('/picture', upload.single('picture'), async (req, res) => {
 	try {
 		
-		await db.pool.query(
+		let [result] = await db.pool.query(
 			'UPDATE user SET picture = ? WHERE idUser = ?',
 			[
 				req.file != undefined ? req.file.filename : null,
