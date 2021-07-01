@@ -16,7 +16,6 @@ module.exports = class Project extends Base {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
-		this.picture = picture || null;
 		this._activeSprintId = activeSprint;
 	}
 
@@ -49,7 +48,6 @@ module.exports = class Project extends Base {
 		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title: this.title,
-			picture: this.picture,
 			activeSprint: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
