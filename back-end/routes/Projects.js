@@ -14,6 +14,8 @@ const issues = require('./Issues');
 const epics = require('./Epics');
 const labels = require('./Labels');
 const columns = require('./Columns');
+const sprints = require('./Sprints');
+const active = require('./Active');
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -139,7 +141,7 @@ app.post('/', async (req, res) => {
 			[req.user.idUser, project.insertId, 'Admin']
 		);
 		await conn.commit();
-		res.status(200).send({ message: 'OK', idProject: project.insertId });
+		res.status(200).send({ idProject: project.insertId });
 	} catch (error) {
 		console.error(error);
 		if (conn != null) conn.rollback();
@@ -435,6 +437,70 @@ app.delete(
 	'/:idProject/columns/:idColumn/',
 	Project_auth(['Admin', 'Member']),
 	columns.delete_column_id
+);
+
+//sprints
+
+app.get(
+	'/:idProject/sprints/',
+	Project_auth(['Admin', 'Member']),
+	sprints.sprints_get
+);
+
+app.post(
+	'/:idProject/sprints/',
+	Project_auth(['Admin', 'Member']),
+	sprints.sprints_post
+);
+
+app.get(
+	'/:idProject/sprints/:idSprint/',
+	Project_auth(['Admin', 'Member']),
+	sprints.get_sprint_id
+);
+
+app.put(
+	'/:idProject/sprints/:idSprint/',
+	Project_auth(['Admin', 'Member']),
+	sprints.put_sprint_id
+);
+
+app.delete(
+	'/:idProject/sprints/:idSprint/',
+	Project_auth(['Admin', 'Member']),
+	sprints.delete_sprint_id
+);
+
+app.get(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.get_sprint_issues
+);
+
+app.post(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.post_add_issues
+);
+
+app.delete(
+	'/:idProject/sprints/:idSprint/issues',
+	Project_auth(['Admin', 'Member']),
+	sprints.delete_remove_issues
+);
+
+//active
+
+app.get(
+	'/:idProject/active',
+	Project_auth(['Admin', 'Member']),
+	active.get_active_sprint
+);
+
+app.put(
+	'/:idProject/active',
+	Project_auth(['Admin', 'Member']),
+	active.put_active_sprint
 );
 
 module.exports = app;
