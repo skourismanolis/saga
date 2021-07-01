@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<b-navbar type="dark" variant="secondary" class="my-0 py-0 pt-2">
-			<img src="@/assets/logo.png" id="sagalogo" alt="" />
+			<router-link to="/">
+				<img src="@/assets/logo.png" id="sagalogo" />
+			</router-link>
 			<div v-if="isLoggedIn" class="ml-auto">
 				<div class="rcorner_top">
 					<b-button variant="primary">
@@ -64,10 +66,15 @@ export default {
 	},
 	computed: {
 		crumbs() {
-			return [
-				{ text: 'test', to: '/home' },
-				{ text: 'test', to: '/home' },
-			];
+			let paths = this.$route.path.split('/');
+			return paths
+				.filter((p) => p.length > 0)
+				.map((p) => {
+					return {
+						text: p,
+						to: p,
+					};
+				});
 		},
 	},
 };
