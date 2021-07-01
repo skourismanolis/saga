@@ -13,10 +13,31 @@
 			<button
 				type="button"
 				class="btn btn-primary d-flex align-items-center create-button"
+				v-b-modal.create-project-modal
 			>
 				Δημιουργία
 				<i class="bi bi-plus align-self-center"></i>
 			</button>
+
+			<b-modal id="create-project-modal">
+				<!-- header -->
+				<template #modal-header="{}">
+					<div>
+						<span class="black-text-modal">Δημιουργία</span>
+						<span class="purple-text-modal">project</span>
+					</div>
+				</template>
+				<!-- footer -->
+				<template #modal-footer="{ cancel, ok }">
+					<b-button size="sm" variant="danger" @click="cancel()">
+						Ακύρωση
+					</b-button>
+					<b-button size="sm" variant="primary" @click="ok()">
+						Αποθήκευση
+					</b-button>
+				</template>
+			</b-modal>
+
 			<div class="input-group search-field" v-if="projects.length > 0">
 				<input
 					type="text"
@@ -176,10 +197,21 @@ export default {
 }
 
 .black-text {
-	font-weight: bold;
 	font-size: 36px;
 }
 
+.black-text-modal {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.purple-text-modal {
+	font-weight: bold;
+
+	font-size: 36px;
+	color: #564787;
+	margin-left: 10px;
+}
 .oddrow {
 	background-color: white !important;
 }
