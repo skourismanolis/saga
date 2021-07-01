@@ -19,6 +19,7 @@ const MOCKPROJECT = {
 	idProject: 2,
 	title: 'asdasd',
 	picture: null,
+	activeSprint: null,
 };
 
 if (__TEST_MODE__ === 'REST') {
