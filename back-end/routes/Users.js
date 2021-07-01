@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 require('mysql2/promise');
 const express = require('express');
 const app = express.Router();
@@ -149,7 +151,7 @@ app.put('/', async (req, res) => {
 
 	try {
 		// prettier-ignore
-		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?', 
+		const [result] = await db.pool.query('SELECT * FROM user WHERE idUser = ?',
 		[
 			req.user.idUser,
 		]);

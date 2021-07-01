@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? './.env.test' : './.env',
+});
 
 const express = require('express');
 const app = express();
@@ -8,7 +10,11 @@ const jwt = require('jsonwebtoken');
 
 var corsOptions = {
 	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-	allowedHeaders: ['X-Pagination-Limit', 'X-Pagination-Offset'],
+	allowedHeaders: [
+		'X-Pagination-Limit',
+		'X-Pagination-Offset',
+		'Authorization',
+	],
 	exposedHeaders: ['X-Pagination-Total'],
 };
 

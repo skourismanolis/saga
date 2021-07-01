@@ -1,7 +1,11 @@
 <template>
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
-		<ProjectNavbar v-if="projectNavbarFlag" />
+		<ProjectNavbar
+			v-if="projectNavbarFlag"
+			:tab="activeTab"
+			@tab-change="changeTab"
+		/>
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -21,9 +25,15 @@ export default {
 		ProjectNavbar,
 	},
 	data() {
-		return {};
+		return {
+			activeTab: '',
+		};
 	},
-	methods: {},
+	methods: {
+		changeTab(value) {
+			this.activeTab = value;
+		},
+	},
 	mounted() {
 		console.log(this.$route);
 	},

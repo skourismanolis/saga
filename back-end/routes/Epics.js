@@ -1,4 +1,6 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 const Joi = require('joi');
 const dayjs = require('dayjs');
 
@@ -97,8 +99,8 @@ async function epics_post(req, res) {
 async function get_epic_id(req, res) {
 	try {
 		let [epic] = await db.pool.query(
-			'SELECT idEpic,title,start,deadline,description FROM epic WHERE idEpic = ?',
-			[req.params.idEpic]
+			'SELECT idEpic,title,start,deadline,description FROM epic WHERE idEpic = ? AND idProject = ?',
+			[req.params.idEpic, req.params.idProject]
 		);
 
 		if (epic.length == 0) {
@@ -122,7 +124,11 @@ async function put_epic_id(req, res) {
 		return;
 	}
 
+	let conn;
 	try {
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
 		let start = req.body.start;
 		if (start != null) start = dayjs(start).format('YYYY-MM-DD');
 		let deadline = req.body.deadline;
@@ -153,11 +159,16 @@ async function put_epic_id(req, res) {
 			return;
 		}
 
+		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
+		if (conn != null) conn.rollback();
+
 		console.error(error);
 		res.sendStatus(500);
 		return;
+	} finally {
+		if (conn != null) conn.rollback();
 	}
 }
 
@@ -263,7 +274,7 @@ async function post_add_issues(req, res) {
 
 		let [results] = await conn.query(
 			`UPDATE issue SET idEpic = ?
-			WHERE idProject = ? AND code IN (?) 
+			WHERE idProject = ? AND code IN (?)
 			AND ? IN (
 				SELECT idEpic FROM epic WHERE idProject = ?
 			)`,
