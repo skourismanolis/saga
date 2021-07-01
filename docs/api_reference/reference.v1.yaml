@@ -122,17 +122,8 @@ paths:
               properties:
                 title:
                   type: string
-                picture:
-                  type: string
-                  format: uri
-                  nullable: true
-                activeSprint:
-                  type: integer
-                  nullable: true
               required:
                 - title
-                - picture
-                - activeSprint
   '/projects/{idProject}/active':
     parameters:
       - schema:
@@ -2198,9 +2189,6 @@ components:
           type: string
         surname:
           type: string
-        picture:
-          type: string
-          nullable: true
         plan:
           type: string
           enum:
@@ -2213,7 +2201,6 @@ components:
         - password
         - name
         - surname
-        - picture
         - plan
     TokenRequest:
       title: TokenRequest
