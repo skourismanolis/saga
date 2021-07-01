@@ -80,15 +80,6 @@ export default {
 };
 </script>
 
-<style>
-.user_button {
-	border-top-right-radius: 50px;
-	border-bottom-right-radius: 50px;
-	padding-left: 5px;
-	padding-right: 3px;
-}
-</style>
-
 <style scoped>
 .hand {
 	cursor: pointer;
