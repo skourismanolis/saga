@@ -8,10 +8,36 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const email_validator = require('email-validator');
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const multer  = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+
+const profilePicsPath = './assets/profilePics/';
+const storage = multer.diskStorage({
+    destination: function(req, file,cb) {
+        cb(null, profilePicsPath)
+    },
+    filename: function(req, file, cb) {
+        cb(null, uuidv4().concat(file.originalname.slice(-4)));
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
+    }
+    else {
+        cb(new Error('Non accepted image type'));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter
+});
 
 app.post('/login', async (req, res) => {
 	try {
@@ -272,6 +298,31 @@ app.get('/:idUser', async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
+	}
+});
+
+app.put('/picture', upload.single('picture'), async (req, res) => {
+	try {
+		
+		await db.pool.query(
+			'UPDATE user SET picture = ? WHERE idUser = ?',
+			[
+				req.file != undefined ? req.file.filename : null,
+				req.user.idUser,
+			]
+		);
+		if (result.length == 0) {
+			res.sendStatus(403);
+			throw 'bob'; //TODO maybe make global constant
+		}
+		res.sendStatus(200);
+	} catch (error) {
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
 	}
 });
 
