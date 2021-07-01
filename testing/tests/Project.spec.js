@@ -342,7 +342,7 @@ if (__TEST_MODE__ === 'REST') {
 			spr = await project.getActiveSprint();
 			if (__TEST_MODE__ === 'REST') expect(spr).toBe(content);
 		});
-    
+
 		it('returns a list of sprints', async () => {
 			let sprints = await project.getSprints();
 			expect(sprints).toBeInstanceOf(PaginatedList);
