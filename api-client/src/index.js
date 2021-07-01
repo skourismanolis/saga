@@ -61,15 +61,7 @@ module.exports = class SagaClient {
 	 * @param {String} userOpt.plan the user's payment plan, must be one of "Free", "Premium", "Host"
 	 * @param {String} [userOpt.picture] the user's picture url
 	 */
-	async register({
-		username,
-		email,
-		password,
-		name,
-		surname,
-		plan,
-		picture = null,
-	}) {
+	async register({ username, email, password, name, surname, plan }) {
 		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
 			throw 'Error invalid plan value';
 
@@ -80,7 +72,6 @@ module.exports = class SagaClient {
 			name,
 			surname,
 			plan,
-			picture,
 		});
 	}
 
@@ -93,17 +84,8 @@ module.exports = class SagaClient {
 	 * @param {String} userOpt.name the user's name
 	 * @param {String} userOpt.surname the user's surname
 	 * @param {String} userOpt.plan the user's payment plan, must be one of "Free", "Premium", "Host"
-	 * @param {String|Null=} userOpt.picture the user's picture url
 	 */
-	async userEdit({
-		username,
-		email,
-		password,
-		name,
-		surname,
-		plan,
-		picture = null,
-	}) {
+	async userEdit({ username, email, password, name, surname, plan }) {
 		if (!this.isLoggedIn) throw LOGINERROR;
 
 		if (['Free', 'Premium', 'Host'].indexOf(plan) === -1)
@@ -116,7 +98,6 @@ module.exports = class SagaClient {
 			name,
 			surname,
 			plan,
-			picture,
 		});
 	}
 
