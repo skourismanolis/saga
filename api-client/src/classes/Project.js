@@ -45,6 +45,16 @@ module.exports = class Project extends Base {
 		return new Sprint(this.client, data, this._idProject);
 	}
 
+	async setActiveSprint(sprint) {
+		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
+		await this.axios.put(`/projects/${this._idProject}`, {
+			title: this.title,
+			picture: this.picture,
+			activeSprint: sprint === null ? null : sprint.id,
+		});
+		await this.refresh();
+	}
+
 	/**
 	 * Get all the sprints belonging to the project
 	 * @returns {Object[]} array of Sprints
