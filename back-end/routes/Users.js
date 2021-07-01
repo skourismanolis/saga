@@ -81,19 +81,21 @@ app.post('/', async (req, res) => {
 
 	try {
 		const salt = await bcrypt.genSalt();
-
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+		if (req.body.username == null) req.body.username = (req.body.name + ' ' + req.body.surname).substring(0, 45);
+
 		await db.pool.query(
 			'INSERT INTO user (username,email, password, name, surname, verified, plan , picture) VALUES (?,?,?,?,?,?,?,?)',
 			[
-				req.body.name + ' ' + req.body.surname,
+				req.body.username,
 				req.body.email,
 				hashedPassword,
 				req.body.name,
 				req.body.surname,
 				0,
 				req.body.plan,
-				req.body.picture,
+				null,
 			]
 		);
 
@@ -165,15 +167,17 @@ app.put('/', async (req, res) => {
 			res.sendStatus(403);
 			return;
 		}
+
+		if (req.body.username == null) req.body.username = (req.body.name + ' ' + req.body.surname).substring(0, 45);
+
 		await db.pool.query(
-			'UPDATE user SET username = ? ,email = ? , name = ? , surname = ? , plan = ?  , picture = ?  WHERE idUser = ?',
+			'UPDATE user SET username = ? ,email = ? , name = ? , surname = ? , plan = ? WHERE idUser = ?',
 			[
 				req.body.username,
 				req.body.email,
 				req.body.name,
 				req.body.surname,
 				req.body.plan,
-				req.body.picture,
 				req.user.idUser,
 			]
 		);
