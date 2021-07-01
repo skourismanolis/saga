@@ -4,14 +4,14 @@ import router from './router';
 import store from './store';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import './scss/custom.scss';
-import SagaClient from '@dira/api-client';
-// import 'bootstrap/dist/css/bootstrap.css'
-// import 'bootstrap-vue/dist/bootstrap-vue.css'
+// import SagaClient from '@dira/api-client';
+import VueDraggable from '../../node_modules/vue-draggable';
 
 Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
-Vue.prototype.$client = new SagaClient({ url: 'http://locahost:3000' });
+Vue.use(VueDraggable);
+// Vue.prototype.$client = new SagaClient({ url: 'http://locahost:3000' });
 
 new Vue({
 	router,
