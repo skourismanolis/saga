@@ -12,7 +12,7 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, { idProject, title, activeSprint, picture }) {
+	constructor(client, { idProject, title, activeSprint }) {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
