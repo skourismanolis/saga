@@ -40,6 +40,17 @@
 				<b-button variant="primary">Σύνδεση / Εγγραφή</b-button>
 			</div>
 		</b-navbar>
+		<b-navbar type="dark" variant="primary">
+			<router-link
+				v-for="(crumb, idx) in crumbs"
+				:key="idx"
+				class="text-light hand"
+				:to="crumb.to"
+			>
+				{{ crumb.text }}
+				<span v-if="idx !== crumbs.length - 1" class="mx-1">/</span>
+			</router-link>
+		</b-navbar>
 	</div>
 </template>
 
@@ -50,6 +61,14 @@ export default {
 		return {
 			isLoggedIn: false,
 		};
+	},
+	computed: {
+		crumbs() {
+			return [
+				{ text: 'test', to: '/home' },
+				{ text: 'test', to: '/home' },
+			];
+		},
 	},
 };
 </script>
@@ -64,6 +83,10 @@ export default {
 </style>
 
 <style scoped>
+.hand {
+	cursor: pointer;
+}
+
 b-navbar {
 	justify-content: none;
 }
