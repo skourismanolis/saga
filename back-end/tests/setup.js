@@ -13,7 +13,6 @@ module.exports = async function setup() {
 		password: 'admin',
 		name: 'string',
 		surname: 'string',
-		picture: 'string',
 		plan: 'Free',
 	});
 

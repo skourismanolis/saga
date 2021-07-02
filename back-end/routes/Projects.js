@@ -6,6 +6,8 @@ const app = express.Router();
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const { Project_auth } = require('../functions');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
@@ -16,6 +18,29 @@ const labels = require('./Labels');
 const columns = require('./Columns');
 const sprints = require('./Sprints');
 const active = require('./Active');
+
+const projectPicsPath = './assets/projectPics/';
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, projectPicsPath);
+	},
+	filename: function (req, file, cb) {
+		cb(null, uuidv4().concat(file.originalname.slice(-4)));
+	},
+});
+
+const fileFilter = (req, file, cb) => {
+	if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+		cb(null, true);
+	} else {
+		cb(new Error('Non accepted image type'));
+	}
+};
+
+const upload = multer({
+	storage: storage,
+	fileFilter: fileFilter,
+});
 
 app.get('/', async (req, res) => {
 	// if (req.params.search == null){}
@@ -165,16 +190,10 @@ app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (project.length == 0) {
 			res.sendStatus(404);
 		}
-		let picture_name;
-		if (req.body.picture == null) {
-			picture_name = project[0].picture;
-		} else {
-			picture_name = req.body.picture;
-		}
-		await db.pool.query(
-			'UPDATE project SET picture = ?, title = ? WHERE idProject = ?',
-			[picture_name, req.body.title, req.params.idProject]
-		);
+		await db.pool.query('UPDATE project title = ? WHERE idProject = ?', [
+			req.body.title,
+			req.params.idProject,
+		]);
 		res.sendStatus(200);
 	} catch (error) {
 		console.error(error);
@@ -244,6 +263,35 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+app.put(
+	'/:idProject/picture',
+	Project_auth(['Admin']),
+	upload.single('picture'),
+	async (req, res) => {
+		try {
+			let [result] = await db.pool.query(
+				'UPDATE project SET picture = ? WHERE idProject = ?',
+				[
+					req.file != undefined ? req.file.filename : null,
+					req.user.idUser,
+				]
+			);
+			if (result.length == 0) {
+				res.sendStatus(403);
+				throw 'bob'; //TODO maybe make global constant
+			}
+			res.sendStatus(200);
+		} catch (error) {
+			if (error != 'bob') {
+				//TODO maybe make global constant
+				console.error(error);
+				res.sendStatus(500);
+			}
+			return;
+		}
+	}
+);
 
 // members
 
