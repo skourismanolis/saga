@@ -294,7 +294,7 @@ app.get('/:idUser', async (req, res) => {
 			'SELECT idUser FROM member WHERE idUser = ? AND idProject IN (SELECT idProject FROM member WHERE idUser = ?)',
 			[req.params.idUser, req.user.idUser]
 		);
-		if (result.length == 0) {
+		if (result.length == 0 && req.params.idUser != req.user.idUser) {
 			res.sendStatus(403);
 			return;
 		}
