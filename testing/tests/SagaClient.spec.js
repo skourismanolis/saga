@@ -83,6 +83,11 @@ describe('users', () => {
 		).resolves.not.toThrow();
 	});
 
+	it("gets the user's profile", async () => {
+		let prof = await client.getProfile();
+		expect(prof).toBeTruthy();
+	});
+
 	if (__TEST_MODE__ === 'CLIENT')
 		it('has user payments', async () => {
 			let payments = await client.getPayments();
