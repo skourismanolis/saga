@@ -140,7 +140,7 @@ async function put_sprint_id(req, res) {
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		let [results] = await db.pool.query(
+		let [results] = await conn.query(
 			'UPDATE sprint SET title = ?, deadline = ? WHERE idSprint = ? AND idProject = ?',
 			[
 				req.body.title,

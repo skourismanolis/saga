@@ -71,7 +71,7 @@ async function epics_post(req, res) {
 			dayjs(deadline).isBefore(start)
 		) {
 			res.status(400).send('Bad request');
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.query('INSERT INTO epic VALUES (?,?,?,?,?,?)', [
@@ -88,11 +88,14 @@ async function epics_post(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -140,10 +143,10 @@ async function put_epic_id(req, res) {
 			dayjs(deadline).isBefore(start)
 		) {
 			res.status(400).send('Bad request');
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
-		let [results] = await db.pool.query(
+		let [results] = await conn.query(
 			'UPDATE epic SET title = ?, start = ?, deadline = ?, description = ? WHERE idEpic = ? AND idProject = ?',
 			[
 				req.body.title,
@@ -156,7 +159,7 @@ async function put_epic_id(req, res) {
 		);
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.commit();
@@ -164,11 +167,14 @@ async function put_epic_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -189,18 +195,21 @@ async function delete_epic_id(req, res) {
 
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -290,7 +299,7 @@ async function post_add_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.commit();
@@ -298,11 +307,14 @@ async function post_add_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -331,7 +343,7 @@ async function delete_remove_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.commit();
@@ -339,11 +351,14 @@ async function delete_remove_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 

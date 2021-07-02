@@ -70,11 +70,14 @@ async function labels_post(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -122,7 +125,7 @@ async function put_label_id(req, res) {
 		);
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 
 		await conn.commit();
@@ -130,11 +133,14 @@ async function put_label_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -155,18 +161,21 @@ async function delete_label_id(req, res) {
 
 		if (label.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 

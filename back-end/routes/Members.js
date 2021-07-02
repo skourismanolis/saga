@@ -78,11 +78,14 @@ async function members_delete(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 

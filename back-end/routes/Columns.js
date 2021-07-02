@@ -56,7 +56,7 @@ async function columns_post(req, res) {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 
-		let [maxOrder] = await db.pool.query(
+		let [maxOrder] = await conn.query(
 			'SELECT MAX(`order`) AS max FROM `column` WHERE idProject = ?',
 			[req.params.idProject]
 		);
@@ -77,11 +77,14 @@ async function columns_post(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -93,7 +96,8 @@ async function get_column_id(req, res) {
 		);
 
 		if (column.length == 0) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		res.send(column);
@@ -130,7 +134,7 @@ async function put_column_id(req, res) {
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 		currentOrder = currentOrder[0].order;
 
@@ -165,11 +169,14 @@ async function put_column_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -185,7 +192,7 @@ async function delete_column_id(req, res) {
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 		currentOrder = currentOrder[0].order;
 
@@ -204,18 +211,21 @@ async function delete_column_id(req, res) {
 
 		if (column.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw 'bob'; //TODO maybe make global constant
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != 'bob') {
+			//TODO maybe make global constant
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
