@@ -3,6 +3,7 @@ const Joi = require('joi');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function columns_get(req, res) {
 	try {
@@ -21,7 +22,8 @@ async function columns_get(req, res) {
 			res.sendStatus(400);
 			return;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		myquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -77,8 +79,7 @@ async function columns_post(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -134,7 +135,7 @@ async function put_column_id(req, res) {
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		currentOrder = currentOrder[0].order;
 
@@ -169,8 +170,7 @@ async function put_column_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -192,7 +192,7 @@ async function delete_column_id(req, res) {
 		);
 		if (currentOrder.length == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		currentOrder = currentOrder[0].order;
 
@@ -211,15 +211,14 @@ async function delete_column_id(req, res) {
 
 		if (column.affectedRows == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}

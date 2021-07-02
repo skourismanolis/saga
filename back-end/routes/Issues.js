@@ -3,6 +3,7 @@ const joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
 const dayjs = require('dayjs');
+const c = require('../constants');
 
 async function issues_create(req, res) {
 	let body;
@@ -29,7 +30,7 @@ async function issues_create(req, res) {
 			);
 			if (label.length == 0) {
 				res.sendStatus(404);
-				throw 'bob'; //TODO maybe make global constant
+				throw c.INVALID_TRANSACTION;
 			}
 		}
 		await conn.query(
@@ -49,7 +50,7 @@ async function issues_create(req, res) {
 		if (body.assignees != null) {
 			if (members.length != body.assignees.length) {
 				res.sendStatus(404);
-				throw 'bob'; //TODO maybe make global constant
+				throw c.INVALID_TRANSACTION;
 			}
 			members.forEach(async (assignee) => {
 				await conn.query(
@@ -147,7 +148,7 @@ async function issues_get(req, res) {
 		conn.commit();
 		if (result.length == 0) {
 			res.status(200).send([]);
-			throw 'bob'; //TODO maybe make global constant;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		let codes = [];
@@ -175,8 +176,7 @@ async function issues_get(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -221,7 +221,7 @@ async function delete_issue(req, res) {
 		);
 		if (issue.length == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		// comment assignee issue
 		conn = await db.pool.getConnection();
@@ -237,8 +237,7 @@ async function delete_issue(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}

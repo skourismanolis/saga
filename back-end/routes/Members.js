@@ -1,14 +1,9 @@
 require('dotenv').config({
 	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
 });
-// const express = require('express');
-// const app = express.Router();
-// const jwt = require('jsonwebtoken');
-// const Joi = require('joi');
-// const { Project_auth } = require('../functions');
 
 const db = require('../db').db;
-// const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function members_get(req, res) {
 	try {
@@ -78,8 +73,7 @@ async function members_delete(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
