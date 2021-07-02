@@ -12,11 +12,10 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, { idProject, title, activeSprint, picture }) {
+	constructor(client, { idProject, title, activeSprint }) {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
-		this.picture = picture || null;
 		this._activeSprintId = activeSprint;
 	}
 
@@ -49,7 +48,6 @@ module.exports = class Project extends Base {
 		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title: this.title,
-			picture: this.picture,
 			activeSprint: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
