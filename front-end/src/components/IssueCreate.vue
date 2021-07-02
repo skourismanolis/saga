@@ -1,5 +1,5 @@
 <template>
-	<b-container>
+	<b-container id="create-issue-body">
 		<h4><strong>Create an issue</strong></h4>
 		<form @submit.prevent="CreateIssue">
 			<b-row class="my-1">
@@ -49,11 +49,22 @@
 					required
 				></b-select>
 			</b-row>
+
+			<h4>Set priority level</h4>
+			<b-row class="my-1">
+				<label
+					for="priority-selector"
+					id="priority-label"
+					v-show="false"
+					>Priority</label
+				>
+			</b-row>
 		</form>
 	</b-container>
 </template>
 
 <script>
+import { Priority } from './IssuePriority.vue';
 export default {
 	data() {
 		return {
@@ -76,6 +87,9 @@ export default {
 			return this.issue.description.length;
 		},
 	},
+	components: {
+		Priority,
+	},
 };
 </script>
 
@@ -84,23 +98,18 @@ label {
 	margin-right: 0px;
 	font-weight: 540;
 	color: rgb(151, 151, 151);
-	text-align: end;
+	text-align: right;
 }
 
-label.memo {
-	float: left;
-}
 div.col-sm-3 {
 	width: 10%;
 	text-align: end;
 	padding-top: 0.25%;
 }
-
 select#category-selector {
 	flex: 1%;
 	margin-left: 3%;
 	margin-right: 1%;
-	width: 100%;
 	padding: 0.375rem 0.75rem;
 	font-size: 1rem;
 	line-height: 1.5;
@@ -117,13 +126,17 @@ h4 {
 	display: flex;
 	justify-content: center;
 }
-
 div.row.my-1 {
 	display: flex;
 	align-items: center;
 }
-
 #label0 {
 	margin-left: 200px;
+}
+#create-issue-body {
+	background-color: lavender;
+	width: 75%;
+	padding-right: 8%;
+	padding-top: 2px;
 }
 </style>
