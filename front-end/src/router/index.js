@@ -58,12 +58,12 @@ const routes = [
 		},
 	},
 	{
-		path: '/backlog',
+		path: '/projects/:idProject/backlog',
 		name: 'Backlog',
 		component: Backlog,
 	},
 	{
-		path: '/epic-create',
+		path: '/projects/:idProject/epic-create',
 		name: 'EpicCreate',
 		component: EpicCreate,
 		meta: {
@@ -71,7 +71,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/epic-view',
+		path: '/projects/:idProject/epic/:idEpic',
 		name: 'EpicView',
 		component: EpicView,
 		meta: {
@@ -79,7 +79,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/epic-edit',
+		path: '/projects/:idProject/epic-edit/:idEpic',
 		name: 'EpicEdit',
 		component: EpicEdit,
 		meta: {
@@ -87,7 +87,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/project-settings',
+		path: '/projects/:idProject/settings',
 		name: 'ProjectSettings',
 		component: ProjectSettings,
 	},
@@ -98,15 +98,6 @@ const routes = [
 		meta: {
 			projectNavbar: false,
 		},
-	},
-	{
-		path: '/about',
-		name: 'About',
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () =>
-			import(/* webpackChunkName: "about" */ '../views/About.vue'),
 	},
 ];
 
