@@ -11,6 +11,7 @@ import EpicView from '../views/EpicView.vue';
 import EpicEdit from '../views/EpicEdit.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
 import Projects from '../views/Projects.vue';
+import DragableTest from '../views/DragableTest.vue';
 
 Vue.use(VueRouter);
 
@@ -98,6 +99,11 @@ const routes = [
 		meta: {
 			projectNavbar: false,
 		},
+	},
+	{
+		path: '/dragable',
+		name: 'DragableTest',
+		component: DragableTest,
 	},
 	{
 		path: '/about',
