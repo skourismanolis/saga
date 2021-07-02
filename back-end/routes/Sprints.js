@@ -37,7 +37,8 @@ async function sprints_get(req, res) {
 			res.sendStatus(400);
 			throw c.INVALID_TRANSACTION;
 		}
-		let limit = req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		mysprintquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
