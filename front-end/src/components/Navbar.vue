@@ -39,19 +39,24 @@
 				</div>
 			</div>
 			<div v-else class="rcorner_top ml-auto">
-				<b-button variant="primary">Σύνδεση / Εγγραφή</b-button>
+				<b-button variant="primary" to="/login"
+					>Σύνδεση / Εγγραφή</b-button
+				>
 			</div>
 		</b-navbar>
 		<b-navbar type="dark" variant="primary">
-			<router-link
-				v-for="(crumb, idx) in crumbs"
-				:key="idx"
-				class="text-light hand"
-				:to="crumb.to"
-			>
-				{{ crumb.text }}
-				<span v-if="idx !== crumbs.length - 1" class="mx-1">/</span>
-			</router-link>
+			<div v-for="(crumb, idx) in crumbs" :key="idx">
+				<router-link
+					v-if="isNaN(crumb.text)"
+					:to="crumb.to"
+					class="text-light hand"
+					>{{ crumb.text }}</router-link
+				>
+				<span v-else class="text-light"> {{ crumb.text }}</span>
+				<span v-if="idx !== crumbs.length - 1" class="mx-1 text-light"
+					>/</span
+				>
+			</div>
 		</b-navbar>
 	</div>
 </template>
@@ -66,15 +71,22 @@ export default {
 	},
 	computed: {
 		crumbs() {
-			let paths = this.$route.path.split('/');
-			return paths
-				.filter((p) => p.length > 0)
-				.map((p) => {
-					return {
-						text: p,
-						to: p,
-					};
-				});
+			let paths = this.$route.path.split('/').filter((p) => p.length > 0);
+			return paths.map((p) => {
+				// make "to" to be the path up to this point, if the path is
+				// /projects/12/backlog/test and p is 'backlog' to will be '/projects/12/backlog'
+				let to = '';
+				for (let p2 of paths) {
+					to += '/' + p2;
+					if (p2 === p) break;
+				}
+
+				let text = p.charAt(0).toUpperCase() + p.slice(1);
+				return {
+					text,
+					to,
+				};
+			});
 		},
 	},
 };
