@@ -52,13 +52,8 @@
 				</button>
 			</div>
 		</div>
-		<div v-if="issues.length > 0">
-			<IssueRow
-				class="issue"
-				v-for="(issue, index) in issues"
-				:key="index"
-				:issue="issue"
-			/>
+		<div v-if="issues.length > 0" class="">
+			<slot></slot>
 		</div>
 		<div v-else class="empty-msg d-flex justify-content-center">
 			<span> Δεν υπάρχουν issues! </span>
@@ -67,11 +62,11 @@
 </template>
 
 <script>
-import IssueRow from './IssueRow.vue';
+// import IssueRow from './IssueRow.vue';
 export default {
-	components: {
-		IssueRow,
-	},
+	// components: {
+	// 	IssueRow,
+	// },
 	props: {
 		name: String,
 		start_date: Date,

@@ -1,74 +1,184 @@
 <template>
 	<div class="drag-container" v-drag-and-drop:options="options">
 		<ul class="drag-list">
-			<li class="drag-column" v-for="group in groups" :key="group.id">
-				<span class="drag-column-header">
-					<h2>{{ group.name }}</h2>
-					<feather-icon type="more-vertical"></feather-icon>
-				</span>
-				<vue-draggable-group
-					v-model="group.items"
-					:groups="groups"
-					:data-id="group.id"
-					@change="onGroupsChange"
+			<div class="drag-column" v-for="sprint in sprints" :key="sprint.id">
+				<!-- optional renderless component -->
+				<SprintBox
+					:name="sprint.name"
+					:start_date="sprint.star_date"
+					:end_date="sprint.end_date"
+					:active="sprint.active"
+					:exists_active="sprint.exists_active"
+					:issues="sprint.issues"
 				>
-					<ul class="drag-inner-list" :data-id="group.id">
-						<li
-							class="drag-item"
-							v-for="item in group.items"
-							:key="item.id"
-							:data-id="item.id"
-						>
-							<div class="drag-item-text">{{ item.name }}</div>
-						</li>
-					</ul>
-				</vue-draggable-group>
-			</li>
+					<vue-draggable-group
+						v-model="sprint.issues"
+						:groups="sprints"
+						:data-id="sprint.id"
+						@change="onGroupsChange"
+					>
+						<div>
+							<IssueRow
+								class="issue drag-item"
+								v-for="(issue, index) in sprint.issues"
+								:key="index"
+								:issue="issue"
+							/>
+						</div>
+					</vue-draggable-group>
+				</SprintBox>
+			</div>
 		</ul>
 	</div>
 </template>
 
 <script>
+import SprintBox from '../components/SprintBox.vue';
+import IssueRow from '../components/IssueRow.vue';
+
 export default {
+	components: {
+		SprintBox,
+		IssueRow,
+	},
 	data() {
 		return {
-			groups: [
+			sprints: [
 				{
-					id: 1,
-					name: 'To Do',
-					items: [
-						{ id: 1, name: 'Item 1', groupId: 1 },
-						{ id: 2, name: 'Item 2', groupId: 1 },
-						{ id: 3, name: 'Item 3', groupId: 1 },
+					name: 'Example Sprint',
+					start_date: new Date('08/14/2020'),
+					end_date: new Date('09/14/2020'),
+					active: true,
+					exists_active: true,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
 				},
+
 				{
-					id: 2,
-					name: 'In Progress',
-					items: [
-						{ id: 4, name: 'Item 4', groupId: 2 },
-						{ id: 5, name: 'Item 5', groupId: 2 },
-						{ id: 6, name: 'Item 6', groupId: 2 },
-					],
-				},
-				{
-					id: 3,
-					name: 'Done',
-					items: [
-						{ id: 7, name: 'Item 7', groupId: 3 },
-						{ id: 8, name: 'Item 8', groupId: 3 },
-						{ id: 9, name: 'Item 9', groupId: 3 },
-						{ id: 10, name: 'Item 10', groupId: 3 },
+					name: 'Example Sprint',
+					start_date: new Date(1995, 1, 17),
+					end_date: new Date(1995, 11, 17),
+					active: false,
+					exists_active: true,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 1,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
 				},
 			],
-			options: {
-				dropzoneSelector: '.drag-inner-list',
-				draggableSelector: '.drag-item',
-			},
+			issues: [
+				{
+					color: '#EE0000',
+					type: 'task',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Neutral',
+				},
+				{
+					color: '#047C97',
+					type: 'story',
+					id: 1,
+					assignees: [
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+						require('../assets/profile pics/default-profile-pic.png'),
+					],
+					name: 'Example Issue',
+					date: '23 Μαρ',
+					points: 2,
+					priority: 'Low',
+				},
+			],
 		};
 	},
+	computed: {
+		options() {
+			return {
+				dropzoneSelector: '.drag-inner-list',
+				draggableSelector: '.drag-item',
+				// handlerSelector: null,
+				reactivityEnabled: true,
+				// multipleDropzonesItemsDraggingEnabled: true,
+				// showDropzoneAreas: true,
+				// onDrop: function (event) {},
+				// onDragstart: function (event) {},
+				// onDragenter: function (event) {},
+				// onDragover: function (event) {},
+				// onDragend: function (event) {},
+			};
+		},
+	},
 	methods: {
+		added() {
+			console.log('added');
+		},
+		removed() {
+			console.log('removed');
+		},
+		reordered() {
+			console.log('reordered');
+		},
 		onGroupsChange(e) {
 			console.log({ e });
 		},
@@ -76,137 +186,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-$ease-out: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-$to-do: #f4ce46;
-$in-progress: #2a92bf;
-$approved: #00b961;
-
-* {
-	box-sizing: border-box;
-}
-
-body {
-	background: #33363d;
-	color: white;
-	font-family: 'Roboto Mono', serif;
-	font-weight: 300;
-	line-height: 1.5;
-	-webkit-font-smoothing: antialiased;
-}
-
-ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-
-.drag-container {
-	max-width: 1000px;
-	margin: 20px auto;
-}
-
-.drag-list {
-	display: flex;
-	align-items: flex-start;
-
-	@media (max-width: 690px) {
-		display: block;
-	}
-}
-
-.drag-column {
-	flex: 1;
-	margin: 0 10px;
-	position: relative;
-	background: rgba(black, 0.2);
-	overflow: hidden;
-
-	@media (max-width: 690px) {
-		margin-bottom: 30px;
-	}
-
-	h2 {
-		font-size: 0.8rem;
-		margin: 0;
-		text-transform: uppercase;
-		font-weight: 600;
-	}
-
-	&-to-do {
-		.drag-column-header,
-		.drag-options {
-			background: $to-do;
-		}
-	}
-
-	&-in-progress {
-		.drag-column-header,
-		.drag-options {
-			background: $in-progress;
-		}
-	}
-
-	&-approved {
-		.drag-column-header,
-		.drag-options {
-			background: $approved;
-		}
-	}
-}
-
-.drag-column-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 10px;
-	user-select: none;
-}
-
-.drag-inner-list {
-	height: 85vh;
-	overflow: auto;
-}
-
-.drag-item {
-	margin: 10px;
-	height: 100px;
-	background: rgba(black, 0.4);
-	transition: $ease-out;
-
-	/* items grabbed state */
-	&[aria-grabbed='true'] {
-		background: #5cc1a6;
-		color: #fff;
-	}
-
-	.drag-item-text {
-		font-size: 1rem;
-		padding-left: 1rem;
-		padding-top: 1rem;
-	}
-}
-
-.drag-header-more {
-	cursor: pointer;
-}
-
-@keyframes nodeInserted {
-	from {
-		opacity: 0.2;
-	}
-	to {
-		opacity: 0.8;
-	}
-}
-
-.item-dropzone-area {
-	height: 6rem;
-	background: #888;
-	opacity: 0.8;
-	animation-duration: 0.5s;
-	animation-name: nodeInserted;
-	margin-left: 0.6rem;
-	margin-right: 0.6rem;
-}
-</style>
+<style lang="scss"></style>
