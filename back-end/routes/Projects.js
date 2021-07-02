@@ -9,6 +9,7 @@ const { Project_auth } = require('../functions');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 
+const c = require('../constants');
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
 const members = require('./Members');
@@ -279,12 +280,11 @@ app.put(
 			);
 			if (result.length == 0) {
 				res.sendStatus(403);
-				throw 'bob'; //TODO maybe make global constant
+				throw c.INVALID_TRANSACTION;
 			}
 			res.sendStatus(200);
 		} catch (error) {
-			if (error != 'bob') {
-				//TODO maybe make global constant
+			if (error != c.INVALID_TRANSACTION) {
 				console.error(error);
 				res.sendStatus(500);
 			}

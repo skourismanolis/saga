@@ -6,6 +6,7 @@ const dayjs = require('dayjs');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function epics_get(req, res) {
 	try {
@@ -25,7 +26,8 @@ async function epics_get(req, res) {
 			res.sendStatus(400);
 			return;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		myepicquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -71,7 +73,7 @@ async function epics_post(req, res) {
 			dayjs(deadline).isBefore(start)
 		) {
 			res.status(400).send('Bad request');
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.query('INSERT INTO epic VALUES (?,?,?,?,?,?)', [
@@ -88,11 +90,13 @@ async function epics_post(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -140,10 +144,10 @@ async function put_epic_id(req, res) {
 			dayjs(deadline).isBefore(start)
 		) {
 			res.status(400).send('Bad request');
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
-		let [results] = await db.pool.query(
+		let [results] = await conn.query(
 			'UPDATE epic SET title = ?, start = ?, deadline = ?, description = ? WHERE idEpic = ? AND idProject = ?',
 			[
 				req.body.title,
@@ -156,7 +160,7 @@ async function put_epic_id(req, res) {
 		);
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -164,11 +168,13 @@ async function put_epic_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -189,18 +195,20 @@ async function delete_epic_id(req, res) {
 
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -221,7 +229,8 @@ async function get_epic_issues(req, res) {
 			res.sendStatus(400);
 			return;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		myissuequery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -290,7 +299,7 @@ async function post_add_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -298,11 +307,13 @@ async function post_add_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 
@@ -331,7 +342,7 @@ async function delete_remove_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -339,11 +350,13 @@ async function delete_remove_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 

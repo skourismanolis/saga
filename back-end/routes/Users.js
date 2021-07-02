@@ -14,6 +14,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 const profilePicsPath = './assets/profilePics/';
 const storage = multer.diskStorage({
@@ -318,12 +319,11 @@ app.put('/picture', upload.single('picture'), async (req, res) => {
 		);
 		if (result.length == 0) {
 			res.sendStatus(403);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		res.sendStatus(200);
 	} catch (error) {
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
