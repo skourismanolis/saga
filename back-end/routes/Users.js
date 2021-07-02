@@ -288,6 +288,7 @@ app.get('/:idUser', async (req, res) => {
 		);
 		if (result.length == 0) {
 			res.sendStatus(404);
+			return;
 		}
 		[result] = await db.pool.query(
 			'SELECT idUser FROM member WHERE idUser = ? AND idProject IN (SELECT idProject FROM member WHERE idUser = ?)',
@@ -295,6 +296,7 @@ app.get('/:idUser', async (req, res) => {
 		);
 		if (result.length == 0) {
 			res.sendStatus(403);
+			return;
 		}
 		[result] = await db.pool.query(
 			'SELECT idUser,name,surname,email,picture,username,plan FROM user WHERE idUser = ?',
