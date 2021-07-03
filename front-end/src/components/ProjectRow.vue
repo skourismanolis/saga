@@ -81,13 +81,13 @@ export default {
 			return MAX_USERS;
 		},
 		firstNadmins() {
-			if (this.admins.length < MAX_USERS) return this.admins.length;
+			if (this.admins.length < MAX_USERS) return this.admins;
 			else {
 				return this.admins.slice(0, MAX_USERS);
 			}
 		},
 		firstNmembers() {
-			if (this.members.length < MAX_USERS) return this.members.length;
+			if (this.members.length < MAX_USERS) return this.members;
 			else {
 				return this.members.slice(0, MAX_USERS);
 			}
