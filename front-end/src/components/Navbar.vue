@@ -64,12 +64,10 @@
 <script>
 export default {
 	name: 'NavBar',
-	data() {
-		return {
-			isLoggedIn: false,
-		};
-	},
 	computed: {
+		isLoggedIn() {
+			return this.$store.state.isLoggedIn;
+		},
 		crumbs() {
 			let paths = this.$route.path.split('/').filter((p) => p.length > 0);
 			return paths.map((p) => {
