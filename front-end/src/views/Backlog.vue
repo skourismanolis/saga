@@ -119,17 +119,29 @@
 				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
 			</div>
 			<div v-else>
-				<SprintBox
-					class="sprint-box"
-					v-for="(sprint, index) in sprints"
-					:key="index"
-					:name="sprint.name"
-					:start_date="sprint.star_date"
-					:end_date="sprint.end_date"
-					:active="sprint.active"
-					:exists_active="sprint.exists_active"
-					:issues="sprint.issues"
-				/>
+				<div class="drag-container" v-drag-and-drop:options="options">
+					<vue-draggable-group
+						v-for="sprint in sprints"
+						v-model="sprint.issues"
+						:groups="sprints"
+						itemsKey="issues"
+						:key="sprint.id"
+						:data-id="sprint.id"
+					>
+						<SprintBox
+							:sprint="sprint"
+							class="drag-inner-list sprint-box"
+						>
+							<IssueRow
+								v-for="issue in sprint.issues"
+								:key="issue.id"
+								:data-id="issue.id"
+								:issue="issue"
+								class="drag-item"
+							/>
+						</SprintBox>
+					</vue-draggable-group>
+				</div>
 			</div>
 
 			<div id="line"><hr /></div>
@@ -263,6 +275,7 @@ export default {
 
 			sprints: [
 				{
+					id: 1,
 					name: 'Example Sprint',
 					start_date: new Date('08/14/2020'),
 					end_date: new Date('09/14/2020'),
@@ -270,9 +283,9 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 1,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -284,9 +297,9 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 2,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -301,6 +314,7 @@ export default {
 				},
 
 				{
+					id: 2,
 					name: 'Example Sprint',
 					start_date: new Date(1995, 1, 17),
 					end_date: new Date(1995, 11, 17),
@@ -308,9 +322,9 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 3,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -322,9 +336,9 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 4,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -369,6 +383,14 @@ export default {
 				},
 			],
 		};
+	},
+	computed: {
+		options() {
+			return {
+				dropzoneSelector: '.drag-inner-list',
+				draggableSelector: '.drag-item',
+			};
+		},
 	},
 	methods: {
 		toggleExpanded(i) {
