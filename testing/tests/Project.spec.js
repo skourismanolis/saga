@@ -19,6 +19,7 @@ const MOCKPROJECT = {
 	idProject: 2,
 	title: 'asdasd',
 	picture: null,
+	activeSprint: null,
 };
 
 if (__TEST_MODE__ === 'REST') {
@@ -317,6 +318,29 @@ if (__TEST_MODE__ === 'REST') {
 			await expect(
 				project.createSprint({ title: 'asdas' })
 			).resolves.toBeInstanceOf(Sprint);
+		});
+
+		test('active sprint', async () => {
+			let spr = await project.getActiveSprint();
+			expect(spr).toBeNull();
+			let { content } = await project.getSprints();
+			spr = content[0];
+
+			if (__TEST_MODE__ === 'CLIENT') {
+				let mockAxios = {
+					get: jest.fn(async () => ({
+						data: [{ ...MOCKPROJECT, activeSprint: spr.id }],
+					})),
+					put: client.axios.put,
+				};
+				project.axios = mockAxios;
+			}
+
+			await expect(project.setActiveSprint(spr)).resolves.not.toThrow();
+
+			if (__TEST_MODE__ === 'CLIENT') project.axios = client.axios;
+			spr = await project.getActiveSprint();
+			if (__TEST_MODE__ === 'REST') expect(spr).toBe(content);
 		});
 
 		it('returns a list of sprints', async () => {

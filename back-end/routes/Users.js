@@ -8,10 +8,36 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const email_validator = require('email-validator');
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
+
+const profilePicsPath = './assets/profilePics/';
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, profilePicsPath);
+	},
+	filename: function (req, file, cb) {
+		cb(null, uuidv4().concat(file.originalname.slice(-4)));
+	},
+});
+
+const fileFilter = (req, file, cb) => {
+	if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg') {
+		cb(null, true);
+	} else {
+		cb(new Error('Non accepted image type'));
+	}
+};
+
+const upload = multer({
+	storage: storage,
+	fileFilter: fileFilter,
+});
 
 app.post('/login', async (req, res) => {
 	try {
@@ -81,19 +107,26 @@ app.post('/', async (req, res) => {
 
 	try {
 		const salt = await bcrypt.genSalt();
-
 		const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+		if (req.body.username == null)
+			req.body.username = (
+				req.body.name +
+				' ' +
+				req.body.surname
+			).substring(0, 45);
+
 		await db.pool.query(
 			'INSERT INTO user (username,email, password, name, surname, verified, plan , picture) VALUES (?,?,?,?,?,?,?,?)',
 			[
-				req.body.name + ' ' + req.body.surname,
+				req.body.username,
 				req.body.email,
 				hashedPassword,
 				req.body.name,
 				req.body.surname,
 				0,
 				req.body.plan,
-				req.body.picture,
+				null,
 			]
 		);
 
@@ -165,15 +198,22 @@ app.put('/', async (req, res) => {
 			res.sendStatus(403);
 			return;
 		}
+
+		if (req.body.username == null)
+			req.body.username = (
+				req.body.name +
+				' ' +
+				req.body.surname
+			).substring(0, 45);
+
 		await db.pool.query(
-			'UPDATE user SET username = ? ,email = ? , name = ? , surname = ? , plan = ?  , picture = ?  WHERE idUser = ?',
+			'UPDATE user SET username = ? ,email = ? , name = ? , surname = ? , plan = ? WHERE idUser = ?',
 			[
 				req.body.username,
 				req.body.email,
 				req.body.name,
 				req.body.surname,
 				req.body.plan,
-				req.body.picture,
 				req.user.idUser,
 			]
 		);
@@ -248,13 +288,15 @@ app.get('/:idUser', async (req, res) => {
 		);
 		if (result.length == 0) {
 			res.sendStatus(404);
+			return;
 		}
 		[result] = await db.pool.query(
 			'SELECT idUser FROM member WHERE idUser = ? AND idProject IN (SELECT idProject FROM member WHERE idUser = ?)',
 			[req.params.idUser, req.user.idUser]
 		);
-		if (result.length == 0) {
+		if (result.length == 0 && req.params.idUser != req.user.idUser) {
 			res.sendStatus(403);
+			return;
 		}
 		[result] = await db.pool.query(
 			'SELECT idUser,name,surname,email,picture,username,plan FROM user WHERE idUser = ?',
@@ -268,6 +310,26 @@ app.get('/:idUser', async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
+	}
+});
+
+app.put('/picture', upload.single('picture'), async (req, res) => {
+	try {
+		let [result] = await db.pool.query(
+			'UPDATE user SET picture = ? WHERE idUser = ?',
+			[req.file != undefined ? req.file.filename : null, req.user.idUser]
+		);
+		if (result.length == 0) {
+			res.sendStatus(403);
+			throw c.INVALID_TRANSACTION;
+		}
+		res.sendStatus(200);
+	} catch (error) {
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
 	}
 });
 

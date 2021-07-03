@@ -3,6 +3,7 @@ const joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
 const dayjs = require('dayjs');
+const c = require('../constants');
 
 async function issues_create(req, res) {
 	let body;
@@ -15,22 +16,23 @@ async function issues_create(req, res) {
 	let conn;
 	let code = uuidv4();
 	try {
-		const [members] = await db.pool.query(
+		conn = await db.pool.getConnection();
+		await conn.beginTransaction();
+
+		const [members] = await conn.query(
 			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
 			[req.params.idProject, body.assignees]
 		);
 		if (req.body.idLabel != null) {
-			let [label] = await db.pool.query(
+			let [label] = await conn.query(
 				'SELECT * FROM label WHERE idLabel = ?',
 				[req.body.idLabel]
 			);
 			if (label.length == 0) {
 				res.sendStatus(404);
-				return;
+				throw c.INVALID_TRANSACTION;
 			}
 		}
-		conn = await db.pool.getConnection();
-		await conn.beginTransaction();
 		await conn.query(
 			'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
 			[
@@ -48,6 +50,7 @@ async function issues_create(req, res) {
 		if (body.assignees != null) {
 			if (members.length != body.assignees.length) {
 				res.sendStatus(404);
+				throw c.INVALID_TRANSACTION;
 			}
 			members.forEach(async (assignee) => {
 				await conn.query(
@@ -145,7 +148,7 @@ async function issues_get(req, res) {
 		conn.commit();
 		if (result.length == 0) {
 			res.status(200).send([]);
-			return;
+			throw c.INVALID_TRANSACTION;
 		}
 
 		let codes = [];
@@ -171,9 +174,13 @@ async function issues_get(req, res) {
 		// search via string filter
 		res.status(200).header('X-Pagination-Total', result_pag).send(result);
 	} catch (error) {
-		console.error(error);
 		if (conn != null) conn.rollback();
-		res.sendStatus(500);
+
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
 	} finally {
 		if (conn != null) conn.release();
 	}
@@ -213,7 +220,8 @@ async function delete_issue(req, res) {
 			[req.params.code, req.params.idProject]
 		);
 		if (issue.length == 0) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			throw c.INVALID_TRANSACTION;
 		}
 		// comment assignee issue
 		conn = await db.pool.getConnection();
@@ -228,8 +236,12 @@ async function delete_issue(req, res) {
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
-		console.error(error);
-		res.sendStatus(500);
+
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
+		return;
 	} finally {
 		if (conn != null) conn.release();
 	}

@@ -59,12 +59,12 @@ const routes = [
 		},
 	},
 	{
-		path: '/backlog',
+		path: '/projects/:idProject/backlog',
 		name: 'Backlog',
 		component: Backlog,
 	},
 	{
-		path: '/epic-create',
+		path: '/projects/:idProject/epic-create',
 		name: 'EpicCreate',
 		component: EpicCreate,
 		meta: {
@@ -72,7 +72,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/epic-view',
+		path: '/projects/:idProject/epic/:idEpic',
 		name: 'EpicView',
 		component: EpicView,
 		meta: {
@@ -80,7 +80,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/epic-edit',
+		path: '/projects/:idProject/epic-edit/:idEpic',
 		name: 'EpicEdit',
 		component: EpicEdit,
 		meta: {
@@ -88,7 +88,7 @@ const routes = [
 		},
 	},
 	{
-		path: '/project-settings',
+		path: '/projects/:idProject/settings',
 		name: 'ProjectSettings',
 		component: ProjectSettings,
 	},

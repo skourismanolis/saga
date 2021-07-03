@@ -12,11 +12,11 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, { idProject, title, picture }) {
+	constructor(client, { idProject, title, activeSprint }) {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
-		this.picture = picture || null;
+		this._activeSprintId = activeSprint;
 	}
 
 	get id() {
@@ -28,7 +28,29 @@ module.exports = class Project extends Base {
 			idProject: this._idProject,
 			title: this.title,
 			picture: this.picture,
+			activeSprint: this._activeSprintId,
 		});
+	}
+
+	/**
+	 * Returns the active sprint or null if there isn't any;
+	 * @returns {Object|Null} the current active sprint
+	 */
+	async getActiveSprint() {
+		if (this._activeSprintId == null) return null;
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${this._activeSprintId}`
+		);
+		return new Sprint(this.client, data, this._idProject);
+	}
+
+	async setActiveSprint(sprint) {
+		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
+		await this.axios.put(`/projects/${this._idProject}`, {
+			title: this.title,
+			activeSprint: sprint === null ? null : sprint.id,
+		});
+		await this.refresh();
 	}
 
 	/**
@@ -389,12 +411,14 @@ module.exports = class Project extends Base {
 		let project = projects.find((m) => m.idProject == this._idProject);
 		this.title = project.title;
 		this.picture = project.picture;
+		this._activeSprintId = project.activeSprint;
 	}
 
 	async update({ title, picture }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
 			picture,
+			activeSprint: this._activeSprintId,
 		});
 
 		await this.refresh();
