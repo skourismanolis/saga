@@ -1,30 +1,28 @@
 <template>
-	<div class="drag-container" v-drag-and-drop:options="options">
-		<div class="drag-list">
-			<SprintBox
-				class="drag-column"
-				v-for="sprint in sprints"
-				:key="sprint.id"
-				:sprint="sprint"
-			>
-				<vue-draggable-group
-					v-model="sprint.issues"
-					:groups="sprints"
-					:data-id="sprint.id"
-					@change="onGroupsChange"
-				>
-					<div class="drag-inner-list" :data-id="sprint.id">
-						<IssueRow
-							class="drag-item"
-							v-for="issue in sprint.issues"
-							:key="issue.id"
-							:data-id="issue.id"
-							:issue="issue"
-						/>
-					</div>
-				</vue-draggable-group>
+	<div
+		class="drag-container"
+		v-drag-and-drop:options="options"
+		@onDragstart="added"
+	>
+		<vue-draggable-group
+			v-for="sprint in sprints"
+			v-model="sprint.issues"
+			:groups="sprints"
+			itemsKey="issues"
+			:key="sprint.id"
+			:data-id="sprint.id"
+			@change="onGroupsChange"
+		>
+			<SprintBox :sprint="sprint" class="drag-inner-list">
+				<IssueRow
+					v-for="issue in sprint.issues"
+					:key="issue.id"
+					:data-id="issue.id"
+					:issue="issue"
+					class="drag-item"
+				/>
 			</SprintBox>
-		</div>
+		</vue-draggable-group>
 	</div>
 </template>
 
@@ -39,6 +37,10 @@ export default {
 	},
 	data() {
 		return {
+			test: {
+				items: 123,
+			},
+
 			sprints: [
 				{
 					id: 1,
@@ -119,6 +121,21 @@ export default {
 							points: 2,
 							priority: 'Low',
 						},
+						{
+							id: 5,
+							sprintId: 2,
+							color: '#047C97',
+							type: 'story',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
 				},
 			],
@@ -132,8 +149,8 @@ export default {
 				// handlerSelector: null,
 				// reactivityEnabled: true,
 				// multipleDropzonesItemsDraggingEnabled: true,
-				// showDropzoneAreas: true,
-				// onDrop: function (event) {},
+				// showDropzoneAreas: false,
+				onDrop: this.added(),
 				// onDragstart: function (event) {},
 				// onDragenter: function (event) {},
 				// onDragover: function (event) {},
@@ -143,7 +160,7 @@ export default {
 	},
 	methods: {
 		added() {
-			console.log('added');
+			console.log(this.test['items']);
 		},
 		removed() {
 			console.log('removed');
@@ -158,4 +175,7 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style scoped>
+.drag-inner-list {
+}
+</style>
