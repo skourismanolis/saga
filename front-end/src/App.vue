@@ -34,9 +34,6 @@ export default {
 			this.activeTab = value;
 		},
 	},
-	mounted() {
-		console.log(this.$route);
-	},
 	computed: {
 		navbarFlag() {
 			if (this.$route.meta != null && this.$route.meta.navbar == false) {
