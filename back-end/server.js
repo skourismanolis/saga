@@ -1,7 +1,7 @@
 const connect = require('./db').connect;
 const app = require('./index');
 
-const port = 8080;
+const port = 3000;
 
 async function main() {
 	try {
