@@ -19,10 +19,6 @@ async function issues_create(req, res) {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 
-		const [members] = await conn.query(
-			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
-			[req.params.idProject, body.assignees]
-		);
 		if (req.body.idLabel != null) {
 			let [label] = await conn.query(
 				'SELECT * FROM label WHERE idLabel = ?',
@@ -47,7 +43,11 @@ async function issues_create(req, res) {
 				body.idLabel,
 			]
 		);
-		if (body.assignees != null) {
+		if (body.assignees != null && body.assignees.length > 0) {
+			const [members] = await conn.query(
+				'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
+				[req.params.idProject, body.assignees]
+			);
 			if (members.length != body.assignees.length) {
 				res.sendStatus(404);
 				throw c.INVALID_TRANSACTION;

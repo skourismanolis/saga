@@ -11,10 +11,9 @@ async function get_active_sprint(req, res) {
 	try {
 		let [result] = await db.pool.query(
 			`SELECT s.idSprint,s.title,s.start,s.deadline
-            FROM sprint s, project p WHERE s.idSprint = p.activeSprint AND s.idProject = p.idProject AND p.idProject = ?`,
+		    FROM sprint s, project p WHERE s.idSprint = p.activeSprint AND s.idProject = p.idProject AND p.idProject = ?`,
 			[req.params.idProject]
 		);
-
 		res.send(result);
 	} catch (error) {
 		if (error != c.INVALID_TRANSACTION) {

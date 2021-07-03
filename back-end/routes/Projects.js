@@ -191,10 +191,10 @@ app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (project.length == 0) {
 			res.sendStatus(404);
 		}
-		await db.pool.query('UPDATE project title = ? WHERE idProject = ?', [
-			req.body.title,
-			req.params.idProject,
-		]);
+		await db.pool.query(
+			'UPDATE project SET title = ? WHERE idProject = ?',
+			[req.body.title, req.params.idProject]
+		);
 		res.sendStatus(200);
 	} catch (error) {
 		console.error(error);
