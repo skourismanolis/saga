@@ -36,12 +36,52 @@
 				<span class="label-text">ΣΥΝΟΛΟΛΙΚΟΙ ΠΟΝΤΟΙ</span>
 				<span>{{ totalPoints }}</span>
 			</div>
-			<EpicIssueBox class="box container-element" :issues="epic_issues" />
-			<BacklogBox
-				class="box container-element"
-				:issues="issues"
-				:buttonActive="false"
-			/>
+			<div class="drag-container" v-drag-and-drop:options="options">
+				<vue-draggable-group
+					v-for="epic_issue in epic_issues"
+					v-model="epic_issue.issues"
+					:groups="dropZones"
+					itemsKey="issues"
+					:key="epic_issue.id"
+					:data-id="epic_issue.id"
+				>
+					<EpicIssueBox
+						class="drag-inner-list box container-element"
+						:issues="epic_issues[0].issues"
+					>
+						<IssueRow
+							v-for="issue in epic_issue.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</EpicIssueBox>
+				</vue-draggable-group>
+
+				<vue-draggable-group
+					v-for="backlog in backlogs"
+					v-model="backlog.issues"
+					:groups="dropZones"
+					itemsKey="issues"
+					:key="backlog.id"
+					:data-id="backlog.id"
+				>
+					<BacklogBox
+						:backlog="backlog"
+						:activeButton="false"
+						class="drag-inner-list box container-element"
+					>
+						<IssueRow
+							v-for="issue in backlog.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</BacklogBox>
+				</vue-draggable-group>
+			</div>
 			<button
 				type="submit"
 				class="btn btn-primary align-self-end submit-button"
@@ -56,58 +96,84 @@
 <script>
 import BacklogBox from '../components/BacklogBox.vue';
 import EpicIssueBox from '../components/EpicIssueBox.vue';
+import IssueRow from '../components/IssueRow.vue';
 
 export default {
 	components: {
 		BacklogBox,
 		EpicIssueBox,
+		IssueRow,
 	},
 	data() {
 		return {
-			epic_issues: [],
-			issues: [
+			backlogs: [
 				{
-					color: '#EE0000',
-					type: 'task',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
+					id: -1,
+					issues: [
+						{
+							id: 5,
+							epicId: null,
+							sprintId: -1,
+							color: '#EE0000',
+							type: 'task',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							id: 6,
+							epicId: null,
+							sprintId: -1,
+							color: '#047C97',
+							type: 'story',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Neutral',
 				},
+			],
+			epic_issues: [
 				{
-					color: '#047C97',
-					type: 'story',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Low',
+					id: -2,
+					issues: [],
 				},
 			],
 		};
 	},
 	computed: {
+		options() {
+			return {
+				dropzoneSelector: '.drag-inner-list',
+				draggableSelector: '.drag-item',
+				// onDrop: this.drop,
+			};
+		},
 		totalPoints() {
-			if (this.issues.length > 0) {
+			if (this.epic_issues[0].issues.length > 0) {
 				let points = 0;
 
-				for (let i in this.epic_issues) {
-					points += this.epic_issues[i].points;
+				for (let i in this.epic_issues[0].issues) {
+					points += this.epic_issues[0].issues[i].points;
 				}
 				return points;
 			}
 			return 0;
+		},
+		dropZones() {
+			return [].concat(this.backlogs, this.epic_issues);
 		},
 	},
 	methods: {},

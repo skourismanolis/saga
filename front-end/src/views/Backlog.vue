@@ -35,10 +35,17 @@
 						id="epic-entry"
 						class="d-flex flex-row align-items-center"
 						v-bind:class="{ oddrow: index % 2 != 0 }"
-						@click="toggleExpanded(index)"
 					>
+						<button
+							type="button"
+							class="btn btn-primary epic-sprint-button"
+							@click="addIssuesToActiveSprint(index)"
+						>
+							<i class="bi bi-plus-lg"></i>
+						</button>
 						<i id="epic-icon" class="bi bi-hourglass"></i>
 						<span id="epic-name">{{ epic.name }}</span>
+
 						<div
 							id="epic-date"
 							class="
@@ -69,11 +76,13 @@
 							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
+							@click="toggleExpanded(index)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
+							@click="toggleExpanded(index)"
 						></i>
 					</div>
 					<div v-if="epic.expanded == true">
@@ -107,37 +116,68 @@
 					<i class="bi bi-plus create-epic-button-icon"></i>
 				</button>
 			</div>
+			<div class="drag-container" v-drag-and-drop:options="options">
+				<div
+					class="align-self-center d-flex flex-column"
+					v-if="sprints.length === 0"
+				>
+					<img
+						id="empty-sprint-art"
+						src="../assets/empty-sprint-art.png"
+					/>
+					<span class="align-self-center">
+						Δεν υπάρχουν sprints!
+					</span>
+				</div>
+				<div v-else>
+					<vue-draggable-group
+						v-for="sprint in sprints"
+						v-model="sprint.issues"
+						:groups="dropZones"
+						itemsKey="issues"
+						:key="sprint.id"
+						:data-id="sprint.id"
+					>
+						<SprintBox
+							:sprint="sprint"
+							class="drag-inner-list sprint-box"
+						>
+							<IssueRow
+								v-for="issue in sprint.issues"
+								:key="issue.id"
+								:data-id="issue.id"
+								:issue="issue"
+								class="drag-item issue-row"
+							/>
+						</SprintBox>
+					</vue-draggable-group>
+				</div>
 
-			<div
-				class="align-self-center d-flex flex-column"
-				v-if="sprints.length === 0"
-			>
-				<img
-					id="empty-sprint-art"
-					src="../assets/empty-sprint-art.png"
-				/>
-				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
-			</div>
-			<div v-else>
-				<SprintBox
-					class="sprint-box"
-					v-for="(sprint, index) in sprints"
-					:key="index"
-					:name="sprint.name"
-					:start_date="sprint.star_date"
-					:end_date="sprint.end_date"
-					:active="sprint.active"
-					:exists_active="sprint.exists_active"
-					:issues="sprint.issues"
-				/>
-			</div>
+				<div id="line"><hr /></div>
 
-			<div id="line"><hr /></div>
-			<BacklogBox
-				class="backlog-box"
-				:issues="issues"
-				:buttonActive="true"
-			/>
+				<vue-draggable-group
+					v-for="backlog in backlogs"
+					v-model="backlog.issues"
+					:groups="dropZones"
+					itemsKey="issues"
+					:key="backlog.id"
+					:data-id="backlog.id"
+				>
+					<BacklogBox
+						:backlog="backlog"
+						:activeButton="true"
+						class="drag-inner-list backlog-box"
+					>
+						<IssueRow
+							v-for="issue in backlog.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</BacklogBox>
+				</vue-draggable-group>
+			</div>
 		</div>
 	</div>
 </template>
@@ -158,28 +198,16 @@ export default {
 			// epicsList: [],
 			epics: [
 				{
+					id: 1,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
 					issues: [
 						{
+							id: 1,
+							epicId: 1,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-						{
-							color: '#047C97',
-							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -191,9 +219,10 @@ export default {
 							priority: 'Neutral',
 						},
 						{
-							color: '#299D00',
-							type: 'bug',
-							id: 1,
+							id: 2,
+							epicId: 1,
+							color: '#047C97',
+							type: 'story',
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -202,21 +231,24 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'Very High',
+							priority: 'Low',
 						},
 					],
 					expanded: false,
 				},
 
 				{
+					id: 2,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
 					issues: [
 						{
+							id: 3,
+							epicId: 2,
+							sprintId: 2,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -225,12 +257,14 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'Very Low',
+							priority: 'Neutral',
 						},
 						{
+							id: 4,
+							epicId: 2,
+							sprintId: 2,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -239,20 +273,55 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'High',
+							priority: 'Low',
 						},
 					],
 					expanded: false,
 				},
 
 				{
+					id: 3,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
-					issues: [],
+					issues: [
+						{
+							id: 5,
+							epicId: 3,
+							sprintId: -1,
+							color: '#EE0000',
+							type: 'task',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							id: 6,
+							epicId: 3,
+							sprintId: -1,
+							color: '#047C97',
+							type: 'story',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
+					],
 					expanded: false,
 				},
 				{
+					id: 4,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
@@ -263,6 +332,7 @@ export default {
 
 			sprints: [
 				{
+					id: 1,
 					name: 'Example Sprint',
 					start_date: new Date('08/14/2020'),
 					end_date: new Date('09/14/2020'),
@@ -270,9 +340,11 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 1,
+							epicId: 1,
+							sprintId: 1,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -284,9 +356,11 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 2,
+							epicId: 1,
+							sprintId: 1,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -301,6 +375,7 @@ export default {
 				},
 
 				{
+					id: 2,
 					name: 'Example Sprint',
 					start_date: new Date(1995, 1, 17),
 					end_date: new Date(1995, 11, 17),
@@ -308,9 +383,11 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 3,
+							epicId: 2,
+							sprintId: 2,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -322,9 +399,11 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 4,
+							epicId: 2,
+							sprintId: 2,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -338,39 +417,71 @@ export default {
 					],
 				},
 			],
-			issues: [
+			backlogs: [
 				{
-					color: '#EE0000',
-					type: 'task',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
+					id: -1,
+					issues: [
+						{
+							id: 5,
+							epicId: 3,
+							sprintId: -1,
+							color: '#EE0000',
+							type: 'task',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							id: 6,
+							epicId: 3,
+							sprintId: -1,
+							color: '#047C97',
+							type: 'story',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Neutral',
-				},
-				{
-					color: '#047C97',
-					type: 'story',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Low',
 				},
 			],
 		};
 	},
+	computed: {
+		options() {
+			return {
+				dropzoneSelector: '.drag-inner-list',
+				draggableSelector: '.drag-item',
+				onDrop: this.drop,
+			};
+		},
+
+		dropZones() {
+			return [].concat(this.sprints, this.backlogs);
+		},
+	},
 	methods: {
+		drop(event) {
+			let item_id = event.items[0].attributes['data-id'].value;
+			let target_id = event.droptarget.attributes['data-id'].value;
+
+			let target = this.dropZones.find((obj) => obj.id == target_id);
+
+			let item = target.issues.find((obj) => obj.id == item_id);
+			item.sprintId = parseInt(target_id);
+		},
+
 		toggleExpanded(i) {
 			if (this.epics[i].expanded == false) {
 				this.epics[i].expanded = true;
@@ -378,6 +489,47 @@ export default {
 				this.epics[i].expanded = false;
 			}
 		},
+		addIssuesToActiveSprint(i) {
+			let active_sprint_id = this.sprints[0].id;
+
+			this.epics[i].issues.forEach((epic_issue) => {
+				//check backlog
+				for (let j = 0; j < this.backlogs[0].issues.length; j++) {
+					if (
+						this.backlogs[0].issues[j].id == epic_issue.id &&
+						this.backlogs[0].issues[j].sprintId != active_sprint_id
+					) {
+						let data = this.backlogs[0].issues.splice(j, 1);
+						data = data.pop();
+						data.sprintId = this.sprints[0].id;
+						this.sprints[0].issues.push(data);
+					}
+				}
+
+				//check other sprints
+				if (this.sprints.length > 1) {
+					for (let j = 1; j < this.sprints.length; j++) {
+						for (
+							let k = 0;
+							k < this.sprints[j].issues.length;
+							k++
+						) {
+							if (
+								this.sprints[j].issues[k].id == epic_issue.id &&
+								this.sprints[j].issues[k].sprintId !=
+									active_sprint_id
+							) {
+								let data = this.sprints[j].issues.splice(k, 1);
+								data = data.pop();
+								data.sprintId = this.sprints[0].id;
+								this.sprints[0].issues.push(data);
+							}
+						}
+					}
+				}
+			});
+		},
+
 		redirectEpicCreate() {
 			// let query = { activePlan: value };
 			this.$router
@@ -516,5 +668,21 @@ export default {
 
 .sprint-box {
 	margin-bottom: 12px;
+}
+
+.issue-row {
+	border-radius: 4pt;
+	margin-bottom: 2px;
+}
+
+.epic-sprint-button {
+	margin-left: 8px;
+	margin-right: 8px;
+	border-radius: 50pt;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	background-color: #c4c4c4;
+	border: 0;
 }
 </style>

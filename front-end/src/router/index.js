@@ -8,7 +8,6 @@ import ProfileEdit from '../views/ProfileEdit.vue';
 import Backlog from '../views/Backlog.vue';
 import EpicCreate from '../views/EpicCreate.vue';
 import EpicView from '../views/EpicView.vue';
-import EpicEdit from '../views/EpicEdit.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
 import Projects from '../views/Projects.vue';
 
@@ -81,14 +80,7 @@ const routes = [
 			projectNavbar: false,
 		},
 	},
-	{
-		path: '/projects/:idProject/epic-edit/:idEpic',
-		name: 'EpicEdit',
-		component: EpicEdit,
-		meta: {
-			projectNavbar: false,
-		},
-	},
+
 	{
 		path: '/projects/:idProject/settings',
 		name: 'ProjectSettings',
