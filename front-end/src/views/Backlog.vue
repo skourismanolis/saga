@@ -107,23 +107,24 @@
 					<i class="bi bi-plus create-epic-button-icon"></i>
 				</button>
 			</div>
-
-			<div
-				class="align-self-center d-flex flex-column"
-				v-if="sprints.length === 0"
-			>
-				<img
-					id="empty-sprint-art"
-					src="../assets/empty-sprint-art.png"
-				/>
-				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
-			</div>
-			<div v-else>
-				<div class="drag-container" v-drag-and-drop:options="options">
+			<div class="drag-container" v-drag-and-drop:options="options">
+				<div
+					class="align-self-center d-flex flex-column"
+					v-if="sprints.length === 0"
+				>
+					<img
+						id="empty-sprint-art"
+						src="../assets/empty-sprint-art.png"
+					/>
+					<span class="align-self-center">
+						Δεν υπάρχουν sprints!
+					</span>
+				</div>
+				<div v-else>
 					<vue-draggable-group
 						v-for="sprint in sprints"
 						v-model="sprint.issues"
-						:groups="sprints"
+						:groups="dropZones"
 						itemsKey="issues"
 						:key="sprint.id"
 						:data-id="sprint.id"
@@ -137,19 +138,36 @@
 								:key="issue.id"
 								:data-id="issue.id"
 								:issue="issue"
-								class="drag-item"
+								class="drag-item issue-row"
 							/>
 						</SprintBox>
 					</vue-draggable-group>
 				</div>
-			</div>
 
-			<div id="line"><hr /></div>
-			<BacklogBox
-				class="backlog-box"
-				:issues="issues"
-				:buttonActive="true"
-			/>
+				<div id="line"><hr /></div>
+
+				<vue-draggable-group
+					v-for="backlog in backlogs"
+					v-model="backlog.issues"
+					:groups="dropZones"
+					itemsKey="issues"
+					:key="backlog.id"
+					:data-id="backlog.id"
+				>
+					<BacklogBox
+						:backlog="backlog"
+						class="drag-inner-list backlog-box"
+					>
+						<IssueRow
+							v-for="issue in backlog.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</BacklogBox>
+				</vue-draggable-group>
+			</div>
 		</div>
 	</div>
 </template>
@@ -352,34 +370,39 @@ export default {
 					],
 				},
 			],
-			issues: [
+			backlogs: [
 				{
-					color: '#EE0000',
-					type: 'task',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
+					id: -1,
+					issues: [
+						{
+							color: '#EE0000',
+							type: 'task',
+							id: 5,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							color: '#047C97',
+							type: 'story',
+							id: 6,
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
 					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Neutral',
-				},
-				{
-					color: '#047C97',
-					type: 'story',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Low',
 				},
 			],
 		};
@@ -390,6 +413,10 @@ export default {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
 			};
+		},
+
+		dropZones() {
+			return [].concat(this.sprints, this.backlogs);
 		},
 	},
 	methods: {
@@ -538,5 +565,10 @@ export default {
 
 .sprint-box {
 	margin-bottom: 12px;
+}
+
+.issue-row {
+	border-radius: 4pt;
+	margin-bottom: 2px;
 }
 </style>

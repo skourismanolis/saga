@@ -108,11 +108,6 @@ export default {
 	margin-left: 12px;
 }
 
-.issue {
-	border-radius: 4pt;
-	margin-bottom: 2px;
-}
-
 .empty-msg {
 	background-color: white;
 	padding: 12px;

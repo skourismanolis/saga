@@ -6,7 +6,6 @@
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<button
-				v-if="buttonActive == true"
 				type="button"
 				class="
 					btn btn-primary
@@ -20,34 +19,28 @@
 				<i class="bi bi-plus button-icon"></i>
 			</button>
 		</div>
-		<div v-if="issues.length > 0">
-			<IssueRow
-				class="issue"
-				v-for="(issue, index) in issues"
-				:key="index"
-				:issue="issue"
-			/>
-		</div>
-		<div v-else class="empty-msg d-flex justify-content-center">
+		<slot> </slot>
+		<div
+			v-if="backlog.issues.length == 0"
+			class="empty-msg d-flex justify-content-center"
+		>
 			<span> Δεν υπάρχουν issues! </span>
 		</div>
 	</div>
 </template>
 
 <script>
-import IssueRow from './IssueRow.vue';
 export default {
-	components: {
-		IssueRow,
-	},
 	props: {
-		issues: Array,
-		buttonActive: Boolean,
+		backlog: Object,
 	},
 	computed: {
 		issuesNum() {
-			if (this.issues != undefined && this.issues != null) {
-				return this.issues.length;
+			if (
+				this.backlog.issues != undefined &&
+				this.backlog.issues != null
+			) {
+				return this.backlog.issues.length;
 			}
 			return 0;
 		},
@@ -76,11 +69,6 @@ export default {
 	color: #808080;
 	font-size: 24px;
 	margin-left: 12px;
-}
-
-.issue {
-	border-radius: 4pt;
-	margin-bottom: 2px;
 }
 
 .empty-msg {
