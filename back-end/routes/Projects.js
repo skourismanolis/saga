@@ -109,12 +109,6 @@ app.get('/', async (req, res) => {
 				}
 			});
 		});
-		// Rename property "title" to "name"
-		projects = projects.map(function (obj) {
-			obj['name'] = obj['title']; // Assign new key
-			delete obj['title']; // Delete old key
-			return obj;
-		});
 		res.status(200)
 			.header('X-Pagination-Total', result_pag.length)
 			.send(projects);
