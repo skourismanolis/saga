@@ -405,6 +405,34 @@ module.exports = class Project extends Base {
 		return await this.getIssue(code);
 	}
 
+	/**
+	 * Changes the project's picture
+	 * !!WARNING: ONLY WORKS ON BROWSER ENVIRONMENTS
+	 * @param {Object} options
+	 * @param {File} options.picture
+	 */
+	async setPicture({ picture }) {
+		//eslint-disable-next-line no-undef
+		if (FormData !== 'undefined')
+			throw 'Invalid environment, this only works on browser';
+		//eslint-disable-next-line no-undef
+		if (picture instanceof File) throw 'Picture must be a File';
+
+		//eslint-disable-next-line no-undef
+		let data = new FormData();
+
+		data.append('picture', picture, picture.name);
+
+		await this.axios({
+			method: 'PUT',
+			url: `/projects/${this._idProject}/picture`,
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			data,
+		});
+	}
+
 	async refresh() {
 		let { data: projects } = await this.axios.get(`/projects`);
 
