@@ -147,10 +147,11 @@ app.post('/', async (req, res) => {
 				process.env.EMAIL_SECRET
 			);
 
-			const url = `http://localhost:8080/token/${emailToken}`;
+			const url = `http://localhost:3000/token/${emailToken}`;
 
 			var transporter = nodemailer.createTransport({
-				service: 'gmail', // hostname
+				host: 'mail.gmx.com',
+				port: 465,
 				auth: {
 					user: process.env.GMAIL_EMAIL,
 					pass: process.env.GMAIL_PASS,
@@ -158,6 +159,7 @@ app.post('/', async (req, res) => {
 			});
 
 			await transporter.sendMail({
+				from: process.env.GMAIL_EMAIL,
 				to: result[0].email,
 				subject: 'Confirm Email for Saga Account',
 				html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
