@@ -7,7 +7,7 @@ const keytar = require('keytar');
 const domain = 'http://127.0.0.1';
 const port = 8080;
 const SagaClient = require('@dira/api-client');
-let client = new SagaClient({ url: domain+':'+port });
+let client = new SagaClient({ url: domain + ':' + port });
 
 module.exports = {
 	client,

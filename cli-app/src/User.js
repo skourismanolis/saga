@@ -23,10 +23,8 @@ const logout = program
 		try {
 			await keytar.deletePassword('Saga', 'Saga');
 		} catch (error) {
-			if (error.response)
-				console.error(error.response.data);
-			else
-				console.error(error);
+			if (error.response) console.error(error.response.data);
+			else console.error(error);
 		}
 	});
 
@@ -48,63 +46,53 @@ const register = program
 				'Registration Complete! We have sent you a verification email'
 			);
 		} catch (error) {
-			if (error.response)
-				console.error(error.response.data);
-			else
-				console.error(error);
+			if (error.response) console.error(error.response.data);
+			else console.error(error);
 		}
 	});
 
 const user = program.command('user');
-user
-	.command('delete <password>')
+user.command('delete <password>')
 	.description('delete this user profile')
 	.action(async (password) => {
 		try {
-			await client.deleteUser({password});
-			console.log(
-				'User deleted successfully!'
-			);
+			await client.deleteUser({ password });
+			console.log('User deleted successfully!');
 			await keytar.deletePassword('Saga', 'Saga');
 		} catch (error) {
-			if (error.response)
-				console.error(error.response.data);
-			else
-				console.error(error);
+			if (error.response) console.error(error.response.data);
+			else console.error(error);
 		}
 	});
 
-user
-	.command('update <username> <email> <password> <name> <surname> <plan>')
+user.command('update <username> <email> <password> <name> <surname> <plan>')
 	.description('update this user profile')
 	.action(async (username, email, password, name, surname, plan) => {
 		try {
-			await client.userEdit({username, email, password, name, surname, plan});
-			console.log(
-				'User updated successfully!'
-			);
+			await client.userEdit({
+				username,
+				email,
+				password,
+				name,
+				surname,
+				plan,
+			});
+			console.log('User updated successfully!');
 		} catch (error) {
-			if (error.response)
-				console.error(error.response.data);
-			else
-				console.error(error);
+			if (error.response) console.error(error.response.data);
+			else console.error(error);
 		}
 	});
 
-user
-	.command('get')
+user.command('get')
 	.description('update this user profile')
 	.action(async () => {
 		try {
 			let data = await client.getProfile();
-			console.log(
-				data
-			);
+			console.log(data);
 		} catch (error) {
-			if (error.response)
-				console.error(error.response.data);
-			else
-				console.error(error);
+			if (error.response) console.error(error.response.data);
+			else console.error(error);
 		}
 	});
 
