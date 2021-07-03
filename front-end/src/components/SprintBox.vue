@@ -2,13 +2,13 @@
 	<div class="sprint-container">
 		<div class="d-flex flex-row top justify-content-between">
 			<div>
-				<span id="sprint-title"> {{ sprint.name }} </span>
+				<span id="sprint-title"> {{ name }} </span>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<div class="d-flex align-items-baseline flex-row">
-				<span class="sprint-date"> {{ sprint.dateTime }} </span>
+				<span class="sprint-date"> {{ dateTime }} </span>
 				<button
-					v-if="sprint.active == true"
+					v-if="active == true"
 					type="button"
 					class="
 						btn btn-primary
@@ -22,9 +22,7 @@
 					<i class="bi bi-check-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="
-						sprint.active == false && sprint.exists_active == true
-					"
+					v-else-if="active == false && exists_active == true"
 					type="button"
 					class="
 						btn btn-primary
@@ -39,9 +37,7 @@
 					<i class="bi bi-play-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="
-						sprint.active == false && sprint.exists_active == false
-					"
+					v-else-if="active == false && exists_active == false"
 					type="button"
 					class="
 						btn btn-primary
@@ -56,32 +52,38 @@
 				</button>
 			</div>
 		</div>
-
-		<!-- this is where the issue rows are added -->
-		<slot></slot>
-
-		<div
-			v-if="sprint.issues.length == 0"
-			class="empty-msg d-flex justify-content-center"
-		>
+		<div v-if="issues.length > 0">
+			<IssueRow
+				class="issue"
+				v-for="(issue, index) in issues"
+				:key="index"
+				:issue="issue"
+			/>
+		</div>
+		<div v-else class="empty-msg d-flex justify-content-center">
 			<span> Δεν υπάρχουν issues! </span>
 		</div>
 	</div>
 </template>
 
 <script>
-// import IssueRow from './IssueRow.vue';
+import IssueRow from './IssueRow.vue';
 export default {
-	// components: {
-	// 	IssueRow,
-	// },
+	components: {
+		IssueRow,
+	},
 	props: {
-		sprint: Object,
+		name: String,
+		start_date: Date,
+		end_date: Date,
+		active: Boolean,
+		exists_active: Boolean,
+		issues: Array,
 	},
 	computed: {
 		issuesNum() {
-			if (this.sprint.issues != undefined && this.sprint.issues != null) {
-				return this.sprint.issues.length;
+			if (this.issues != undefined && this.issues != null) {
+				return this.issues.length;
 			}
 			return 0;
 		},
