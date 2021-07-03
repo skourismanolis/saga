@@ -3,7 +3,7 @@
 		<div class="d-flex flex-row top justify-content-between">
 			<div>
 				<span id="sprint-title"> {{ sprint.name }} </span>
-				<span id="issues-num">{{ sprint.issuesNum }}</span>
+				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<div class="d-flex align-items-baseline flex-row">
 				<span class="sprint-date"> {{ sprint.dateTime }} </span>
@@ -56,10 +56,14 @@
 				</button>
 			</div>
 		</div>
-		<div v-if="sprint.issues.length > 0" class="">
-			<slot></slot>
-		</div>
-		<div v-else class="empty-msg d-flex justify-content-center">
+
+		<!-- this is where the issue rows are added -->
+		<slot></slot>
+
+		<div
+			v-if="sprint.issues.length == 0"
+			class="empty-msg d-flex justify-content-center"
+		>
 			<span> Δεν υπάρχουν issues! </span>
 		</div>
 	</div>
@@ -76,8 +80,8 @@ export default {
 	},
 	computed: {
 		issuesNum() {
-			if (this.issues != undefined && this.issues != null) {
-				return this.issues.length;
+			if (this.sprint.issues != undefined && this.sprint.issues != null) {
+				return this.sprint.issues.length;
 			}
 			return 0;
 		},

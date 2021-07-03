@@ -1,28 +1,30 @@
 <template>
 	<div class="drag-container" v-drag-and-drop:options="options">
-		<ul class="drag-list">
-			<div class="drag-column" v-for="sprint in sprints" :key="sprint.id">
-				<!-- optional renderless component -->
-				<SprintBox :sprint="sprint">
-					<vue-draggable-group
-						v-model="sprint.issues"
-						:groups="sprints"
-						:data-id="sprint.id"
-						@change="onGroupsChange"
-					>
-						<div class="drag-inner-list" :data-id="sprint.id">
-							<IssueRow
-								class="drag-item"
-								v-for="issue in sprint.issues"
-								:key="issue.id"
-								:data-id="issue.id"
-								:issue="issue"
-							/>
-						</div>
-					</vue-draggable-group>
-				</SprintBox>
-			</div>
-		</ul>
+		<div class="drag-list">
+			<SprintBox
+				class="drag-column"
+				v-for="sprint in sprints"
+				:key="sprint.id"
+				:sprint="sprint"
+			>
+				<vue-draggable-group
+					v-model="sprint.issues"
+					:groups="sprints"
+					:data-id="sprint.id"
+					@change="onGroupsChange"
+				>
+					<div class="drag-inner-list" :data-id="sprint.id">
+						<IssueRow
+							class="drag-item"
+							v-for="issue in sprint.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+						/>
+					</div>
+				</vue-draggable-group>
+			</SprintBox>
+		</div>
 	</div>
 </template>
 
@@ -39,6 +41,7 @@ export default {
 		return {
 			sprints: [
 				{
+					id: 1,
 					name: 'Example Sprint',
 					start_date: new Date('08/14/2020'),
 					end_date: new Date('09/14/2020'),
@@ -46,9 +49,10 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 1,
+							sprintId: 1,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -60,9 +64,10 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 2,
+							sprintId: 1,
 							color: '#047C97',
 							type: 'story',
-							id: 2,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -77,6 +82,7 @@ export default {
 				},
 
 				{
+					id: 2,
 					name: 'Example Sprint',
 					start_date: new Date(1995, 1, 17),
 					end_date: new Date(1995, 11, 17),
@@ -84,9 +90,10 @@ export default {
 					exists_active: true,
 					issues: [
 						{
+							id: 3,
+							sprintId: 2,
 							color: '#EE0000',
 							type: 'task',
-							id: 3,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -98,9 +105,10 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 4,
+							sprintId: 2,
 							color: '#047C97',
 							type: 'story',
-							id: 4,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -122,7 +130,7 @@ export default {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
 				// handlerSelector: null,
-				reactivityEnabled: true,
+				// reactivityEnabled: true,
 				// multipleDropzonesItemsDraggingEnabled: true,
 				// showDropzoneAreas: true,
 				// onDrop: function (event) {},
