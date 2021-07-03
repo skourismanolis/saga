@@ -165,6 +165,7 @@
 				>
 					<BacklogBox
 						:backlog="backlog"
+						:activeButton="true"
 						class="drag-inner-list backlog-box"
 					>
 						<IssueRow

@@ -6,6 +6,7 @@
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<button
+				v-if="activeButton == true"
 				type="button"
 				class="
 					btn btn-primary
@@ -33,6 +34,7 @@
 export default {
 	props: {
 		backlog: Object,
+		activeButton: Boolean,
 	},
 	computed: {
 		issuesNum() {
