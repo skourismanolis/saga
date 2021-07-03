@@ -23,7 +23,10 @@ const logout = program
 		try {
 			await keytar.deletePassword('Saga', 'Saga');
 		} catch (error) {
-			console.error(error.response.data);
+			if (error.response)
+				console.error(error.response.data);
+			else
+				console.error(error);
 		}
 	});
 
@@ -45,7 +48,29 @@ const register = program
 				'Registration Complete! We have sent you a verification email'
 			);
 		} catch (error) {
-			console.error(error.response.data);
+			if (error.response)
+				console.error(error.response.data);
+			else
+				console.error(error);
+		}
+	});
+
+const user = program.command('user');
+user
+	.command('delete <password>')
+	.description('get profile of user')
+	.action(async (password) => {
+		try {
+			await client.deleteUser({password});
+			console.log(
+				'User deleted successfully!'
+			);
+			await keytar.deletePassword('Saga', 'Saga');
+		} catch (error) {
+			if (error.response)
+				console.error(error.response.data);
+			else
+				console.error(error);
 		}
 	});
 
@@ -53,4 +78,5 @@ module.exports = {
 	login,
 	logout,
 	register,
+	user,
 };

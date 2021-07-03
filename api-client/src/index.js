@@ -120,6 +120,7 @@ module.exports = class SagaClient {
 		this._token = token;
 		let jsonStr = decode64(token.split('.')[1]);
 		this._user = JSON.parse(jsonStr);
+		this.axios.defaults.headers.Authorization = 'Bearer ' + this._token;
 	}
 
 	logout() {
@@ -133,7 +134,6 @@ module.exports = class SagaClient {
 			email,
 			password,
 		});
-		this.axios.defaults.headers.Authorization = 'Bearer ' + data.token;
 		this.setToken(data.token);
 	}
 

@@ -37,5 +37,6 @@ program
 program.addCommand(User.login);
 program.addCommand(User.logout);
 program.addCommand(User.register);
+program.addCommand(User.user);
 
 program.parseAsync(process.argv);
