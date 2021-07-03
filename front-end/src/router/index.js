@@ -118,11 +118,16 @@ router.beforeEach((to, from, next) => {
 		console.error(error);
 	}
 
-	if (!loggedIn && (to.meta == null || to.meta.public == false)) {
+	if (
+		!loggedIn &&
+		(to.meta == null ||
+			(to.meta != null && to.meta.public == null) ||
+			to.meta.public === false)
+	) {
 		console.log('navigation cancelled');
 		next({
 			path: '/login',
-			query: { redir: from.path },
+			query: { redir: to.path },
 		});
 		return;
 	} else next();
