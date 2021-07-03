@@ -20,88 +20,32 @@
 			</button>
 
 			<!-- modal -->
-			<b-modal id="create-project-modal">
+			<b-modal
+				id="create-project-modal"
+				cancel-title="Ακύρωση"
+				cancel-variant="danger"
+				ok-title="Αποθήκευση"
+				@ok="createProject"
+			>
 				<!-- header -->
-
 				<template #modal-header="{}">
 					<div>
 						<span class="black-text-modal">Δημιουργία</span>
 						<span class="purple-text-modal">project</span>
 					</div>
 				</template>
+
 				<!-- content -->
-				<div class="d-flex flex-column justify-content-center mb12">
-					<img
-						:src="new_project.pic"
-						width="128px"
-						height="128px"
-						class="rounded-circle align-self-center"
-					/>
-					<div class="input-group">
-						<div class="custom-file">
-							<input
-								type="file"
-								class="custom-file-input"
-								id="inputGroupFile04"
-							/>
-							<label
-								class="custom-file-label"
-								for="inputGroupFile04"
-								>Επέλεξε αρχείο</label
-							>
-						</div>
-					</div>
-				</div>
 				<label for="exampleInputEmail1">Τίτλος Project</label>
-				<input
+				<b-input
 					type="text"
-					class="form-control mb12"
+					class="mb12"
+					v-model="new_project.title"
 					placeholder="Εισάγετε τίτλο..."
 				/>
-				<label for="exampleInputEmail1"
-					>Προσκάλεσε τα μέλη της ομάδας</label
-				>
-
-				<div class="input-group mb12">
-					<input
-						type="emai"
-						class="form-control mb12"
-						placeholder="Εισάγετε το e-mail του μέλους..."
-					/>
-					<div class="input-group-append">
-						<button class="btn btn-primary" type="button">
-							<i class="bi bi-envelope"></i>
-						</button>
-					</div>
-				</div>
-				<label for="exampleInputEmail1"
-					>Ή στείλτε τον παρακάτω σύνδεσμο</label
-				>
-				<div class="input-group mb12">
-					<input
-						type="text"
-						class="form-control"
-						v-model="generatedLink"
-						disabled
-					/>
-					<div class="input-group-append">
-						<button class="btn btn-primary" type="button">
-							Αντιγραφή
-						</button>
-					</div>
-				</div>
 				<div class="d-flex justify-content-center">
 					<img src="../assets/plant.png" />
 				</div>
-				<!-- footer -->
-				<template #modal-footer="{ cancel, ok }">
-					<b-button size="sm" variant="danger" @click="cancel()">
-						Ακύρωση
-					</b-button>
-					<b-button size="sm" variant="primary" @click="ok()">
-						Αποθήκευση
-					</b-button>
-				</template>
 			</b-modal>
 
 			<div class="input-group search-field" v-if="projects.length > 0">
@@ -149,7 +93,7 @@ export default {
 	data() {
 		return {
 			new_project: {
-				pic: require('../assets/profile pics/default-profile-pic.png'),
+				title: '',
 			},
 
 			projects: [
@@ -220,6 +164,14 @@ export default {
 		};
 	},
 	computed: {},
+	methods: {
+		async createProject() {
+			let project = await this.$client.createProject({
+				title: this.new_project.title,
+			});
+			this.$router.push(`/projects/${project.id}/settings`);
+		},
+	},
 };
 </script>
 
