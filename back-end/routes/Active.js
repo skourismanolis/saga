@@ -5,6 +5,7 @@ const Joi = require('joi');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function get_active_sprint(req, res) {
 	try {
@@ -16,8 +17,7 @@ async function get_active_sprint(req, res) {
 
 		res.send(result);
 	} catch (error) {
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -47,7 +47,7 @@ async function put_active_sprint(req, res) {
 
 		if (req.body.id != null && currentActiveSprint != null) {
 			res.sendStatus(403);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		} else if (req.body.id != null) {
 			let [results] = await conn.query(
 				`UPDATE project SET activeSprint = ? 
@@ -65,7 +65,7 @@ async function put_active_sprint(req, res) {
 			);
 			if (results.affectedRows == 0) {
 				res.sendStatus(404);
-				throw 'bob'; //TODO maybe make global constant
+				throw c.INVALID_TRANSACTION;
 			}
 		} else if (currentActiveSprint != null) {
 			let [results] = await conn.query(
@@ -74,7 +74,7 @@ async function put_active_sprint(req, res) {
 			);
 			if (results.affectedRows == 0) {
 				res.sendStatus(404);
-				throw 'bob'; //TODO maybe make global constant
+				throw c.INVALID_TRANSACTION;
 			}
 		}
 
@@ -83,8 +83,7 @@ async function put_active_sprint(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}

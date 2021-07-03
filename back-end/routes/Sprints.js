@@ -6,6 +6,7 @@ const dayjs = require('dayjs');
 
 const db = require('../db').db;
 const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function sprints_get(req, res) {
 	try {
@@ -23,7 +24,7 @@ async function sprints_get(req, res) {
 			mysprintquery += ' AND s.`start` IS NULL';
 		} else if (req.query.finished != undefined) {
 			res.sendStatus(400);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 
 		// handling pagination headers
@@ -34,9 +35,10 @@ async function sprints_get(req, res) {
 				isNaN(req.headers['x-pagination-offset']))
 		) {
 			res.sendStatus(400);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		mysprintquery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -53,8 +55,7 @@ async function sprints_get(req, res) {
 
 		res.header('X-Pagination-Total', count[0].count).send(sprints);
 	} catch (error) {
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -109,13 +110,12 @@ async function get_sprint_id(req, res) {
 
 		if (sprint.length == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 
 		res.send(sprint);
 	} catch (error) {
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -140,7 +140,7 @@ async function put_sprint_id(req, res) {
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		let [results] = await db.pool.query(
+		let [results] = await conn.query(
 			'UPDATE sprint SET title = ?, deadline = ? WHERE idSprint = ? AND idProject = ?',
 			[
 				req.body.title,
@@ -151,7 +151,7 @@ async function put_sprint_id(req, res) {
 		);
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -159,8 +159,7 @@ async function put_sprint_id(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -187,15 +186,14 @@ async function delete_sprint_id(req, res) {
 
 		if (results.affectedRows == 0) {
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -220,9 +218,10 @@ async function get_sprint_issues(req, res) {
 				isNaN(req.headers['x-pagination-offset']))
 		) {
 			res.sendStatus(400);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
-		let limit = req.headers['x-pagination-limit'] || 15; //TODO maybe make global constant
+		let limit =
+			req.headers['x-pagination-limit'] || c.DEFAULT_PAGINATION_LIMIT;
 		let offset = req.headers['x-pagination-offset'] || 0;
 		myissuequery += ' LIMIT ? OFFSET ?';
 		params.push(parseInt(limit));
@@ -299,7 +298,7 @@ async function post_add_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -307,8 +306,7 @@ async function post_add_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
@@ -341,7 +339,7 @@ async function delete_remove_issues(req, res) {
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
-			throw 'bob'; //TODO maybe make global constant
+			throw c.INVALID_TRANSACTION;
 		}
 
 		await conn.commit();
@@ -349,8 +347,7 @@ async function delete_remove_issues(req, res) {
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		if (error != 'bob') {
-			//TODO maybe make global constant
+		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
 			res.sendStatus(500);
 		}
