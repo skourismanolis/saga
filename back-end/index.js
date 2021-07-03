@@ -14,6 +14,9 @@ var corsOptions = {
 		'X-Pagination-Limit',
 		'X-Pagination-Offset',
 		'Authorization',
+		'Origin',
+		'Content-Type',
+		'Accept',
 	],
 	exposedHeaders: ['X-Pagination-Total'],
 };

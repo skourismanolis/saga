@@ -21,6 +21,7 @@ const routes = [
 		component: Home,
 		meta: {
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -30,6 +31,7 @@ const routes = [
 		meta: {
 			navbar: false,
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -39,6 +41,7 @@ const routes = [
 		meta: {
 			navbar: false,
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -103,6 +106,31 @@ const routes = [
 
 const router = new VueRouter({
 	routes,
+});
+
+router.beforeEach((to, from, next) => {
+	let loggedIn = false;
+
+	try {
+		let token = window.localStorage.getItem('token');
+		loggedIn = token != null;
+	} catch (error) {
+		console.error(error);
+	}
+
+	if (
+		!loggedIn &&
+		(to.meta == null ||
+			(to.meta != null && to.meta.public == null) ||
+			to.meta.public === false)
+	) {
+		console.log('navigation cancelled');
+		next({
+			path: '/login',
+			query: { redir: to.path },
+		});
+		return;
+	} else next();
 });
 
 export default router;
