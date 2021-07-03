@@ -11,15 +11,19 @@
 		/>
 		<span class="project-name">{{ project.title }}</span>
 		<div class="ml-auto members-container d-flex flex-row">
-			<img
+			<a
 				v-for="(admin, index) in firstNadmins"
 				:key="index"
-				:src="admin.picture || DEFAULT_PICTURE"
-				width="24px"
-				height="24px"
-				class="rounded-circle align-self-center mr8"
-			/>
-			<div
+				v-b-tooltip.hover="admin.name + ' ' + admin.surname"
+			>
+				<img
+					:src="admin.picture || DEFAULT_PICTURE"
+					width="24px"
+					height="24px"
+					class="rounded-circle align-self-center mr8"
+				/>
+			</a>
+			<a
 				v-if="admins.length > MAX_USERS"
 				class="
 					d-flex
@@ -28,20 +32,25 @@
 					justify-content-center
 					overflow-num
 				"
+				v-b-tooltip.hover="admins.length + ' ακόμα χρήστες'"
 			>
 				{{ '+' + (admins.length - MAX_USERS) }}
-			</div>
+			</a>
 		</div>
 		<div class="ml100 members-container d-flex flex-row">
-			<img
+			<a
 				v-for="(member, index) in firstNmembers"
 				:key="index"
-				:src="member || picture"
-				width="24px"
-				height="24px"
-				class="rounded-circle align-self-center mr8"
-			/>
-			<div
+				v-b-tooltip.hover="member.name + ' ' + member.surname"
+			>
+				<img
+					:src="member || picture"
+					width="24px"
+					height="24px"
+					class="rounded-circle align-self-center mr8"
+				/>
+			</a>
+			<a
 				id="issue-assignees-num"
 				v-if="members.length > MAX_USERS"
 				class="
@@ -51,9 +60,10 @@
 					justify-content-center
 					overflow-num
 				"
+				v-b-tooltip.hover="members.length + ' ακόμα χρήστες'"
 			>
 				{{ '+' + (members.length - MAX_USERS) }}
-			</div>
+			</a>
 		</div>
 	</router-link>
 </template>
