@@ -1,39 +1,65 @@
 <template>
-	<div class="d-flex justify-content-around">
-		<button
+	<div class="d-flex justify-content-around nav-container">
+		<b-button
 			type="button"
-			class="btn btn-light button-container"
-			@click="$emit('tab-change', 'backlog')"
+			class="
+				button-container
+				d-flex
+				align-items-center
+				justify-content-center
+			"
+			variant="light"
+			:to="basePath + 'backlog'"
 		>
 			Backlog
-			<div class="line" v-bind:class="{ active: tab == 'backlog' }"></div>
-		</button>
-		<button
+			<div
+				class="line"
+				v-bind:class="{ active: $route.name == 'Backlog' }"
+			></div>
+		</b-button>
+		<b-button
 			type="button"
-			class="btn btn-light button-container"
-			@click="$emit('tab-change', 'board')"
+			class="
+				button-container
+				d-flex
+				align-items-center
+				justify-content-center
+			"
+			variant="light"
+			:to="basePath + 'board'"
 		>
 			Board
-			<div class="line" v-bind:class="{ active: tab == 'board' }"></div>
-		</button>
-		<button
+			<div
+				class="line"
+				v-bind:class="{ active: $route.name == 'Board' }"
+			></div>
+		</b-button>
+		<b-button
 			type="button"
-			class="btn btn-light button-container"
-			@click="$emit('tab-change', 'settings')"
+			class="
+				button-container
+				d-flex
+				align-items-center
+				justify-content-center
+			"
+			variant="light"
+			:to="basePath + 'settings'"
 		>
 			Project Settings
 			<div
 				class="line"
-				v-bind:class="{ active: tab == 'settings' }"
+				v-bind:class="{ active: $route.name == 'ProjectSettings' }"
 			></div>
-		</button>
+		</b-button>
 	</div>
 </template>
 
 <script>
 export default {
-	props: {
-		tab: String,
+	computed: {
+		basePath() {
+			return `/projects/${this.$route.params.idProject}/`;
+		},
 	},
 };
 </script>
@@ -44,7 +70,6 @@ export default {
 	width: 100%;
 	border-radius: 0;
 	padding: 0 0;
-
 	position: relative;
 }
 
