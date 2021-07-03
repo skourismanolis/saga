@@ -1,23 +1,23 @@
 <template>
 	<div class="d-flex flex-row align-items-center project-entry">
 		<img
-			:src="project.pic"
+			:src="project.picture || DEFAULT_PICTURE"
 			width="24px"
 			height="24px"
 			class="rounded-circle align-self-center mr8"
 		/>
-		<span id="project-name">{{ project.name }}</span>
+		<span id="project-name">{{ project.title }}</span>
 		<div class="ml-auto members-container d-flex flex-row">
 			<img
 				v-for="(admin, index) in firstNadmins"
 				:key="index"
-				:src="project.admins[index]"
+				:src="admin.picture || DEFAULT_PICTURE"
 				width="24px"
 				height="24px"
 				class="rounded-circle align-self-center mr8"
 			/>
 			<div
-				v-if="project.admins.length > n"
+				v-if="admins.length > MAX_USERS"
 				class="
 					d-flex
 					flex-row
@@ -26,21 +26,21 @@
 					overflow-num
 				"
 			>
-				{{ '+' + (project.admins.length - n) }}
+				{{ '+' + (admins.length - MAX_USERS) }}
 			</div>
 		</div>
 		<div class="ml100 members-container d-flex flex-row">
 			<img
 				v-for="(member, index) in firstNmembers"
 				:key="index"
-				:src="project.members[index]"
+				:src="member || picture"
 				width="24px"
 				height="24px"
 				class="rounded-circle align-self-center mr8"
 			/>
 			<div
 				id="issue-assignees-num"
-				v-if="project.members.length > n"
+				v-if="members.length > MAX_USERS"
 				class="
 					d-flex
 					flex-row
@@ -49,13 +49,16 @@
 					overflow-num
 				"
 			>
-				{{ '+' + (project.members.length - n) }}
+				{{ '+' + (members.length - MAX_USERS) }}
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+const DEFAULT_PICTURE = require('@/assets/profile pics/default-profile-pic.png');
+const MAX_USERS = 5;
+
 export default {
 	components: {},
 	props: {
@@ -63,26 +66,35 @@ export default {
 	},
 	data() {
 		return {
-			n: 5,
-			membersTrimmed: false,
-			adminsTrimmed: false,
+			admins: [],
+			members: [],
 		};
 	},
 	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
+		MAX_USERS() {
+			return MAX_USERS;
+		},
 		firstNadmins() {
-			if (this.project.admins.length < this.n)
-				return this.project.admins.length;
+			if (this.admins.length < MAX_USERS) return this.admins.length;
 			else {
-				return this.project.admins.slice(0, this.n);
+				return this.admins.slice(0, MAX_USERS);
 			}
 		},
 		firstNmembers() {
-			if (this.project.members.length < this.n)
-				return this.project.members.length;
+			if (this.members.length < MAX_USERS) return this.members.length;
 			else {
-				return this.project.members.slice(0, this.n);
+				return this.members.slice(0, MAX_USERS);
 			}
 		},
+	},
+	async mounted() {
+		[this.admins, this.members] = await Promise.all([
+			this.project.getAdmins(),
+			this.project.getNonAdmins(),
+		]);
 	},
 };
 </script>
