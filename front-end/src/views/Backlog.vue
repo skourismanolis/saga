@@ -35,10 +35,17 @@
 						id="epic-entry"
 						class="d-flex flex-row align-items-center"
 						v-bind:class="{ oddrow: index % 2 != 0 }"
-						@click="toggleExpanded(index)"
 					>
+						<button
+							type="button"
+							class="btn btn-primary epic-sprint-button"
+							@click="addIssuesToActiveSprint(index)"
+						>
+							<i class="bi bi-plus-lg"></i>
+						</button>
 						<i id="epic-icon" class="bi bi-hourglass"></i>
 						<span id="epic-name">{{ epic.name }}</span>
+
 						<div
 							id="epic-date"
 							class="
@@ -69,11 +76,13 @@
 							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
+							@click="toggleExpanded(index)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
+							@click="toggleExpanded(index)"
 						></i>
 					</div>
 					<div v-if="epic.expanded == true">
@@ -188,28 +197,16 @@ export default {
 			// epicsList: [],
 			epics: [
 				{
+					id: 1,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
 					issues: [
 						{
+							id: 1,
+							epicId: 1,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-						{
-							color: '#047C97',
-							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -221,9 +218,10 @@ export default {
 							priority: 'Neutral',
 						},
 						{
-							color: '#299D00',
-							type: 'bug',
-							id: 1,
+							id: 2,
+							epicId: 1,
+							color: '#047C97',
+							type: 'story',
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -232,21 +230,24 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'Very High',
+							priority: 'Low',
 						},
 					],
 					expanded: false,
 				},
 
 				{
+					id: 2,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
 					issues: [
 						{
+							id: 3,
+							epicId: 2,
+							sprintId: 2,
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -255,12 +256,14 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'Very Low',
+							priority: 'Neutral',
 						},
 						{
+							id: 4,
+							epicId: 2,
+							sprintId: 2,
 							color: '#047C97',
 							type: 'story',
-							id: 1,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -269,20 +272,55 @@ export default {
 							name: 'Example Issue',
 							date: '23 Μαρ',
 							points: 2,
-							priority: 'High',
+							priority: 'Low',
 						},
 					],
 					expanded: false,
 				},
 
 				{
+					id: 3,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
-					issues: [],
+					issues: [
+						{
+							id: 5,
+							epicId: 3,
+							sprintId: -1,
+							color: '#EE0000',
+							type: 'task',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Neutral',
+						},
+						{
+							id: 6,
+							epicId: 3,
+							sprintId: -1,
+							color: '#047C97',
+							type: 'story',
+							assignees: [
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+								require('../assets/profile pics/default-profile-pic.png'),
+							],
+							name: 'Example Issue',
+							date: '23 Μαρ',
+							points: 2,
+							priority: 'Low',
+						},
+					],
 					expanded: false,
 				},
 				{
+					id: 4,
 					name: 'Example Epic',
 					date: '23 Μαρ',
 					points: 10,
@@ -302,6 +340,8 @@ export default {
 					issues: [
 						{
 							id: 1,
+							epicId: 1,
+							sprintId: 1,
 							color: '#EE0000',
 							type: 'task',
 							assignees: [
@@ -316,6 +356,8 @@ export default {
 						},
 						{
 							id: 2,
+							epicId: 1,
+							sprintId: 1,
 							color: '#047C97',
 							type: 'story',
 							assignees: [
@@ -341,6 +383,8 @@ export default {
 					issues: [
 						{
 							id: 3,
+							epicId: 2,
+							sprintId: 2,
 							color: '#EE0000',
 							type: 'task',
 							assignees: [
@@ -355,6 +399,8 @@ export default {
 						},
 						{
 							id: 4,
+							epicId: 2,
+							sprintId: 2,
 							color: '#047C97',
 							type: 'story',
 							assignees: [
@@ -375,9 +421,11 @@ export default {
 					id: -1,
 					issues: [
 						{
+							id: 5,
+							epicId: 3,
+							sprintId: -1,
 							color: '#EE0000',
 							type: 'task',
-							id: 5,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -389,9 +437,11 @@ export default {
 							priority: 'Neutral',
 						},
 						{
+							id: 6,
+							epicId: 3,
+							sprintId: -1,
 							color: '#047C97',
 							type: 'story',
-							id: 6,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -427,6 +477,45 @@ export default {
 				this.epics[i].expanded = false;
 			}
 		},
+		addIssuesToActiveSprint(i) {
+			let active_sprint_id = this.sprints[0].id;
+
+			this.epics[i].issues.forEach((epic_issue) => {
+				//check backlog
+				for (let j = 0; j < this.backlogs[0].issues.length; j++) {
+					if (
+						this.backlogs[0].issues[j].id == epic_issue.id &&
+						this.backlogs[0].issues[j].sprintId != active_sprint_id
+					) {
+						let data = this.backlogs[0].issues.splice(j, 1);
+						data = data.pop();
+						this.sprints[0].issues.push(data);
+					}
+				}
+
+				//check other sprints
+				if (this.sprints.length > 1) {
+					for (let j = 1; j < this.sprints.length; j++) {
+						for (
+							let k = 0;
+							k < this.sprints[j].issues.length;
+							k++
+						) {
+							if (
+								this.sprints[j].issues[k].id == epic_issue.id &&
+								this.sprints[j].issues[k].sprintId !=
+									active_sprint_id
+							) {
+								let data = this.sprints[j].issues.splice(k, 1);
+								data = data.pop();
+								this.sprints[0].issues.push(data);
+							}
+						}
+					}
+				}
+			});
+		},
+
 		redirectEpicCreate() {
 			// let query = { activePlan: value };
 			this.$router
@@ -570,5 +659,16 @@ export default {
 .issue-row {
 	border-radius: 4pt;
 	margin-bottom: 2px;
+}
+
+.epic-sprint-button {
+	margin-left: 8px;
+	margin-right: 8px;
+	border-radius: 50pt;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	background-color: #c4c4c4;
+	border: 0;
 }
 </style>
