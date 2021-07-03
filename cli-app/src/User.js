@@ -58,7 +58,7 @@ const register = program
 const user = program.command('user');
 user
 	.command('delete <password>')
-	.description('get profile of user')
+	.description('delete this user profile')
 	.action(async (password) => {
 		try {
 			await client.deleteUser({password});
@@ -66,6 +66,23 @@ user
 				'User deleted successfully!'
 			);
 			await keytar.deletePassword('Saga', 'Saga');
+		} catch (error) {
+			if (error.response)
+				console.error(error.response.data);
+			else
+				console.error(error);
+		}
+	});
+
+user
+	.command('update <username> <email> <password> <name> <surname> <plan>')
+	.description('update this user profile')
+	.action(async (username, email, password, name, surname, plan) => {
+		try {
+			await client.userEdit({username, email, password, name, surname, plan});
+			console.log(
+				'User updated successfully!'
+			);
 		} catch (error) {
 			if (error.response)
 				console.error(error.response.data);
