@@ -489,6 +489,7 @@ export default {
 					) {
 						let data = this.backlogs[0].issues.splice(j, 1);
 						data = data.pop();
+						data.sprintId = this.sprints[0].id;
 						this.sprints[0].issues.push(data);
 					}
 				}
@@ -508,6 +509,7 @@ export default {
 							) {
 								let data = this.sprints[j].issues.splice(k, 1);
 								data = data.pop();
+								data.sprintId = this.sprints[0].id;
 								this.sprints[0].issues.push(data);
 							}
 						}
