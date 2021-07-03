@@ -102,7 +102,6 @@
 					id="create-sprint-button"
 					type="button"
 					class="btn btn-primary d-flex align-items-center mx-auto"
-					@click="createSprint()"
 				>
 					Δημιουργία Sprint
 					<i class="bi bi-plus create-epic-button-icon"></i>
@@ -120,19 +119,17 @@
 				<span class="align-self-center"> Δεν υπάρχουν sprints! </span>
 			</div>
 			<div v-else>
-				<div class="drag-container" v-drag-and-drop:options="options">
-					<SprintBox
-						class="sprint-box"
-						v-for="(sprint, index) in sprints"
-						:key="index"
-						:name="sprint.name"
-						:start_date="sprint.star_date"
-						:end_date="sprint.end_date"
-						:active="sprint.active"
-						:exists_active="sprint.exists_active"
-						:issues="sprint.issues"
-					/>
-				</div>
+				<SprintBox
+					class="sprint-box"
+					v-for="(sprint, index) in sprints"
+					:key="index"
+					:name="sprint.name"
+					:start_date="sprint.star_date"
+					:end_date="sprint.end_date"
+					:active="sprint.active"
+					:exists_active="sprint.exists_active"
+					:issues="sprint.issues"
+				/>
 			</div>
 
 			<div id="line"><hr /></div>
@@ -373,38 +370,7 @@ export default {
 			],
 		};
 	},
-	computed: {
-		options() {
-			return {
-				dropzoneSelector: '.sprint-box',
-				draggableSelector: '.issue-entry',
-				handlerSelector: null,
-				reactivityEnabled: false,
-				multipleDropzonesItemsDraggingEnabled: true,
-				showDropzoneAreas: false,
-				// onDragstart: this.test(),
-				// onDrop: function (event) {},
-				// onDragenter: function (event) {},
-				// onDragover: function (event) {},
-				// onDragend: function (event) {},
-			};
-		},
-	},
 	methods: {
-		test() {
-			console.log('aaa');
-		},
-		createSprint() {
-			let new_sprint = {
-				name: 'Νέο Sprint',
-				start_date: new Date(),
-				end_date: new Date(),
-				active: false,
-				exists_active: true,
-				issues: [],
-			};
-			this.sprints.push(new_sprint);
-		},
 		toggleExpanded(i) {
 			if (this.epics[i].expanded == false) {
 				this.epics[i].expanded = true;

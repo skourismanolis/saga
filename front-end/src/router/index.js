@@ -11,7 +11,6 @@ import EpicView from '../views/EpicView.vue';
 import EpicEdit from '../views/EpicEdit.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
 import Projects from '../views/Projects.vue';
-import DragableTest from '../views/DragableTest.vue';
 
 Vue.use(VueRouter);
 
@@ -99,20 +98,6 @@ const routes = [
 		meta: {
 			projectNavbar: false,
 		},
-	},
-	{
-		path: '/dragable',
-		name: 'DragableTest',
-		component: DragableTest,
-	},
-	{
-		path: '/about',
-		name: 'About',
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () =>
-			import(/* webpackChunkName: "about" */ '../views/About.vue'),
 	},
 ];
 
