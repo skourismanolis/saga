@@ -3,25 +3,19 @@
 		<ul class="drag-list">
 			<div class="drag-column" v-for="sprint in sprints" :key="sprint.id">
 				<!-- optional renderless component -->
-				<SprintBox
-					:name="sprint.name"
-					:start_date="sprint.star_date"
-					:end_date="sprint.end_date"
-					:active="sprint.active"
-					:exists_active="sprint.exists_active"
-					:issues="sprint.issues"
-				>
+				<SprintBox :sprint="sprint">
 					<vue-draggable-group
 						v-model="sprint.issues"
 						:groups="sprints"
 						:data-id="sprint.id"
 						@change="onGroupsChange"
 					>
-						<div>
+						<div class="drag-inner-list" :data-id="sprint.id">
 							<IssueRow
-								class="issue drag-item"
-								v-for="(issue, index) in sprint.issues"
-								:key="index"
+								class="drag-item"
+								v-for="issue in sprint.issues"
+								:key="issue.id"
+								:data-id="issue.id"
 								:issue="issue"
 							/>
 						</div>
@@ -68,7 +62,7 @@ export default {
 						{
 							color: '#047C97',
 							type: 'story',
-							id: 1,
+							id: 2,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -92,7 +86,7 @@ export default {
 						{
 							color: '#EE0000',
 							type: 'task',
-							id: 1,
+							id: 3,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -106,7 +100,7 @@ export default {
 						{
 							color: '#047C97',
 							type: 'story',
-							id: 1,
+							id: 4,
 							assignees: [
 								require('../assets/profile pics/default-profile-pic.png'),
 								require('../assets/profile pics/default-profile-pic.png'),
@@ -118,36 +112,6 @@ export default {
 							priority: 'Low',
 						},
 					],
-				},
-			],
-			issues: [
-				{
-					color: '#EE0000',
-					type: 'task',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Neutral',
-				},
-				{
-					color: '#047C97',
-					type: 'story',
-					id: 1,
-					assignees: [
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-						require('../assets/profile pics/default-profile-pic.png'),
-					],
-					name: 'Example Issue',
-					date: '23 Μαρ',
-					points: 2,
-					priority: 'Low',
 				},
 			],
 		};
