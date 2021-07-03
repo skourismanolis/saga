@@ -2,8 +2,8 @@
 	<div class="d-flex flex-row justify-content-around">
 		<div
 			class="card flex-column"
-			@click="$emit('plan-change', 'free')"
-			v-bind:class="{ active: plan == 'free' }"
+			@click="$emit('plan-change', 'Free')"
+			v-bind:class="{ active: plan == 'Free' }"
 		>
 			<div class="d-flex justify-content-around card-header free">
 				<h3>Δωρεάν</h3>
@@ -22,8 +22,8 @@
 
 		<div
 			class="card flex-column"
-			@click="$emit('plan-change', 'normal')"
-			v-bind:class="{ active: plan == 'normal' }"
+			@click="$emit('plan-change', 'Premium')"
+			v-bind:class="{ active: plan == 'Premium' }"
 		>
 			<div class="d-flex justify-content-around card-header normal">
 				<h3>Κανονικό</h3>
@@ -42,8 +42,8 @@
 
 		<div
 			class="card flex-column"
-			@click="$emit('plan-change', 'premium')"
-			v-bind:class="{ active: plan == 'premium' }"
+			@click="$emit('plan-change', 'Host')"
+			v-bind:class="{ active: plan == 'Host' }"
 		>
 			<div class="d-flex justify-content-around card-header premium">
 				<h3>Premium</h3>
