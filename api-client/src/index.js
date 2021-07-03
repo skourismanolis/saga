@@ -32,6 +32,12 @@ module.exports = class SagaClient {
 		return this._token;
 	}
 
+	async getProfile() {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get(`/users/${this._user.idUser}`);
+		return data;
+	}
+
 	/**
 	 * Handles the given token
 	 * @param {Object} handleTokenOpts
