@@ -68,25 +68,47 @@ issue
 		}
 	);
 
-// issue
-// 	.command('update <username> <email> <password> <name> <surname> <plan>')
-// 	.description('update this user profile')
-// 	.action(async (username, email, password, name, surname, plan) => {
-// 		try {
-// 			await client.userEdit({
-// 				username,
-// 				email,
-// 				password,
-// 				name,
-// 				surname,
-// 				plan,
-// 			});
-// 			console.log('User updated successfully!');
-// 		} catch (error) {
-// 			if (error.response) console.error(error.response.statusText);
-// 			else console.error(error);
-// 		}
-// 	});
+issue
+	.command(
+		'create <idProject> <title> <category> <points> <priority> <description> <deadline> <label> <assignees...>'
+	)
+	.description('create issue in project with code')
+	.action(
+		async (
+			idProject,
+			title,
+			category,
+			points,
+			priority,
+			description,
+			deadline,
+			label,
+			assignees
+		) => {
+			try {
+				if (points == 'null') points = null;
+				if (description == 'null') description = null;
+				if (deadline == 'null') deadline = null;
+				if (label == 'null') label = null;
+				if (assignees[0] == 'null') assignees = null;
+				let project = await client.getProject({ idProject });
+				let code = await project.createIssue({
+					title,
+					category,
+					points,
+					priority,
+					description,
+					deadline,
+					label,
+					assignees
+				});
+				console.log(code);
+			} catch (error) {
+				if (error.response) console.error(error.response.statusText);
+				else console.error(error);
+			}
+		}
+	);
 
 // issue
 // 	.command('get')

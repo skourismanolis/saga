@@ -18,11 +18,11 @@ async function issues_create(req, res) {
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-
 		const [members] = await conn.query(
 			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
-			[req.params.idProject, body.assignees]
+			[req.params.idProject, req.body.assignees]
 		);
+
 		if (req.body.idLabel != null) {
 			let [label] = await conn.query(
 				'SELECT * FROM label WHERE idLabel = ?',
@@ -33,6 +33,7 @@ async function issues_create(req, res) {
 				throw c.INVALID_TRANSACTION;
 			}
 		}
+
 		await conn.query(
 			'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
 			[
@@ -65,7 +66,6 @@ async function issues_create(req, res) {
 		if (conn != null) conn.rollback();
 		console.error(error);
 		res.sendStatus(500);
-		return;
 	} finally {
 		if (conn != null) conn.release();
 	}
@@ -309,7 +309,8 @@ async function put_issue(req, res) {
 		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		if (req.body.deadline != null) req.body.deadline = dayjs(req.body.deadline).format('YYYY-MM-DD');
+		if (req.body.deadline != null)
+			req.body.deadline = dayjs(req.body.deadline).format('YYYY-MM-DD');
 		await conn.query(
 			'UPDATE issue SET idLabel = ?, category = ?, idColumn = ?, priority = ?, title = ?, points = ?, deadline = ?, description = ? WHERE code = ?',
 			[
