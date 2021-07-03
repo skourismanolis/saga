@@ -59,7 +59,7 @@ module.exports = class Issue extends Base {
 				this.deadline instanceof Date
 					? this.deadline.toISOString()
 					: null,
-		});
+		}, null, 4);
 	}
 
 	async refresh() {
@@ -209,6 +209,8 @@ module.exports = class Issue extends Base {
 		description,
 		deadline,
 		label,
+		idColumn,
+		assignees,
 	}) {
 		let labelValue;
 
@@ -218,15 +220,15 @@ module.exports = class Issue extends Base {
 
 		let newIssue = {
 			title: title != null ? title : this.title,
-			idColumn: this._idColumn,
+			idColumn: idColumn != null ? idColumn : this._idColumn,
 			idLabel: labelValue,
 			category: category != null ? category : this.category,
-			points: points != null ? points : this.points,
+			points: points !== undefined ? points : this.points,
 			priority: priority != null ? priority : this.priority,
 			description:
 				description !== undefined ? description : this.description,
 			deadline: deadline !== undefined ? deadline : this.deadline,
-			assignees: this._assigneeIds,
+			assignees: assignees !== undefined ? assignees : this._assigneeIds,
 		};
 
 		await this.axios.put(

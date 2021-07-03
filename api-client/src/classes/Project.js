@@ -29,7 +29,7 @@ module.exports = class Project extends Base {
 			title: this.title,
 			picture: this.picture,
 			activeSprint: this._activeSprintId,
-		});
+		}, null, 4);
 	}
 
 	/**
@@ -414,11 +414,9 @@ module.exports = class Project extends Base {
 		this._activeSprintId = project.activeSprint;
 	}
 
-	async update({ title, picture }) {
+	async update({ title }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
-			picture,
-			activeSprint: this._activeSprintId,
 		});
 
 		await this.refresh();

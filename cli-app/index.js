@@ -14,6 +14,7 @@ module.exports = {
 };
 
 const User = require('./src/User');
+const Issue = require('./src/Issue');
 
 program.version('1.0.0');
 const timeLabel = 'command duration';
@@ -38,5 +39,8 @@ program.addCommand(User.login);
 program.addCommand(User.logout);
 program.addCommand(User.register);
 program.addCommand(User.user);
+
+//issues
+program.addCommand(Issue.issue);
 
 program.parseAsync(process.argv);

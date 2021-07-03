@@ -309,6 +309,7 @@ async function put_issue(req, res) {
 		}
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
+		if (req.body.deadline != null) req.body.deadline = dayjs(req.body.deadline).format('YYYY-MM-DD');
 		await conn.query(
 			'UPDATE issue SET idLabel = ?, category = ?, idColumn = ?, priority = ?, title = ?, points = ?, deadline = ?, description = ? WHERE code = ?',
 			[
@@ -318,7 +319,7 @@ async function put_issue(req, res) {
 				req.body.priority,
 				req.body.title,
 				req.body.points,
-				dayjs(req.body.deadline).format('YYYY-MM-DD'),
+				req.body.deadline,
 				req.body.description,
 				req.params.code,
 			]
