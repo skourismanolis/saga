@@ -1,12 +1,15 @@
 <template>
-	<div class="d-flex flex-row align-items-center project-entry">
+	<router-link
+		class="d-flex flex-row align-items-center project-entry"
+		:to="`/projects/${project.id}/backlog`"
+	>
 		<img
 			:src="project.picture || DEFAULT_PICTURE"
 			width="24px"
 			height="24px"
 			class="rounded-circle align-self-center mr8"
 		/>
-		<span id="project-name">{{ project.title }}</span>
+		<span class="project-name">{{ project.title }}</span>
 		<div class="ml-auto members-container d-flex flex-row">
 			<img
 				v-for="(admin, index) in firstNadmins"
@@ -52,7 +55,7 @@
 				{{ '+' + (members.length - MAX_USERS) }}
 			</div>
 		</div>
-	</div>
+	</router-link>
 </template>
 
 <script>
@@ -100,6 +103,15 @@ export default {
 </script>
 
 <style scoped>
+a {
+	color: initial !important;
+	text-decoration: none !important;
+}
+
+a:hover {
+	text-decoration: none !important;
+}
+
 .project-entry {
 	height: 40px;
 	padding: 12px;
