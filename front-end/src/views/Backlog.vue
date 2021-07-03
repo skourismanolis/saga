@@ -462,6 +462,7 @@ export default {
 			return {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
+				onDrop: this.drop,
 			};
 		},
 
@@ -470,6 +471,16 @@ export default {
 		},
 	},
 	methods: {
+		drop(event) {
+			let item_id = event.items[0].attributes['data-id'].value;
+			let target_id = event.droptarget.attributes['data-id'].value;
+
+			let target = this.dropZones.find((obj) => obj.id == target_id);
+
+			let item = target.issues.find((obj) => obj.id == item_id);
+			item.sprintId = parseInt(target_id);
+		},
+
 		toggleExpanded(i) {
 			if (this.epics[i].expanded == false) {
 				this.epics[i].expanded = true;
