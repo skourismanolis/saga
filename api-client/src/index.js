@@ -108,6 +108,35 @@ module.exports = class SagaClient {
 	}
 
 	/**
+	 * Changes the current user's picture
+	 * !!WARNING: ONLY WORKS ON BROWSER ENVIRONMENTS
+	 * @param {Object} options
+	 * @param {File} options.picture
+	 */
+	async setUserPicture({ picture }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		//eslint-disable-next-line no-undef
+		if (FormData !== 'undefined')
+			throw 'Invalid environment, this only works on browser';
+		//eslint-disable-next-line no-undef
+		if (picture instanceof File) throw 'Picture must be a File';
+
+		//eslint-disable-next-line no-undef
+		let data = new FormData();
+
+		data.append('picture', picture, picture.name);
+
+		await this.axios({
+			method: 'PUT',
+			url: '/users/picture',
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			data,
+		});
+	}
+
+	/**
 	 * Delete current user. Comments and issues by this user will have theis creator id set to 0.
 	 * @param {Object} deletUsrOpt
 	 * @param {Object} deletUsrOpt.password the current user's passowrd
