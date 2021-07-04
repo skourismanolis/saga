@@ -90,6 +90,9 @@
 					:member="admin"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
+					@upgrade="upgradeMember"
+					@downgrade="downgradeMember"
+					@remove="removeMember"
 				/>
 			</div>
 			<div class="mb24">
@@ -104,6 +107,9 @@
 					:member="member"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
+					@upgrade="upgradeMember"
+					@downgrade="downgradeMember"
+					@remove="removeMember"
 				/>
 			</div>
 		</div>
@@ -154,6 +160,18 @@ export default {
 				alert(error);
 			}
 		},
+		async upgradeMember(member) {
+			console.log(member);
+			//todo: add implementation
+		},
+		async downgradeMember(member) {
+			console.log(member);
+			//todo: add implementation
+		},
+		async removeMember(member) {
+			console.log(member);
+			//todo: add implementation
+		},
 	},
 	async created() {
 		try {
@@ -161,8 +179,8 @@ export default {
 				idProject: this.$route.params.idProject,
 			});
 			[this.members, this.admins] = await Promise.all([
-				this.project.getAdmins(),
 				this.project.getNonAdmins(),
+				this.project.getAdmins(),
 			]);
 			this.projectTitle = this.project.title;
 		} catch (error) {
