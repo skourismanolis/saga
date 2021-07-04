@@ -360,34 +360,37 @@ module.exports = class Project extends Base {
 
 	/**
 	 * Remove member from project
-	 * @param {String} idUser
+	 * @param {Object} options
+	 * @param {Object} options.member the member to remove
 	 */
-	async deleteMember(idUser) {
-		await this.axios.delete(
-			`projects/${this._idProject}/members`, {idUser}
-		);
+	async deleteMember({ member }) {
+		await this.axios.delete(`projects/${this._idProject}/members`, {
+			idUser: member.id,
+		});
 		this.refresh();
 	}
 
 	/**
 	 * Promote member to admin
-	 * @param {String} idUser
+	 * @param {Object} options
+	 * @param {Object} options.member the member to promote
 	 */
-	async promoteAdmin(idUser) {
-		await this.axios.post(
-			`projects/${this._idProject}/members/admin`, {idUser}
-		);
+	async promoteAdmin({ member }) {
+		await this.axios.post(`projects/${this._idProject}/members/admin`, {
+			idUser: member.id,
+		});
 		this.refresh();
 	}
 
 	/**
 	 * Demote admin to member
-	 * @param {String} idUser
+	 * @param {Object} options
+	 * @param {Object} options.member the member to demote
 	 */
-	 async demoteAdmin(idUser) {
-		await this.axios.delete(
-			`projects/${this._idProject}/members/admin`, {idUser}
-		);
+	async demoteAdmin({ member }) {
+		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
+			idUser: member.id,
+		});
 		this.refresh();
 	}
 
