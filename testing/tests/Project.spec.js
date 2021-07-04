@@ -79,7 +79,7 @@ if (__TEST_MODE__ === 'REST') {
 
 	test('refresh', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 		};
 		project.axios = mockAxios;
 		await expect(project.refresh()).resolves.not.toThrow();
@@ -88,7 +88,7 @@ if (__TEST_MODE__ === 'REST') {
 
 	test('updates', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 			put: client.axios.put,
 		};
 		project.axios = mockAxios;
