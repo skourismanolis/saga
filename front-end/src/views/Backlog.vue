@@ -79,13 +79,13 @@
 							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
-							@click="toggleExpanded(epic)"
+							@click="toggleExpanded(index)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
-							@click="toggleExpanded(epic)"
+							@click="toggleExpanded(index)"
 						></i>
 					</div>
 					<div v-if="epic.expanded == true">
@@ -99,7 +99,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="d-flex flex-column" id="right">
+		<div class="d-flex flex-column" id="right">
 			<span id="sprints-label">Sprints</span>
 			<div class="d-flex flex-row align-items-baseline">
 				<div class="d-flex flex-row" id="filter-row-container">
@@ -189,7 +189,7 @@
 					</BacklogBox>
 				</vue-draggable-group>
 			</div>
-		</div> -->
+		</div>
 	</div>
 </template>
 
@@ -208,135 +208,145 @@ export default {
 		return {
 			loaded: false,
 			project: {},
+
+			//epic data
 			epics: {},
 			epic_issues: [],
+			epic_expanded: [],
 
-			sprints: [
-				{
-					id: 1,
-					name: 'Example Sprint',
-					start_date: new Date('08/14/2020'),
-					end_date: new Date('09/14/2020'),
-					active: true,
-					exists_active: true,
-					issues: [
-						{
-							id: 1,
-							epicId: 1,
-							sprintId: 1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 2,
-							epicId: 1,
-							sprintId: 1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
+			//sprint data
+			sprints: [],
 
-				{
-					id: 2,
-					name: 'Example Sprint',
-					start_date: new Date(1995, 1, 17),
-					end_date: new Date(1995, 11, 17),
-					active: false,
-					exists_active: true,
-					issues: [
-						{
-							id: 3,
-							epicId: 2,
-							sprintId: 2,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 4,
-							epicId: 2,
-							sprintId: 2,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
-			backlogs: [
-				{
-					id: -1,
-					issues: [
-						{
-							id: 5,
-							epicId: 3,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: 3,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
+			// sprints: [
+			// 	{
+			// 		id: 1,
+			// 		name: 'Example Sprint',
+			// 		start_date: new Date('08/14/2020'),
+			// 		end_date: new Date('09/14/2020'),
+			// 		active: true,
+			// 		exists_active: true,
+			// 		issues: [
+			// 			{
+			// 				id: 1,
+			// 				epicId: 1,
+			// 				sprintId: 1,
+			// 				color: '#EE0000',
+			// 				type: 'task',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Neutral',
+			// 			},
+			// 			{
+			// 				id: 2,
+			// 				epicId: 1,
+			// 				sprintId: 1,
+			// 				color: '#047C97',
+			// 				type: 'story',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Low',
+			// 			},
+			// 		],
+			// 	},
+
+			// 	{
+			// 		id: 2,
+			// 		name: 'Example Sprint',
+			// 		start_date: new Date(1995, 1, 17),
+			// 		end_date: new Date(1995, 11, 17),
+			// 		active: false,
+			// 		exists_active: true,
+			// 		issues: [
+			// 			{
+			// 				id: 3,
+			// 				epicId: 2,
+			// 				sprintId: 2,
+			// 				color: '#EE0000',
+			// 				type: 'task',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Neutral',
+			// 			},
+			// 			{
+			// 				id: 4,
+			// 				epicId: 2,
+			// 				sprintId: 2,
+			// 				color: '#047C97',
+			// 				type: 'story',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Low',
+			// 			},
+			// 		],
+			// 	},
+			// ],
+
+			//backlog data
+			issues: [],
+
+			// backlogs: [
+			// 	{
+			// 		id: -1,
+			// 		issues: [
+			// 			{
+			// 				id: 5,
+			// 				epicId: 3,
+			// 				sprintId: -1,
+			// 				color: '#EE0000',
+			// 				type: 'task',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Neutral',
+			// 			},
+			// 			{
+			// 				id: 6,
+			// 				epicId: 3,
+			// 				sprintId: -1,
+			// 				color: '#047C97',
+			// 				type: 'story',
+			// 				assignees: [
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 					require('../assets/profile pics/default-profile-pic.png'),
+			// 				],
+			// 				name: 'Example Issue',
+			// 				date: '23 Μαρ',
+			// 				points: 2,
+			// 				priority: 'Low',
+			// 			},
+			// 		],
+			// 	},
+			// ],
 		};
 	},
 	computed: {
@@ -379,10 +389,14 @@ export default {
 			item.sprintId = parseInt(target_id);
 		},
 
-		toggleExpanded(epic) {
-			console.log(epic);
-			if (epic.expanded) epic.expanded = false;
-			else epic.expanded = true;
+		toggleExpanded(i) {
+			console.log(i);
+			if (this.epic_expanded[i] == true) {
+				this.epic_expanded[i] = false;
+			} else if (this.epic_expanded[i] == false) {
+				console.log('here');
+				this.epic_expanded[i] = true;
+			}
 		},
 		addIssuesToActiveSprint(i) {
 			let active_sprint_id = this.sprints[0].id;
@@ -471,9 +485,14 @@ export default {
 			this.epic_issues = [];
 
 			for (let i = 0; i < this.epics.content.length; i++) {
+				//issue fetching
 				let tempIssues = await this.epics.content[i].getIssues();
 				this.epic_issues.push(tempIssues);
+
+				//expanded init
+				this.epic_expanded.push(false);
 			}
+
 			this.loaded = true;
 		} catch (error) {
 			alert(error);
