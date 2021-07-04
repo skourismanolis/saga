@@ -161,19 +161,18 @@
 
 				<div id="line"><hr /></div>
 
-				<!-- <BacklogBox
-					:backlog="backlog"
+				<BacklogBox
+					:totalIssues="issues.content.length"
 					:activeButton="true"
 					class="drag-inner-list backlog-box"
 				>
 					<IssueRow
-						v-for="issue in backlog.issues"
+						v-for="issue in issues.content"
 						:key="issue.code"
-						:data-id="issue.code"
 						:issue="issue"
 						class="drag-item issue-row"
 					/>
-				</BacklogBox> -->
+				</BacklogBox>
 			</div>
 		</div>
 	</div>
@@ -181,13 +180,13 @@
 
 <script>
 import IssueRow from '../components/IssueRow.vue';
-// import BacklogBox from '../components/BacklogBox.vue';
+import BacklogBox from '../components/BacklogBox.vue';
 import SprintBox from '../components/SprintBox.vue';
 
 export default {
 	components: {
 		IssueRow,
-		// BacklogBox,
+		BacklogBox,
 		SprintBox,
 	},
 	data() {
@@ -210,11 +209,6 @@ export default {
 
 			//backlog data
 			issues: {},
-
-			//render data
-			renderedBacklog: [],
-			renderedEpics: [],
-			renderedSprints: [],
 		};
 	},
 	computed: {
@@ -231,39 +225,6 @@ export default {
 		},
 	},
 	methods: {
-		getRenderedEpics() {
-			let epicsArray = this.epics.content;
-			for (let i = 0; i < epicsArray.length; i++) {
-				epicsArray[i].issues = [...this.epic_issues[i].content];
-				epicsArray[i].expanded = true;
-			}
-			return epicsArray;
-		},
-
-		getRenderedBacklog() {
-			let backlogArray = [
-				{
-					id: -1,
-					issues: [...this.issues.content],
-				},
-			];
-			return backlogArray;
-		},
-
-		getRenderedSprints() {
-			let sprintsArray = this.sprints.content;
-			for (let i = 0; i < sprintsArray.length; i++) {
-				sprintsArray[i].issues = [...this.sprint_issues[i].content];
-				sprintsArray[i].active = false;
-				if (this.active_sprint == null) {
-					sprintsArray[i].exists_active = false;
-				} else {
-					sprintsArray[i].exists_active = true;
-				}
-			}
-			return sprintsArray;
-		},
-
 		epicPoints(index) {
 			let points = 0;
 			this.epic_issues[index].content.forEach((issue) => {
@@ -294,51 +255,6 @@ export default {
 			// owner.issues = owner.issues.filter(
 			// 	(elem) => parseInt(elem.code) != item_id
 			// );
-			var target;
-			var owner;
-			var item;
-			try {
-				//get owner & item from non rendered data
-				if (owner_id != -1) {
-					// look in sprints
-					let index = this.sprints.content.findIndex(
-						(obj) => obj.id == owner_id
-					);
-					owner = this.sprints.content[index];
-
-					item = this.sprint_issues[index].content.find(
-						(obj) => obj.code == item_id
-					);
-				} else {
-					owner = this.project;
-
-					item = this.issues.content.find(
-						(obj) => obj.code == item_id
-					);
-				}
-
-				// get target from non rendered data
-				if (target_id != -1) {
-					// look in sprints
-					target = this.sprints.content.find(
-						(obj) => obj.id == target_id
-					);
-					item._idSprint = parseInt(target_id);
-				} else {
-					// it'sthe backlog
-					target = this.project;
-					item._idSprint = null;
-				}
-
-				console.log(owner);
-				console.log(item);
-				console.log(target);
-
-				await owner.removeIssues(item);
-				await target.addIssues(item);
-			} catch (error) {
-				alert(error);
-			}
 		},
 
 		toggleExpanded(index) {
@@ -354,44 +270,6 @@ export default {
 		addIssuesToActiveSprint(epic) {
 			if (this.active_sprint != null) {
 				console.log(epic);
-				// let active_sprint_id = this.sprints[0].id;
-
-				// this.renderedEpics[i].issues.forEach((epic_issue) => {
-				//     //check backlog
-				//     for (let j = 0; j < this.backlogs[0].issues.length; j++) {
-				//         if (
-				//             this.backlogs[0].issues[j].id == epic_issue.id &&
-				//             this.backlogs[0].issues[j].sprintId != active_sprint_id
-				//         ) {
-				//             let data = this.backlogs[0].issues.splice(j, 1);
-				//             data = data.pop();
-				//             data.sprintId = this.sprints[0].id;
-				//             this.sprints[0].issues.push(data);
-				//         }
-				//     }
-
-				//     //check other sprints
-				//     if (this.sprints.length > 1) {
-				//         for (let j = 1; j < this.sprints.length; j++) {
-				//             for (
-				//                 let k = 0;
-				//                 k < this.sprints[j].issues.length;
-				//                 k++
-				//             ) {
-				//                 if (
-				//                     this.sprints[j].issues[k].id == epic_issue.id &&
-				//                     this.sprints[j].issues[k].sprintId !=
-				//                         active_sprint_id
-				//                 ) {
-				//                     let data = this.sprints[j].issues.splice(k, 1);
-				//                     data = data.pop();
-				//                     data.sprintId = this.sprints[0].id;
-				//                     this.sprints[0].issues.push(data);
-				//                 }
-				//             }
-				//         }
-				//     }
-				// });
 			}
 		},
 
@@ -471,11 +349,6 @@ export default {
 				let tempIssues = await this.sprints.content[i].getIssues();
 				this.sprint_issues.push(tempIssues);
 			}
-
-			//get render data
-			this.renderedBacklog = this.getRenderedBacklog();
-			// this.renderedEpics = this.getRenderedEpics();
-			// this.renderedSprints = this.getRenderedSprints();
 
 			this.loaded = true;
 		} catch (error) {
