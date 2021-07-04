@@ -27,8 +27,9 @@ module.exports = class Label extends Base {
 		let { data } = await this.axios.get(
 			`/projects/${this._idProject}/labels/${this.id}`
 		);
-		this.name = data[0].name;
-		this.color = data[0].color;
+
+		this.name = data.name;
+		this.color = data.color;
 	}
 
 	async getProject() {
