@@ -215,7 +215,7 @@ export default {
 			epic_expanded: [],
 
 			//sprint data
-			sprints: [],
+			sprints: {},
 
 			// sprints: [
 			// 	{
@@ -492,6 +492,9 @@ export default {
 				//expanded init
 				this.epic_expanded.push(false);
 			}
+
+			//getting backlog data
+			this.issues = await this.project.searchIssues({});
 
 			this.loaded = true;
 		} catch (error) {
