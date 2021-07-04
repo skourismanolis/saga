@@ -174,8 +174,8 @@ app.post('/', async (req, res) => {
 app.get('/:idProject', async (req, res) => {
 	try {
 		let [project] = await db.pool.query(
-			`SELECT * FROM project 
-			WHERE idProject = ? AND idProject IN 
+			`SELECT * FROM project
+			WHERE idProject = ? AND idProject IN
 			( SELECT idProject FROM member WHERE idUser = ?)`,
 			[req.params.idProject, req.user.idUser]
 		);
@@ -219,10 +219,10 @@ app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (project.length == 0) {
 			res.sendStatus(404);
 		}
-		await db.pool.query('UPDATE project title = ? WHERE idProject = ?', [
-			req.body.title,
-			req.params.idProject,
-		]);
+		await db.pool.query(
+			'UPDATE project SET title = ? WHERE idProject = ?',
+			[req.body.title, req.params.idProject]
+		);
 		res.sendStatus(200);
 	} catch (error) {
 		console.error(error);
