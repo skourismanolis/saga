@@ -1,64 +1,29 @@
 <template>
 	<b-container id="create-issue-body">
-		<h4><strong>Create an issue</strong></h4>
-		<form @submit.prevent="CreateIssue">
-			<b-col sm="3">
-				<label for="input-title">TITLE</label>
-			</b-col>
-			<b-col sm="4">
-				<input
-					contenteditable="true"
-					v-model="issue.title"
-					style="outline: none"
-				/>
-			</b-col>
-
-			<b-row class="my-1">
-				<b-col sm="3">
-					<label for="textarea-limit"
-						>Description<br />({{
-							getDescriptionLength
-						}}/200)</label
-					>
-				</b-col>
-				<b-col sm="9">
-					<b-form-textarea
-						id="textarea-limit"
-						placeholder="Describe in 200 or less characters."
-						v-model="issue.description"
-						trim
-					></b-form-textarea>
-				</b-col>
-			</b-row>
-
-			<h4>Choose category and tags</h4>
-			<b-row class="my-1">
-				<label for="category-selector" id="label0">Category </label>
-
-				<b-select
-					id="category-selector"
-					v-model="issue.category"
-					:options="Categories"
-					class="my-1"
-					required
-				></b-select>
-			</b-row>
-
-			<h4>Set priority level</h4>
-			<b-row class="my-1">
-				<label
-					for="priority-selector"
-					id="priority-label"
-					v-show="false"
-					>Priority</label
-				>
-			</b-row>
-		</form>
+		<h4 id="issue-title" class="primary">
+			<h5
+				v-if="editTitle == false"
+				class="issue-title"
+				@dblclick="toggleEditTitle()"
+			>
+				{{ sprint.title }}
+			</h5>
+			<b-form-input
+				v-else
+				class="title-input"
+				type="text"
+				v-model="sprint.title"
+				required
+				@focusout="toggleEditTitle()"
+			></b-form-input>
+			<IssuePriority class="issue-element" :priority="issue.priority" />
+			<strong>{{ issue.title }}</strong>
+		</h4>
 	</b-container>
 </template>
 
 <script>
-//import { Priority } from './IssuePriority.vue';
+import IssuePriority from './IssuePriority.vue';
 export default {
 	data() {
 		return {
@@ -67,6 +32,7 @@ export default {
 				category: '',
 				title: 'doomdoom',
 				description: '',
+				priority: 'High',
 			},
 		};
 	},
@@ -81,16 +47,10 @@ export default {
 			return this.issue.description.length;
 		},
 	},
-	/*components: {
-		Priority,
-	},*/
+	components: {
+		IssuePriority,
+	},
 };
 </script>
 
-<style scoped>
-input:focus,
-textarea:focus,
-select:focus {
-	outline: none;
-}
-</style>
+<style scoped></style>

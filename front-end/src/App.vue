@@ -2,8 +2,7 @@
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
 		<ProjectNavbar v-if="projectNavbarFlag" />
-		<Card />
-		<Modal />
+		<Issue />
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -15,18 +14,17 @@
 import Footer from './components/Footer';
 import Navbar from './components/navbar_off';
 import ProjectNavbar from './components/ProjectNavbar.vue';
-import Modal from './components/Issue.vue';
-//import Team from './components/TeamList.vue';
-import Card from './components/IssueCard.vue';
+import Issue from './components/Issue.vue';
+//import Card from './components/IssueCard.vue';
 
 export default {
 	components: {
 		Footer,
 		Navbar,
 		ProjectNavbar,
-		Modal,
 		//Team,
-		Card,
+		//Card,
+		Issue,
 	},
 	data() {
 		return {};

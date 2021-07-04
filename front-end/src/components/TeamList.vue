@@ -20,6 +20,8 @@ export default {
 	},
 	computed: {
 		printMembers() {
+			if (this.show == 0) return this.members; //not having === won't cause a problem here
+
 			return this.members.slice(0, this.show);
 		},
 	},
