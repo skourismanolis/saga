@@ -41,6 +41,16 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * @returns {String} the invitation link
+	 */
+	async getInvite() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/invite`
+		);
+		return data.inviteLink;
+	}
+
+	/**
 	 * Returns the active sprint or null if there isn't any;
 	 * @returns {Object|Null} the current active sprint
 	 */
@@ -62,6 +72,19 @@ module.exports = class Project extends Base {
 			id: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
+	}
+
+	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
 	}
 
 	/**
@@ -93,6 +116,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific epic from the api
+	 * @param {Number} idEpic
+	 * @returns {Object} Epic
+	 */
+	async getEpic(idEpic) {
+		let { data: epic } = await this.axios.get(
+			`/projects/${this._idProject}/epics/${idEpic}`
+		);
+
+		return new Epic(this.client, epic, this._idProject);
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
@@ -100,6 +136,19 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/labels`
 		);
 		return labels.map((l) => new Label(this.client, l, this._idProject));
+	}
+
+	/**
+	 * Get a specific label from the api
+	 * @param {Number} idLabel
+	 * @returns {Object} Label
+	 */
+	async getLabel(idLabel) {
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${idLabel}`
+		);
+
+		return new Label(this.client, label, this._idProject);
 	}
 
 	/**
@@ -363,8 +412,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to remove
 	 */
 	async deleteMember({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members`,
+			data: { idUser: member.id },
 		});
 	}
 
@@ -385,8 +436,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to demote
 	 */
 	async demoteAdmin({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members/admin`,
+			data: { idUser: member.id },
 		});
 	}
 

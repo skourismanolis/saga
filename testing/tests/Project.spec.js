@@ -46,27 +46,61 @@ test('toJSON', () => {
 	expect(proj).toMatchObject(MOCKPROJECT);
 });
 
+test('project invite link', async () => {
+	let invite = await project.getInvite();
+	expect(typeof invite).toBe('string');
+});
+
 test('project constructor', () => {
 	expect(project.id).toBe(MOCKPROJECT.idProject);
 });
 
-test('members', async () => {
-	let members = await project.getMembers();
-	expect(members.length).toBeGreaterThan(0);
-	members.forEach((member) => expect(member).toBeInstanceOf(Member));
+describe('members', () => {
+	test('get members', async () => {
+		let members = await project.getMembers();
+		expect(members.length).toBeGreaterThan(0);
+		members.forEach((member) => expect(member).toBeInstanceOf(Member));
+	});
 
-	let admins = await project.getAdmins();
-	let nonAdmins = await project.getNonAdmins();
-	expect(admins.length).toBeGreaterThan(0);
-	admins.forEach((member) => expect(member).toBeInstanceOf(Member));
-	expect(nonAdmins.length).toBeGreaterThan(0);
-	nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
+	test('get admins', async () => {
+		let admins = await project.getAdmins();
+		expect(admins.length).toBeGreaterThan(0);
+		admins.forEach((member) => expect(member).toBeInstanceOf(Member));
+	});
+
+	test('get non admins', async () => {
+		let nonAdmins = await project.getNonAdmins();
+		expect(nonAdmins.length).toBeGreaterThan(0);
+		nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
+	});
+
+	test('promote admin', async () => {
+		let members = await project.getMembers();
+		await expect(
+			project.promoteAdmin({ member: members[1] })
+		).resolves.not.toThrow();
+	});
+
+	test('demote admin', async () => {
+		let members = await project.getMembers();
+		console.log(members[1]);
+		await expect(
+			project.demoteAdmin({ member: members[1] })
+		).resolves.not.toThrow();
+	});
+
+	test('delete member', async () => {
+		let members = await project.getMembers();
+		await expect(
+			project.deleteMember({ member: members[1] })
+		).resolves.not.toThrow();
+	});
 });
 
 test('refresh', async () => {
 	if (__TEST_MODE__ === 'CLIENT') {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 		};
 		project.axios = mockAxios;
 	}
@@ -79,7 +113,7 @@ test('refresh', async () => {
 test('updates', async () => {
 	if (__TEST_MODE__ === 'CLIENT') {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 			put: client.axios.put,
 		};
 		project.axios = mockAxios;
@@ -102,6 +136,13 @@ describe('labels', () => {
 			color: '#123456',
 		});
 		expect(label).toBeInstanceOf(Label);
+	});
+
+	it('returns a specific column', async () => {
+		let columns = await project.getColumns();
+		await expect(project.getColumn(columns[0].id)).resolves.toBeInstanceOf(
+			Column
+		);
 	});
 
 	it('deletes existing label', async () => {
@@ -367,6 +408,13 @@ describe('sprints', () => {
 		sprints.content.forEach((s) => expect(s).toBeInstanceOf(Sprint));
 	});
 
+	it('returns a specific sprint', async () => {
+		let sprints = await project.getSprints();
+		await expect(
+			project.getSprint(sprints.content[0].id)
+		).resolves.toBeInstanceOf(Sprint);
+	});
+
 	it('deletes a sprint', async () => {
 		let sprints = await project.getSprints();
 
@@ -387,6 +435,13 @@ describe('epics', () => {
 		let epics = await project.getEpics();
 		expect(epics).toBeInstanceOf(PaginatedList);
 		epics.content.forEach((s) => expect(s).toBeInstanceOf(Epic));
+	});
+
+	it('returns a specific epic', async () => {
+		let epics = await project.getEpics();
+		await expect(
+			project.getEpic(epics.content[0].id)
+		).resolves.toBeInstanceOf(Epic);
 	});
 
 	it('deletes a epic', async () => {
