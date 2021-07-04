@@ -2,6 +2,7 @@ const axios = require('axios');
 const Project = require('./classes/Project');
 const PaginatedList = require('./classes/PaginatedList');
 const decode64 = require('./parseB64');
+const Issue = require('./classes/Issue');
 
 const LOGINERROR = 'Please login first';
 
@@ -181,6 +182,26 @@ module.exports = class SagaClient {
 		});
 		await list.refresh();
 		return list;
+	}
+
+	async getProject({ idProject }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get('/projects/' + idProject);
+		return new Project(this, {
+			idProject,
+			title: data.title,
+			activeSprint: data.activeSprint,
+			picture: data.picture,
+			members: data.members,
+		});
+	}
+
+	async getProjectIssue({ idProject, code }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get(
+			'/projects/' + idProject + '/issues/' + code
+		);
+		return new Issue(this, data, idProject);
 	}
 
 	async createProject({ title }) {
