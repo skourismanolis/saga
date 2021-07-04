@@ -370,6 +370,28 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Promote member to admin
+	 * @param {String} idUser
+	 */
+	async promoteAdmin(idUser) {
+		await this.axios.post(
+			`projects/${this._idProject}/members/admin`, {idUser}
+		);
+		this.refresh();
+	}
+
+	/**
+	 * Demote admin to member
+	 * @param {String} idUser
+	 */
+	 async demoteAdmin(idUser) {
+		await this.axios.delete(
+			`projects/${this._idProject}/members/admin`, {idUser}
+		);
+		this.refresh();
+	}
+
+	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code
 	 */
