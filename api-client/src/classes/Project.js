@@ -16,9 +16,9 @@ module.exports = class Project extends Base {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
-		this._activeSprintId = activeSprint;
-		this.picture = picture;
-		this._members = members;
+		this._activeSprintId = activeSprint !== undefined ? activeSprint : null;
+		this.picture = picture !== undefined ? picture : null;
+		this._members = (members == undefined || members.length === 0) ? null : members;
 	}
 
 	get id() {
