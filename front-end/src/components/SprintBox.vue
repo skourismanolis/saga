@@ -20,7 +20,33 @@
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<div class="d-flex align-items-baseline flex-row">
-				<span class="sprint-date"> {{ sprint.dateTime }} </span>
+				<b-form-datepicker
+					class="sprint-date"
+					size="sm"
+					v-model="sprint.start_date"
+					:date-format-options="{
+						year: 'numeric',
+						month: 'numeric',
+						day: 'numeric',
+					}"
+				></b-form-datepicker>
+				<span
+					v-if="editTitle == false"
+					class="sprint-title"
+					@dblclick="toggleEditTitle()"
+				>
+					-
+				</span>
+				<b-form-datepicker
+					class="sprint-date"
+					size="sm"
+					v-model="sprint.start_date"
+					:date-format-options="{
+						year: 'numeric',
+						month: 'numeric',
+						day: 'numeric',
+					}"
+				></b-form-datepicker>
 				<button
 					v-if="sprint.active == true"
 					type="button"
@@ -165,9 +191,7 @@ export default {
 }
 
 .sprint-date {
-	color: white;
-	font-size: 18px;
-	font-weight: bold;
-	margin-right: 12px;
+	width: 120px;
+	margin: 0px 8px;
 }
 </style>
