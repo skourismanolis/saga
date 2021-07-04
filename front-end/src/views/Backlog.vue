@@ -44,7 +44,7 @@
 							<i class="bi bi-plus-lg"></i>
 						</button>
 						<i id="epic-icon" class="bi bi-hourglass"></i>
-						<span id="epic-name">{{ epic.name }}</span>
+						<span id="epic-name">{{ epic.title }}</span>
 
 						<div
 							id="epic-date"
@@ -56,7 +56,7 @@
 								ml-auto
 							"
 						>
-							{{ epic.date }}
+							{{ epic.deadline.toDateString() }}
 						</div>
 						<div
 							id="epic-points"
@@ -67,7 +67,7 @@
 								justify-content-center
 							"
 						>
-							{{ epic.points }}
+							{{ epicPoints(epic) }}
 						</div>
 						<span id="epic-issues-num">
 							{{ epic.issues.length }}
@@ -203,140 +203,8 @@ export default {
 	},
 	data() {
 		return {
-			// epicsList: [],
-			epics: [
-				{
-					id: 1,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 1,
-							epicId: 1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 2,
-							epicId: 1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
-
-				{
-					id: 2,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 3,
-							epicId: 2,
-							sprintId: 2,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 4,
-							epicId: 2,
-							sprintId: 2,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
-
-				{
-					id: 3,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 5,
-							epicId: 3,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: 3,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
-				{
-					id: 4,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [],
-					expanded: false,
-				},
-			],
+			project: {},
+			epics: [],
 
 			sprints: [
 				{
@@ -480,6 +348,13 @@ export default {
 		},
 	},
 	methods: {
+		epicPoints(epic) {
+			let points = 0;
+			epic.issues.forEach((issue) => {
+				points += issue.points;
+			});
+			return points;
+		},
 		drop(event) {
 			let item_id = event.items[0].attributes['data-id'].value;
 			let target_id = event.droptarget.attributes['data-id'].value;
@@ -572,6 +447,25 @@ export default {
 				.push({ path: '/epic-create' /*, query: query*/ })
 				.catch(() => {});
 		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+
+			//getting epic data
+			this.epics = await this.project.getEpics();
+			this.epics = this.epics.content;
+
+			this.epics.forEach(async (epic) => {
+				let issues = await epic.getIssues();
+				epic['issues'] = issues.content;
+				epic['expanded'] = false;
+			});
+		} catch (error) {
+			alert(error);
+		}
 	},
 };
 </script>
