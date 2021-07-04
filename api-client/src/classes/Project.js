@@ -1,4 +1,4 @@
-const URLSearchParams = require('url').URLSearchParams;
+const URLSearchParams = require('../URLSearchParams');
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -37,6 +37,16 @@ module.exports = class Project extends Base {
 			null,
 			4
 		);
+	}
+
+	/**
+	 * @returns {String} the invitation link
+	 */
+	async getInvite() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/invite`
+		);
+		return data.inviteLink;
 	}
 
 	/**

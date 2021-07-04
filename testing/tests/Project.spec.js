@@ -34,6 +34,11 @@ if (__TEST_MODE__ === 'REST') {
 		expect(project.id).toBe(MOCKPROJECT.idProject);
 	});
 
+	test('project invite link', async () => {
+		let invite = await project.getInvite();
+		expect(typeof invite).toBe('string');
+	});
+
 	describe('members', () => {
 		test('get members', async () => {
 			let members = await project.getMembers();
