@@ -3,7 +3,7 @@
 		<div class="d-flex flex-row top justify-content-between">
 			<div>
 				<span id="backlog-title"> Backlog </span>
-				<span id="issues-num">{{ issuesNum }}</span>
+				<span id="issues-num">{{ totalIssues }}</span>
 			</div>
 			<button
 				v-if="activeButton == true"
@@ -22,7 +22,7 @@
 		</div>
 		<slot> </slot>
 		<div
-			v-if="backlog.issues.length == 0"
+			v-if="totalIssues == 0"
 			class="empty-msg d-flex justify-content-center"
 		>
 			<span> Δεν υπάρχουν issues! </span>
@@ -33,19 +33,8 @@
 <script>
 export default {
 	props: {
-		backlog: Object,
+		totalIssues: Number,
 		activeButton: Boolean,
-	},
-	computed: {
-		issuesNum() {
-			if (
-				this.backlog.issues != undefined &&
-				this.backlog.issues != null
-			) {
-				return this.backlog.issues.length;
-			}
-			return 0;
-		},
 	},
 };
 </script>
