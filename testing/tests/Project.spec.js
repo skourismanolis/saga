@@ -34,22 +34,52 @@ if (__TEST_MODE__ === 'REST') {
 		expect(project.id).toBe(MOCKPROJECT.idProject);
 	});
 
-	test('members', async () => {
-		let members = await project.getMembers();
-		expect(members.length).toBeGreaterThan(0);
-		members.forEach((member) => expect(member).toBeInstanceOf(Member));
+	describe('members', () => {
+		test('get members', async () => {
+			let members = await project.getMembers();
+			expect(members.length).toBeGreaterThan(0);
+			members.forEach((member) => expect(member).toBeInstanceOf(Member));
+		});
 
-		let admins = await project.getAdmins();
-		let nonAdmins = await project.getNonAdmins();
-		expect(admins.length).toBeGreaterThan(0);
-		admins.forEach((member) => expect(member).toBeInstanceOf(Member));
-		expect(nonAdmins.length).toBeGreaterThan(0);
-		nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
+		test('get admins', async () => {
+			let admins = await project.getAdmins();
+			expect(admins.length).toBeGreaterThan(0);
+			admins.forEach((member) => expect(member).toBeInstanceOf(Member));
+		});
+
+		test('get non admins', async () => {
+			let nonAdmins = await project.getNonAdmins();
+			expect(nonAdmins.length).toBeGreaterThan(0);
+			nonAdmins.forEach((member) =>
+				expect(member).toBeInstanceOf(Member)
+			);
+		});
+
+		test('demote admin', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.demoteAdmin({ member: members[0] })
+			).resolves.not.toThrow();
+		});
+
+		test('promote admin', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.promoteAdmin({ member: members[0] })
+			).resolves.not.toThrow();
+		});
+
+		test('delete member', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.deleteMember({ member: members[0] })
+			).resolves.not.toThrow();
+		});
 	});
 
 	test('refresh', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 		};
 		project.axios = mockAxios;
 		await expect(project.refresh()).resolves.not.toThrow();
@@ -58,7 +88,7 @@ if (__TEST_MODE__ === 'REST') {
 
 	test('updates', async () => {
 		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			get: jest.fn(async () => ({ data: MOCKPROJECT })),
 			put: client.axios.put,
 		};
 		project.axios = mockAxios;
