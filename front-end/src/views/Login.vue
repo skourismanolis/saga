@@ -93,7 +93,9 @@ export default {
 				alert(error);
 			}
 			await this.$root.loadUser();
-			this.$router.push('/projects').catch(() => {});
+			if (this.$route.query != null && this.$route.query.redir != null) {
+				this.$router.push(this.$route.query.redir).catch(() => {});
+			} else this.$router.push('/projects').catch(() => {});
 		},
 	},
 	created() {
