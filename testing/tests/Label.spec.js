@@ -6,7 +6,7 @@ let client;
 let label;
 
 const MOCKLABEL = {
-	idLabel: 2,
+	idLabel: 1,
 	name: 'Frontend',
 	color: '#123456',
 };
@@ -17,44 +17,50 @@ const MOCKPROJECT = {
 	picture: null,
 };
 
-if (__TEST_MODE__ === 'REST') {
-	it('suite disabled', () => expect(1).toBe(1));
-} else {
-	beforeAll(() => {
-		client = new SagaClient({ url: __APIURL__ });
-	});
+beforeAll(async () => {
+	client = new SagaClient({ url: __APIURL__ });
+	if (__TEST_MODE__ === 'REST') {
+		await client.login({
+			email: __APIUNAME__,
+			password: __APIPWD__,
+		});
+	}
+});
 
-	it('constructs', async () => {
-		label = new Label(client, MOCKLABEL, 2);
-		expect(label).toBeTruthy();
-	});
+it('constructs', async () => {
+	label = new Label(client, MOCKLABEL, 2);
+	expect(label).toBeTruthy();
+});
 
-	test('id', () => {
-		expect(label.id).toBe(MOCKLABEL.idLabel);
-	});
+test('id', () => {
+	expect(label.id).toBe(MOCKLABEL.idLabel);
+});
 
-	test('toJSON', () => {
-		let lab = label.toJSON();
-		expect(lab).toBeTruthy();
-		expect(() => {
-			lab = JSON.parse(lab);
-		}).not.toThrow();
+test('toJSON', () => {
+	let lab = label.toJSON();
+	expect(lab).toBeTruthy();
+	expect(() => {
+		lab = JSON.parse(lab);
+	}).not.toThrow();
 
-		expect(lab).toMatchObject(MOCKLABEL);
-	});
+	expect(lab).toMatchObject(MOCKLABEL);
+});
 
-	test('refresh', async () => {
-		await expect(label.refresh()).resolves.not.toThrow();
-	});
+test('refresh', async () => {
+	await expect(label.refresh()).resolves.not.toThrow();
+});
 
-	test('get project', async () => {
+test('get project', async () => {
+	if (__TEST_MODE__ === 'CLIENT') {
 		let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
 		label.axios = mockAxios;
-		await expect(label.getProject()).resolves.toBeInstanceOf(Project);
+	}
+	await expect(label.getProject()).resolves.toBeInstanceOf(Project);
+	if (__TEST_MODE__ === 'CLIENT') {
 		label.axios = client.axios;
-	});
+	}
+});
 
-	it('updates', async () => {
-		await expect(label.update({ title: 'asdsad' })).resolves.not.toThrow();
-	});
-}
+it('updates', async () => {
+	await expect(label.update({ name: 'asdsad' })).resolves.not.toThrow();
+});
