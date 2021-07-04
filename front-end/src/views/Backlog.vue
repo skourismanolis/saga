@@ -148,6 +148,7 @@
 						itemsKey="issues"
 						:key="sprint.id"
 						:data-id="sprint.id"
+						@change="updateSprint()"
 					>
 						<SprintBox
 							:sprint="sprint"
@@ -173,6 +174,7 @@
 					itemsKey="issues"
 					:key="backlog.id"
 					:data-id="backlog.id"
+					@change="updateBacklog()"
 				>
 					<BacklogBox
 						:backlog="backlog"
@@ -403,6 +405,14 @@ export default {
 			this.$router
 				.push({ path: '/epic-create' /*, query: query*/ })
 				.catch(() => {});
+		},
+
+		updateSprint() {
+			console.log('update sprint');
+		},
+
+		updateBacklog() {
+			console.log('update backlog');
 		},
 	},
 	async created() {
