@@ -109,7 +109,9 @@
 						@click="filterByEpic()"
 						>Epic</a
 					>
-					<a type="button" class="link">Label</a>
+					<a type="button" class="link" @click="filterByLabel()"
+						>Label</a
+					>
 				</div>
 
 				<button
@@ -536,13 +538,19 @@ export default {
 		},
 
 		filterByEpic() {
-			for (let i = 0; i < this.sprints.length; i++) {
-				this.sprints[i].issues.sort(
+			for (let i = 0; i < this.dropZones.length; i++) {
+				this.dropZones[i].issues.sort(
 					(a, b) => parseInt(a.epicId) - parseInt(b.epicId)
 				);
 			}
 		},
-		FilterByLabel() {},
+		filterByLabel() {
+			for (let i = 0; i < this.dropZones.length; i++) {
+				this.dropZones[i].issues.sort(
+					(a, b) => (a.type > b.type) - (a.type < b.type)
+				);
+			}
+		},
 
 		redirectEpicCreate() {
 			// let query = { activePlan: value };
