@@ -1,11 +1,7 @@
 <template>
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
-		<ProjectNavbar
-			v-if="projectNavbarFlag"
-			:tab="activeTab"
-			@tab-change="changeTab"
-		/>
+		<ProjectNavbar v-if="projectNavbarFlag" />
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -23,16 +19,6 @@ export default {
 		Footer,
 		Navbar,
 		ProjectNavbar,
-	},
-	data() {
-		return {
-			activeTab: '',
-		};
-	},
-	methods: {
-		changeTab(value) {
-			this.activeTab = value;
-		},
 	},
 	computed: {
 		navbarFlag() {

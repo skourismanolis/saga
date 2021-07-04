@@ -99,6 +99,15 @@ app.get('/', async (req, res) => {
 		// }
 		// create correct project objects
 		projects.forEach((project) => {
+			//create project picture url
+			if (project.picture != null)
+				project.picture =
+					req.protocol +
+					'://' +
+					req.get('host') +
+					'/projectPics/' +
+					project.picture;
+
 			// add members property inside projcet
 			project.members = [];
 			// find the members to add them
@@ -108,12 +117,6 @@ app.get('/', async (req, res) => {
 					project.members.push(user);
 				}
 			});
-		});
-		// Rename property "title" to "name"
-		projects = projects.map(function (obj) {
-			obj['name'] = obj['title']; // Assign new key
-			delete obj['title']; // Delete old key
-			return obj;
 		});
 		res.status(200)
 			.header('X-Pagination-Total', result_pag.length)
@@ -174,6 +177,47 @@ app.post('/', async (req, res) => {
 		return res.sendStatus(500);
 	} finally {
 		if (conn != null) conn.release();
+	}
+});
+
+app.get('/:idProject', async (req, res) => {
+	try {
+		let [project] = await db.pool.query(
+			`SELECT * FROM project
+			WHERE idProject = ? AND idProject IN
+			( SELECT idProject FROM member WHERE idUser = ?)`,
+			[req.params.idProject, req.user.idUser]
+		);
+
+		if (project.length == 0) {
+			res.sendStatus(404);
+			return;
+		}
+
+		project = project[0];
+		if (project.picture != null)
+			project.picture =
+				req.protocol +
+				'://' +
+				req.get('host') +
+				'/projectPics/' +
+				project.picture;
+
+		let [users] = await db.pool.query(
+			`
+			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture
+			FROM user, member
+			WHERE member.idProject = ?
+			AND user.idUser = member.idUser`,
+			[req.params.idProject]
+		);
+
+		project.members = users;
+
+		res.send(project);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
 	}
 });
 
@@ -274,8 +318,8 @@ app.put(
 			let [result] = await db.pool.query(
 				'UPDATE project SET picture = ? WHERE idProject = ?',
 				[
-					req.file != undefined ? req.file.filename : null,
-					req.user.idUser,
+					req.file !== undefined ? req.file.filename : null,
+					req.params.idProject,
 				]
 			);
 			if (result.length == 0) {

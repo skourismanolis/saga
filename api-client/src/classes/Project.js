@@ -12,11 +12,13 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, { idProject, title, activeSprint }) {
+	constructor(client, { idProject, title, picture, activeSprint, members }) {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
 		this._activeSprintId = activeSprint;
+		this.picture = picture;
+		this._members = members;
 	}
 
 	get id() {
@@ -24,12 +26,17 @@ module.exports = class Project extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({
-			idProject: this._idProject,
-			title: this.title,
-			picture: this.picture,
-			activeSprint: this._activeSprintId,
-		});
+		return JSON.stringify(
+			{
+				idProject: this._idProject,
+				title: this.title,
+				picture: this.picture,
+				members: this._members,
+				activeSprint: this._activeSprintId,
+			},
+			null,
+			4
+		);
 	}
 
 	/**
@@ -377,6 +384,7 @@ module.exports = class Project extends Base {
 		description,
 		deadline,
 		label,
+		assignees,
 	}) {
 		let labelValue;
 
@@ -391,7 +399,7 @@ module.exports = class Project extends Base {
 			priority: priority || null,
 			description: description || null,
 			deadline: deadline || null,
-			assignees: [],
+			assignees: assignees || null,
 		};
 
 		let {
@@ -402,6 +410,34 @@ module.exports = class Project extends Base {
 		);
 
 		return await this.getIssue(code);
+	}
+
+	/**
+	 * Changes the project's picture
+	 * !!WARNING: ONLY WORKS ON BROWSER ENVIRONMENTS
+	 * @param {Object} options
+	 * @param {File} options.picture
+	 */
+	async setPicture({ picture }) {
+		//eslint-disable-next-line no-undef
+		if (FormData === 'undefined')
+			throw 'Invalid environment, this only works on browser';
+		//eslint-disable-next-line no-undef
+		if (!(picture instanceof File)) throw 'Picture must be a File';
+
+		//eslint-disable-next-line no-undef
+		let data = new FormData();
+
+		data.append('picture', picture, picture.name);
+
+		await this.axios({
+			method: 'PUT',
+			url: `/projects/${this._idProject}/picture`,
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			data,
+		});
 	}
 
 	async refresh() {

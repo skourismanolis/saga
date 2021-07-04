@@ -2,6 +2,7 @@ const axios = require('axios');
 const Project = require('./classes/Project');
 const PaginatedList = require('./classes/PaginatedList');
 const decode64 = require('./parseB64');
+const Issue = require('./classes/Issue');
 
 const LOGINERROR = 'Please login first';
 
@@ -108,6 +109,35 @@ module.exports = class SagaClient {
 	}
 
 	/**
+	 * Changes the current user's picture
+	 * !!WARNING: ONLY WORKS ON BROWSER ENVIRONMENTS
+	 * @param {Object} options
+	 * @param {File} options.picture
+	 */
+	async setUserPicture({ picture }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		//eslint-disable-next-line no-undef
+		if (FormData === 'undefined')
+			throw 'Invalid environment, this only works on browser';
+		//eslint-disable-next-line no-undef
+		if (!(picture instanceof File)) throw 'Picture must be a File';
+
+		//eslint-disable-next-line no-undef
+		let data = new FormData();
+
+		data.append('picture', picture, picture.name);
+
+		await this.axios({
+			method: 'PUT',
+			url: '/users/picture',
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			data,
+		});
+	}
+
+	/**
 	 * Delete current user. Comments and issues by this user will have theis creator id set to 0.
 	 * @param {Object} deletUsrOpt
 	 * @param {Object} deletUsrOpt.password the current user's passowrd
@@ -152,6 +182,26 @@ module.exports = class SagaClient {
 		});
 		await list.refresh();
 		return list;
+	}
+
+	async getProject({ idProject }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get('/projects/' + idProject);
+		return new Project(this, {
+			idProject,
+			title: data.title,
+			activeSprint: data.activeSprint,
+			picture: data.picture,
+			members: data.members,
+		});
+	}
+
+	async getProjectIssue({ idProject, code }) {
+		if (!this.isLoggedIn) throw LOGINERROR;
+		let { data } = await this.axios.get(
+			'/projects/' + idProject + '/issues/' + code
+		);
+		return new Issue(this, data, idProject);
 	}
 
 	async createProject({ title }) {

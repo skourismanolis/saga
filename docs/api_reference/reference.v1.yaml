@@ -124,6 +124,27 @@ paths:
                   type: string
               required:
                 - title
+    get:
+      summary: Get project by id
+      operationId: get-projects-idProject
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Get project by id
   '/projects/{idProject}/active':
     parameters:
       - schema:
@@ -1746,7 +1767,7 @@ components:
         idProject:
           type: integer
           minimum: 0
-        name:
+        title:
           type: string
         members:
           type: array
@@ -1761,7 +1782,7 @@ components:
           nullable: true
       required:
         - idProject
-        - name
+        - title
         - members
         - picture
         - activeSprint

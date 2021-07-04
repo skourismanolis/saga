@@ -6,15 +6,13 @@
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 		</div>
-		<div v-if="issues.length > 0">
-			<IssueRow
-				class="issue"
-				v-for="(issue, index) in issues"
-				:key="index"
-				:issue="issue"
-			/>
-		</div>
-		<div v-else class="empty-msg d-flex justify-content-center">
+
+		<slot> </slot>
+
+		<div
+			v-if="issues.length == 0"
+			class="empty-msg d-flex justify-content-center"
+		>
 			<span>
 				Σείρετε issues απο το backlog για να τα εισάγετε στο epic!
 			</span>
@@ -23,11 +21,7 @@
 </template>
 
 <script>
-import IssueRow from './IssueRow.vue';
 export default {
-	components: {
-		IssueRow,
-	},
 	props: {
 		issues: Array,
 	},
