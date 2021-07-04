@@ -54,8 +54,7 @@ module.exports = class Project extends Base {
 	async setActiveSprint(sprint) {
 		if (sprint !== null && sprint.id == null) throw 'Invalid sprint';
 		await this.axios.put(`/projects/${this._idProject}/active`, {
-			title: this.title,
-			activeSprint: sprint === null ? null : sprint.id,
+			id: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
 	}
