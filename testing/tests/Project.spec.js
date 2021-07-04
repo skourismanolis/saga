@@ -34,17 +34,26 @@ if (__TEST_MODE__ === 'REST') {
 		expect(project.id).toBe(MOCKPROJECT.idProject);
 	});
 
-	test('members', async () => {
-		let members = await project.getMembers();
-		expect(members.length).toBeGreaterThan(0);
-		members.forEach((member) => expect(member).toBeInstanceOf(Member));
+	describe('members', () => {
+		test('get members', async () => {
+			let members = await project.getMembers();
+			expect(members.length).toBeGreaterThan(0);
+			members.forEach((member) => expect(member).toBeInstanceOf(Member));
+		});
 
-		let admins = await project.getAdmins();
-		let nonAdmins = await project.getNonAdmins();
-		expect(admins.length).toBeGreaterThan(0);
-		admins.forEach((member) => expect(member).toBeInstanceOf(Member));
-		expect(nonAdmins.length).toBeGreaterThan(0);
-		nonAdmins.forEach((member) => expect(member).toBeInstanceOf(Member));
+		test('get admins', async () => {
+			let admins = await project.getAdmins();
+			expect(admins.length).toBeGreaterThan(0);
+			admins.forEach((member) => expect(member).toBeInstanceOf(Member));
+		});
+
+		test('get non admins', async () => {
+			let nonAdmins = await project.getNonAdmins();
+			expect(nonAdmins.length).toBeGreaterThan(0);
+			nonAdmins.forEach((member) =>
+				expect(member).toBeInstanceOf(Member)
+			);
+		});
 	});
 
 	test('refresh', async () => {
