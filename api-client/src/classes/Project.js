@@ -75,6 +75,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
+	}
+
+	/**
 	 * Get all the sprints belonging to the project
 	 * @returns {Object[]} array of Sprints
 	 */
@@ -86,19 +99,6 @@ module.exports = class Project extends Base {
 		});
 		await list.refresh();
 		return list;
-	}
-
-	/**
-	 * Get a specific sprint from the api
-	 * @param {Number} idSprint
-	 * @returns {Object} Sprint
-	 */
-	async getSprint(idSprint) {
-		let { data: sprint } = await this.axios.get(
-			`/projects/${this._idProject}/sprints/${idSprint}`
-		);
-
-		return new Sprint(this.client, sprint, this._idProject);
 	}
 
 	/**
@@ -415,8 +415,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to remove
 	 */
 	async deleteMember({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members`,
+			data: { idUser: member.id },
 		});
 	}
 
@@ -437,8 +439,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to demote
 	 */
 	async demoteAdmin({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members/admin`,
+			data: { idUser: member.id },
 		});
 	}
 	/**

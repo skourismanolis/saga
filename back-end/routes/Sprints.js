@@ -80,13 +80,10 @@ async function sprints_post(req, res) {
 		let deadline = req.body.deadline;
 		if (deadline != null) deadline = dayjs(deadline).format('YYYY-MM-DD');
 
-		await conn.query('INSERT INTO sprint VALUES (?,?,?,?,?)', [
-			0,
-			req.params.idProject,
-			req.body.title,
-			null,
-			deadline,
-		]);
+		await conn.query(
+			'INSERT INTO sprint (idSprint, idProject, title, `start`, deadline) VALUES (?,?,?,?,?)',
+			[0, req.params.idProject, req.body.title, null, deadline]
+		);
 
 		await conn.commit();
 		res.sendStatus(200);
@@ -107,7 +104,6 @@ async function get_sprint_id(req, res) {
 			'SELECT idSprint,title,start,deadline FROM sprint WHERE idSprint = ? AND idProject = ?',
 			[req.params.idSprint, req.params.idProject]
 		);
-
 		if (sprint.length == 0) {
 			res.sendStatus(404);
 			throw c.INVALID_TRANSACTION;
@@ -177,6 +173,10 @@ async function delete_sprint_id(req, res) {
 
 		await conn.query(
 			'UPDATE issue SET idSprint = NULL WHERE idSprint = ? AND idProject = ?',
+			[req.params.idSprint, req.params.idProject]
+		);
+		await conn.query(
+			'UPDATE project SET activeSprint = NULL WHERE activeSprint = ? AND idProject = ?',
 			[req.params.idSprint, req.params.idProject]
 		);
 		let [results] = await conn.query(
@@ -293,7 +293,6 @@ async function post_add_issues(req, res) {
 				req.params.idProject,
 			]
 		);
-		console.log(results);
 
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();

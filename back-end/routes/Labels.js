@@ -60,15 +60,13 @@ async function labels_post(req, res) {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 
-		await conn.query('INSERT INTO label VALUES (?,?,?,?)', [
-			0,
-			req.params.idProject,
-			req.body.name,
-			req.body.color,
-		]);
+		const [results] = await conn.query(
+			'INSERT INTO label VALUES (?,?,?,?)',
+			[0, req.params.idProject, req.body.name, req.body.color]
+		);
 
 		await conn.commit();
-		res.sendStatus(200);
+		res.send({ idLabel: results.insertId });
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
