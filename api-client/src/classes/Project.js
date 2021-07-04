@@ -440,7 +440,7 @@ module.exports = class Project extends Base {
 		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
 			idUser: member.id,
 		});
-
+	}
 	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code
