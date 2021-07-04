@@ -1,4 +1,4 @@
-const URLSearchParams = require('url').URLSearchParams;
+// const URLSearchParams = require('../URLSearchParams');
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -99,6 +99,19 @@ module.exports = class Project extends Base {
 		});
 		await list.refresh();
 		return list;
+	}
+
+	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
 	}
 
 	/**
@@ -241,7 +254,10 @@ module.exports = class Project extends Base {
 			query.search = search;
 		}
 
-		let queryParams = new URLSearchParams(query);
+		let queryParams;
+		if (typeof process === 'undefined')
+			queryParams = new require('url').URLSearchParams(query);
+		else queryParams = new URLSearchParams(query);
 		let url =
 			`/projects/${this._idProject}/issues?` + queryParams.toString();
 
@@ -442,7 +458,6 @@ module.exports = class Project extends Base {
 			data: { idUser: member.id },
 		});
 	}
-
 	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code

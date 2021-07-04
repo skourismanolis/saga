@@ -22,10 +22,6 @@ const MOCKPROJECT = {
 	activeSprint: null,
 };
 
-// if (__TEST_MODE__ === 'REST') {
-// 	it('suite disabled', () => expect(1).toBe(1));
-// } else {
-
 beforeAll(async () => {
 	client = new SagaClient({ url: __APIURL__ });
 	if (__TEST_MODE__ === 'REST') {
@@ -417,7 +413,6 @@ describe('sprints', () => {
 
 	it('deletes a sprint', async () => {
 		let sprints = await project.getSprints();
-
 		await expect(
 			project.deleteSprint(sprints.content[0])
 		).resolves.not.toThrow();
@@ -446,7 +441,6 @@ describe('epics', () => {
 
 	it('deletes a epic', async () => {
 		let epics = await project.getEpics();
-
 		await expect(
 			project.deleteEpic(epics.content[0])
 		).resolves.not.toThrow();
