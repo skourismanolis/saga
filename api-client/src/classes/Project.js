@@ -363,7 +363,6 @@ module.exports = class Project extends Base {
 		await this.axios.delete(`projects/${this._idProject}/members`, {
 			idUser: member.id,
 		});
-		this.refresh();
 	}
 
 	/**
@@ -375,7 +374,6 @@ module.exports = class Project extends Base {
 		await this.axios.post(`projects/${this._idProject}/members/admin`, {
 			idUser: member.id,
 		});
-		this.refresh();
 	}
 
 	/**
@@ -387,7 +385,6 @@ module.exports = class Project extends Base {
 		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
 			idUser: member.id,
 		});
-		this.refresh();
 	}
 
 	/**
@@ -478,9 +475,9 @@ module.exports = class Project extends Base {
 	}
 
 	async refresh() {
-		let { data: projects } = await this.axios.get(`/projects`);
-
-		let project = projects.find((m) => m.idProject == this._idProject);
+		let { data: project } = await this.axios.get(
+			`/projects/${this._idProject}`
+		);
 		this.title = project.title;
 		this.picture = project.picture;
 		this._activeSprintId = project.activeSprint;
