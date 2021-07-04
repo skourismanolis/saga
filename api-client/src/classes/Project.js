@@ -243,10 +243,9 @@ module.exports = class Project extends Base {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.deadline when will this sprint end
 	 */
-	async createSprint({ start, deadline, title }) {
+	async createSprint({ deadline, title }) {
 		let newSprint = {
 			title: title,
-			start: start || null,
 			deadline: deadline || null,
 		};
 
@@ -359,6 +358,39 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Remove member from project
+	 * @param {Object} options
+	 * @param {Object} options.member the member to remove
+	 */
+	async deleteMember({ member }) {
+		await this.axios.delete(`projects/${this._idProject}/members`, {
+			idUser: member.id,
+		});
+	}
+
+	/**
+	 * Promote member to admin
+	 * @param {Object} options
+	 * @param {Object} options.member the member to promote
+	 */
+	async promoteAdmin({ member }) {
+		await this.axios.post(`projects/${this._idProject}/members/admin`, {
+			idUser: member.id,
+		});
+	}
+
+	/**
+	 * Demote admin to member
+	 * @param {Object} options
+	 * @param {Object} options.member the member to demote
+	 */
+	async demoteAdmin({ member }) {
+		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
+			idUser: member.id,
+		});
+	}
+
+	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code
 	 */
@@ -446,9 +478,9 @@ module.exports = class Project extends Base {
 	}
 
 	async refresh() {
-		let { data: projects } = await this.axios.get(`/projects`);
-
-		let project = projects.find((m) => m.idProject == this._idProject);
+		let { data: project } = await this.axios.get(
+			`/projects/${this._idProject}`
+		);
 		this.title = project.title;
 		this.picture = project.picture;
 		this._activeSprintId = project.activeSprint;

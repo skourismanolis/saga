@@ -2022,10 +2022,6 @@ components:
       title: Sprint Put Post
       type: object
       properties:
-        start:
-          type: string
-          format: date-time
-          nullable: true
         deadline:
           type: string
           format: date-time
@@ -2033,7 +2029,6 @@ components:
         title:
           type: string
       required:
-        - start
         - deadline
         - title
     Epic:

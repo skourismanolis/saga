@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`label` (
   `idLabel` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `idProject` INT UNSIGNED NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  `color` VARCHAR(6) NOT NULL,
+  `color` VARCHAR(7) NOT NULL,
   PRIMARY KEY (`idLabel`),
   CONSTRAINT `fk_label_project1`
     FOREIGN KEY (`idProject`)
