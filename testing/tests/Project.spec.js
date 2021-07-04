@@ -347,10 +347,13 @@ describe('sprints', () => {
 			project.axios = mockAxios;
 		}
 		await expect(project.setActiveSprint(spr)).resolves.not.toThrow();
-
+		await project.refresh();
 		if (__TEST_MODE__ === 'CLIENT') project.axios = client.axios;
 		spr = await project.getActiveSprint();
-		if (__TEST_MODE__ === 'REST') expect(spr).toBe(content);
+		expect(spr).toBeInstanceOf(Sprint);
+		content = await project.getSprints();
+		content = content._content;
+		if (__TEST_MODE__ === 'REST') expect(content).toContainEqual(spr);
 	});
 
 	it('returns a list of sprints', async () => {
@@ -403,7 +406,7 @@ describe('columns', () => {
 	});
 
 	it('returns a specific column', async () => {
-		let column = await project.getColumn(123);
+		let column = await project.getColumn(1);
 		expect(column).toBeInstanceOf(Column);
 	});
 

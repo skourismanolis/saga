@@ -175,6 +175,10 @@ async function delete_sprint_id(req, res) {
 			'UPDATE issue SET idSprint = NULL WHERE idSprint = ? AND idProject = ?',
 			[req.params.idSprint, req.params.idProject]
 		);
+		await conn.query(
+			'UPDATE project SET activeSprint = NULL WHERE activeSprint = ? AND idProject = ?',
+			[req.params.idSprint, req.params.idProject]
+		);
 		let [results] = await conn.query(
 			'DELETE FROM sprint WHERE idSprint = ? AND idProject = ?;',
 			[req.params.idSprint, req.params.idProject]
