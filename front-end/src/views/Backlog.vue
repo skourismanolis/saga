@@ -103,7 +103,12 @@
 					<span id="filter-text" class="filter-element"
 						>Φίλτραρε issues με:</span
 					>
-					<a type="button" class="link filter-element">Epic</a>
+					<a
+						type="button"
+						class="link filter-element"
+						@click="filterByEpic()"
+						>Epic</a
+					>
 					<a type="button" class="link">Label</a>
 				</div>
 
@@ -529,6 +534,15 @@ export default {
 				}
 			});
 		},
+
+		filterByEpic() {
+			for (let i = 0; i < this.sprints.length; i++) {
+				this.sprints[i].issues.sort(
+					(a, b) => parseInt(a.epicId) - parseInt(b.epicId)
+				);
+			}
+		},
+		FilterByLabel() {},
 
 		redirectEpicCreate() {
 			// let query = { activePlan: value };
