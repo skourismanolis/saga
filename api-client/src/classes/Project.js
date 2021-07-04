@@ -75,6 +75,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
+	}
+
+	/**
 	 * Get all the epics belonging to the project
 	 * @returns {Object[]} array of Epics
 	 */
