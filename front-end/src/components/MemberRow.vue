@@ -14,17 +14,17 @@
 		<span class="member-element email">{{ member.email }}</span>
 
 		<div class="ml-auto" v-bind:class="{ invisible: member.admin == true }">
-			<a v-if="member.role !== 'Admin'" @click="$emit('upgrade', member)">
+			<a v-if="member.role !== 'Admin'" @click="$emit('promote', member)">
 				<i class="icon bi bi-arrow-up"></i>
 			</a>
 			<a
 				v-else-if="member.id != $store.state.user.idUser"
-				@click="$emit('downgrade', member)"
+				@click="$emit('demote', member)"
 				><i class="icon bi bi-arrow-down"></i
 			></a>
 			<a
 				v-if="member.id != $store.state.user.idUser"
-				@click="$emit('remove', member)"
+				@click="$emit('delete', member)"
 			>
 				<i class="icon bi bi-x-circle ml12 mr12 icon"></i>
 			</a>

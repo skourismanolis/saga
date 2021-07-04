@@ -90,9 +90,9 @@
 					:member="admin"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
-					@upgrade="upgradeMember"
-					@downgrade="downgradeMember"
-					@remove="removeMember"
+					@promote="promoteMember"
+					@demote="demoteMember"
+					@delete="deleteMember"
 				/>
 			</div>
 			<div class="mb24">
@@ -107,9 +107,9 @@
 					:member="member"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
-					@upgrade="upgradeMember"
-					@downgrade="downgradeMember"
-					@remove="removeMember"
+					@promote="promoteMember"
+					@demote="demoteMember"
+					@delete="deleteMember"
 				/>
 			</div>
 		</div>
@@ -160,15 +160,15 @@ export default {
 				alert(error);
 			}
 		},
-		async upgradeMember(member) {
+		async promoteMember(member) {
 			console.log(member);
 			//todo: add implementation
 		},
-		async downgradeMember(member) {
+		async demoteMember(member) {
 			console.log(member);
 			//todo: add implementation
 		},
-		async removeMember(member) {
+		async deleteMember(member) {
 			console.log(member);
 			//todo: add implementation
 		},
