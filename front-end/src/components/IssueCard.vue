@@ -6,10 +6,9 @@
 				footer-tag="footer"
 				style="border-radius: 0px"
 			>
-				<b-card-text v-b-popover.hover.top="`{{issue.title}}`">
-					<h6 style=" float:left">{{ issue.title }}</h6>
+				<b-card-text v-b-popover.hover.top="issue.title">
+					<h6 style="float: left">{{ issue.title }}</h6>
 					<div id="dets-column" class="footer-element">
-						
 						<i
 							id="issue-icon"
 							class="bi bi-bug issue-element"
@@ -88,7 +87,7 @@ p.card-body {
 	display: inline;
 }
 
-.card-body{
+.card-body {
 	padding-right: 12px;
 }
 
@@ -114,7 +113,7 @@ i {
 	padding-left: 15%;
 	padding-top: 0;
 	margin-top: 0;
-	color:#DB5461;
+	color: #db5461;
 	width: 24px;
 	height: 24px;
 }
@@ -122,17 +121,17 @@ i {
 p.card-text {
 	text-overflow: ellipsis;
 	white-space: nowrap;
-    overflow: hidden;
+	overflow: hidden;
 }
 
-h6{
-	width:255.96px;
+h6 {
+	width: 255.96px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-    overflow: hidden;
+	overflow: hidden;
 }
 
-#main{
+#main {
 	width: 325px;
 }
 </style>
