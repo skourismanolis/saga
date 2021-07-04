@@ -118,6 +118,7 @@
 					id="create-sprint-button"
 					type="button"
 					class="btn btn-primary d-flex align-items-center mx-auto"
+					@click="createSprint()"
 				>
 					Δημιουργία Sprint
 					<i class="bi bi-plus create-epic-button-icon"></i>
@@ -534,6 +535,19 @@ export default {
 						}
 					}
 				}
+			});
+		},
+
+		createSprint() {
+			// USE API CLIENT HERE INSTEAD OF THIS
+			this.sprints.push({
+				id: 9,
+				name: 'Νέο Sprint',
+				start_date: new Date(),
+				end_date: new Date(),
+				active: false,
+				exists_active: true,
+				issues: [],
 			});
 		},
 
