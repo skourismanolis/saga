@@ -144,4 +144,11 @@ describe('projects', () => {
 
 		projects.content.forEach((p) => expect(p).toBeInstanceOf(Project));
 	});
+
+	it('deletes a project', async () => {
+		let projects = await client.getProjects();
+		await expect(
+			client.deleteProject({ project: projects.content[0] })
+		).resolves.not.toThrow();
+	});
 });

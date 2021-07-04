@@ -213,4 +213,8 @@ module.exports = class SagaClient {
 			picture: null,
 		});
 	}
+
+	async deleteProject({ project }) {
+		await this.axios.delete(`/projects/${project.id}`);
+	}
 };
