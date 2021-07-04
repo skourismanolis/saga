@@ -1,4 +1,4 @@
-const URLSearchParams = require('url').URLSearchParams;
+const URLSearchParams = require('../URLSearchParams');
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
