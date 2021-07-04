@@ -109,6 +109,7 @@ i {
 	padding-left: 15%;
 	padding-top: 0;
 	margin-top: 0;
+	color:#DB5461;
 }
 p.card-text {
 	text-overflow: ellipsis;
