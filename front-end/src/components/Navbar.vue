@@ -6,7 +6,7 @@
 			</router-link>
 			<div v-if="isLoggedIn" class="ml-auto">
 				<div class="rcorner_top">
-					<b-button variant="primary">
+					<b-button variant="primary" to="/projects">
 						Τα project μου
 						<b-icon icon="box-seam"></b-icon>
 					</b-button>

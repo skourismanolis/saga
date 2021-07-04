@@ -421,10 +421,10 @@ module.exports = class Project extends Base {
 	 */
 	async setPicture({ picture }) {
 		//eslint-disable-next-line no-undef
-		if (FormData !== 'undefined')
+		if (FormData === 'undefined')
 			throw 'Invalid environment, this only works on browser';
 		//eslint-disable-next-line no-undef
-		if (picture instanceof File) throw 'Picture must be a File';
+		if (!(picture instanceof File)) throw 'Picture must be a File';
 
 		//eslint-disable-next-line no-undef
 		let data = new FormData();
