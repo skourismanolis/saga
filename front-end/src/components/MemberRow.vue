@@ -2,7 +2,7 @@
 	<div class="d-flex flex-row align-items-center member-entry">
 		<div class="text-container">
 			<img
-				:src="member.pic"
+				:src="member.picture || DEFAULT_PICTURE"
 				width="24px"
 				height="24px"
 				class="rounded-circle align-self-center member-element ml12"
@@ -14,19 +14,29 @@
 		<span class="member-element email">{{ member.email }}</span>
 
 		<div class="ml-auto" v-bind:class="{ invisible: member.admin == true }">
-			<i class="icon bi bi-arrow-up"></i>
-			<i class="icon bi bi-x-circle ml12 mr12 icon"></i>
+			<a>
+				<i class="icon bi bi-arrow-up"></i>
+			</a>
+			<a>
+				<i class="icon bi bi-x-circle ml12 mr12 icon"></i>
+			</a>
 		</div>
 	</div>
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 export default {
 	components: {},
 	props: {
 		member: Object,
 	},
-	computed: {},
+	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
+	},
 };
 </script>
 

@@ -1,58 +1,65 @@
 <template>
-	<form class="d-flex flex-row">
+	<div v-if="project === null">
+		<b-spinner />
+	</div>
+	<form v-else class="d-flex flex-row">
 		<div class="left d-flex flex-column mb60">
 			<div classs="d-flex flex-row title-row">
 				<span class="black-text title">Ρυθμίσεις </span>
 				<span class="purple-text title">project </span>
 			</div>
 			<img
-				:src="profilePic"
+				:src="project.picture || DEFAULT_PICTURE"
 				width="128px"
 				height="128px"
 				class="rounded-circle"
 			/>
 			<div class="form-group" id="choose-file-container">
-				<label for="profile-pic">Αλλαγή εικόνας...</label>
-				<input
-					type="file"
-					class="form-control-file file-button"
-					id="profile-pic"
-				/>
+				<label
+					>Αλλαγή εικόνας...
+					<b-input-group>
+						<b-form-file
+							accept="image/jpeg, image/png"
+							v-model="selectedPicture"
+							class="file-button"
+						/>
+						<b-input-group-append>
+							<b-btn
+								variant="primary"
+								@click="savePicture"
+								:disabled="selectedPicture == null"
+								><i class="bi bi-check-lg"></i
+							></b-btn>
+						</b-input-group-append>
+					</b-input-group>
+				</label>
 			</div>
 			<span class="black-text mb12"> Τίτλος Project </span>
 			<div class="input-group mb12">
-				<input
+				<b-input
 					type="text"
 					class="form-control"
 					placeholder="Recipient's username"
-					aria-label="Recipient's username"
-					aria-describedby="basic-addon2"
+					v-model="projectTitle"
 				/>
 				<div class="input-group-append">
-					<button class="btn btn-primary" type="button">
+					<button
+						class="btn btn-primary"
+						type="button"
+						@click="saveTitle"
+					>
 						<i class="bi bi-check-lg"></i>
 					</button>
-					<button class="btn btn-outline-primary" type="button">
+					<button
+						class="btn btn-outline-primary"
+						type="button"
+						@click="projectTitle = project.title"
+					>
 						<i class="bi bi-x-lg"></i>
 					</button>
 				</div>
 			</div>
-			<span class="black-text mb12"> Προσκάλεσε τα μέλη της ομάδας </span>
-			<div class="input-group mb12">
-				<input
-					type="emai"
-					class="form-control"
-					placeholder="Εισάγετε το e-mail του μέλους..."
-				/>
-				<div class="input-group-append">
-					<button class="btn btn-primary" type="button">
-						<i class="bi bi-envelope"></i>
-					</button>
-				</div>
-			</div>
-			<span class="black-text mb12">
-				Ή στείλε τον παρακάτω σύνδεσμο:
-			</span>
+			<span class="black-text mb12"> Στείλε τον παρακάτω σύνδεσμο: </span>
 			<div class="input-group mb60">
 				<input
 					type="text"
@@ -104,6 +111,8 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 import MemberRow from '../components/MemberRow.vue';
 export default {
 	components: {
@@ -111,83 +120,54 @@ export default {
 	},
 	data() {
 		return {
-			admins: [
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: true,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: true,
-				},
-			],
-
-			members: [
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-				{
-					pic: require(`../assets/profile pics/default-profile-pic.png`),
-					name: 'Example Name',
-					email: 'example@provider.domain',
-					admin: false,
-				},
-			],
+			project: null,
+			projectTitle: '',
+			selectedPicture: null,
+			admins: [],
+			members: [],
 		};
 	},
 	computed: {
-		profilePic: function () {
-			let filename = 'default-profile-pic.png';
-			// if (this.user && this.user.ProfilePicPath)
-			// 	filename = this.user.ProfilePicPath;
-			return require(`../assets/profile pics/${filename}`);
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
 		},
 		generatedLink() {
 			return 'htttps://invite.com/w=AagYAFa76%A';
 		},
+	},
+	methods: {
+		async savePicture() {
+			try {
+				await this.project.setPicture({
+					picture: this.selectedPicture,
+				});
+				await this.project.refresh();
+			} catch (error) {
+				console.error(error);
+				alert(error);
+			}
+		},
+		async saveTitle() {
+			try {
+				await this.project.update({ title: this.projectTitle });
+			} catch (error) {
+				alert(error);
+			}
+		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+			[this.members, this.admins] = await Promise.all([
+				this.project.getAdmins(),
+				this.project.getNonAdmins(),
+			]);
+			this.projectTitle = this.project.title;
+		} catch (error) {
+			alert(error);
+		}
 	},
 };
 </script>
