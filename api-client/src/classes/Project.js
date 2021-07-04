@@ -44,18 +44,18 @@ module.exports = class Project extends Base {
 	 * @returns {Object|Null} the current active sprint
 	 */
 	async getActiveSprint() {
-		// if (this._activeSprintId == null) return null;
+		if (this._activeSprintId == null) return null;
 		let { data } = await this.axios.get(
-			`/projects/${this._idProject}/active`
+			`/projects/${this._idProject}/sprints/${this._activeSprintId}`
 		);
-		if (data.length == 0) return null;
 		return new Sprint(this.client, data, this._idProject);
 	}
 
 	async setActiveSprint(sprint) {
-		if (sprint !== null && sprint.id == null) throw 'Invalid sprint';
-		await this.axios.put(`/projects/${this._idProject}/active`, {
-			id: sprint === null ? null : sprint.id,
+		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
+		await this.axios.put(`/projects/${this._idProject}`, {
+			title: this.title,
+			activeSprint: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
 	}
@@ -239,9 +239,10 @@ module.exports = class Project extends Base {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.deadline when will this sprint end
 	 */
-	async createSprint({ deadline, title }) {
+	async createSprint({ start, deadline, title }) {
 		let newSprint = {
 			title: title,
+			start: start || null,
 			deadline: deadline || null,
 		};
 
