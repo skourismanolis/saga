@@ -91,7 +91,7 @@ async function get_label_id(req, res) {
 			return res.sendStatus(404);
 		}
 
-		res.send(label);
+		res.send(label[0]);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
