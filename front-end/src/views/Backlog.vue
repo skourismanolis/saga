@@ -245,10 +245,6 @@ export default {
 		},
 	},
 	methods: {
-		forceRerender() {
-			this.$forceUpdate();
-		},
-
 		getRenderedEpics() {
 			let epicsArray = this.epics.content;
 			for (let i = 0; i < epicsArray.length; i++) {
@@ -291,13 +287,30 @@ export default {
 		},
 		drop(event) {
 			console.log(event);
-			// let item_id = event.items[0].attributes['data-id'].value;
-			// let target_id = event.droptarget.attributes['data-id'].value;
+			let item_id = event.items[0].attributes['data-id'].value;
+			let owner_id = event.owner.attributes['data-id'].value;
+			let target_id = event.droptarget.attributes['data-id'].value;
 
-			// let target = this.dropZones.find((obj) => obj.id == target_id);
+			console.log('item ' + item_id);
+			console.log('owner ' + owner_id);
+			console.log('target ' + target_id);
 
-			// let item = target.issues.find((obj) => obj.id == item_id);
-			// item.sprintId = parseInt(target_id);
+			// console.log(this.dropZones());
+
+			let owner = this.dropZones.find((obj) => obj.id == owner_id);
+			let target = this.dropZones.find((obj) => obj.id == target_id);
+			let item = owner.issues.find(
+				(obj) => parseInt(obj.code) == item_id
+			);
+
+			console.log(item);
+			console.log(owner);
+			console.log(target);
+
+			owner.issues = owner.issues.filter(
+				(elem) => parseInt(elem.code) != item_id
+			);
+			target.issues.push(item);
 		},
 
 		toggleExpanded(epic) {
@@ -309,7 +322,7 @@ export default {
 				console.log('its false');
 				epic.expanded = true;
 			}
-			this.forceRerender();
+			this.$forceUpdate();
 		},
 		addIssuesToActiveSprint(i) {
 			let active_sprint_id = this.sprints[0].id;
