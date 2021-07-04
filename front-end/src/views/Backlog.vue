@@ -42,7 +42,7 @@
 						<button
 							type="button"
 							class="btn btn-primary epic-sprint-button"
-							@click="addIssuesToActiveSprint(index)"
+							@click="addIssuesToActiveSprint(epic)"
 						>
 							<i class="bi bi-plus-lg"></i>
 						</button>
@@ -326,45 +326,48 @@ export default {
 			}
 			this.$forceUpdate();
 		},
-		addIssuesToActiveSprint(i) {
-			let active_sprint_id = this.sprints[0].id;
+		addIssuesToActiveSprint(epic) {
+			if (this.active_sprint != null) {
+				console.log(epic);
+				// let active_sprint_id = this.sprints[0].id;
 
-			this.renderedEpics[i].issues.forEach((epic_issue) => {
-				//check backlog
-				for (let j = 0; j < this.backlogs[0].issues.length; j++) {
-					if (
-						this.backlogs[0].issues[j].id == epic_issue.id &&
-						this.backlogs[0].issues[j].sprintId != active_sprint_id
-					) {
-						let data = this.backlogs[0].issues.splice(j, 1);
-						data = data.pop();
-						data.sprintId = this.sprints[0].id;
-						this.sprints[0].issues.push(data);
-					}
-				}
+				// this.renderedEpics[i].issues.forEach((epic_issue) => {
+				//     //check backlog
+				//     for (let j = 0; j < this.backlogs[0].issues.length; j++) {
+				//         if (
+				//             this.backlogs[0].issues[j].id == epic_issue.id &&
+				//             this.backlogs[0].issues[j].sprintId != active_sprint_id
+				//         ) {
+				//             let data = this.backlogs[0].issues.splice(j, 1);
+				//             data = data.pop();
+				//             data.sprintId = this.sprints[0].id;
+				//             this.sprints[0].issues.push(data);
+				//         }
+				//     }
 
-				//check other sprints
-				if (this.sprints.length > 1) {
-					for (let j = 1; j < this.sprints.length; j++) {
-						for (
-							let k = 0;
-							k < this.sprints[j].issues.length;
-							k++
-						) {
-							if (
-								this.sprints[j].issues[k].id == epic_issue.id &&
-								this.sprints[j].issues[k].sprintId !=
-									active_sprint_id
-							) {
-								let data = this.sprints[j].issues.splice(k, 1);
-								data = data.pop();
-								data.sprintId = this.sprints[0].id;
-								this.sprints[0].issues.push(data);
-							}
-						}
-					}
-				}
-			});
+				//     //check other sprints
+				//     if (this.sprints.length > 1) {
+				//         for (let j = 1; j < this.sprints.length; j++) {
+				//             for (
+				//                 let k = 0;
+				//                 k < this.sprints[j].issues.length;
+				//                 k++
+				//             ) {
+				//                 if (
+				//                     this.sprints[j].issues[k].id == epic_issue.id &&
+				//                     this.sprints[j].issues[k].sprintId !=
+				//                         active_sprint_id
+				//                 ) {
+				//                     let data = this.sprints[j].issues.splice(k, 1);
+				//                     data = data.pop();
+				//                     data.sprintId = this.sprints[0].id;
+				//                     this.sprints[0].issues.push(data);
+				//                 }
+				//             }
+				//         }
+				//     }
+				// });
+			}
 		},
 
 		createSprint() {
