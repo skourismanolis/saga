@@ -1,4 +1,4 @@
-const URLSearchParams = require('url').URLSearchParams;
+// const URLSearchParams = require('../URLSearchParams');
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -41,6 +41,16 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * @returns {String} the invitation link
+	 */
+	async getInvite() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/invite`
+		);
+		return data.inviteLink;
+	}
+
+	/**
 	 * Returns the active sprint or null if there isn't any;
 	 * @returns {Object|Null} the current active sprint
 	 */
@@ -79,6 +89,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
+	}
+
+	/**
 	 * Get all the epics belonging to the project
 	 * @returns {Object[]} array of Epics
 	 */
@@ -93,6 +116,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific epic from the api
+	 * @param {Number} idEpic
+	 * @returns {Object} Epic
+	 */
+	async getEpic(idEpic) {
+		let { data: epic } = await this.axios.get(
+			`/projects/${this._idProject}/epics/${idEpic}`
+		);
+
+		return new Epic(this.client, epic, this._idProject);
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
@@ -100,6 +136,19 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/labels`
 		);
 		return labels.map((l) => new Label(this.client, l, this._idProject));
+	}
+
+	/**
+	 * Get a specific label from the api
+	 * @param {Number} idLabel
+	 * @returns {Object} Label
+	 */
+	async getLabel(idLabel) {
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${idLabel}`
+		);
+
+		return new Label(this.client, label, this._idProject);
 	}
 
 	/**
@@ -192,7 +241,10 @@ module.exports = class Project extends Base {
 			query.search = search;
 		}
 
-		let queryParams = new URLSearchParams(query);
+		let queryParams;
+		if (typeof process === 'undefined')
+			queryParams = new require('url').URLSearchParams(query);
+		else queryParams = new URLSearchParams(query);
 		let url =
 			`/projects/${this._idProject}/issues?` + queryParams.toString();
 
@@ -243,10 +295,9 @@ module.exports = class Project extends Base {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.deadline when will this sprint end
 	 */
-	async createSprint({ start, deadline, title }) {
+	async createSprint({ deadline, title }) {
 		let newSprint = {
 			title: title,
-			start: start || null,
 			deadline: deadline || null,
 		};
 
@@ -367,7 +418,6 @@ module.exports = class Project extends Base {
 		await this.axios.delete(`projects/${this._idProject}/members`, {
 			idUser: member.id,
 		});
-		this.refresh();
 	}
 
 	/**
@@ -379,7 +429,6 @@ module.exports = class Project extends Base {
 		await this.axios.post(`projects/${this._idProject}/members/admin`, {
 			idUser: member.id,
 		});
-		this.refresh();
 	}
 
 	/**
@@ -391,8 +440,6 @@ module.exports = class Project extends Base {
 		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
 			idUser: member.id,
 		});
-		this.refresh();
-	}
 
 	/**
 	 * Return Issue using the issue's code
@@ -461,10 +508,10 @@ module.exports = class Project extends Base {
 	 */
 	async setPicture({ picture }) {
 		//eslint-disable-next-line no-undef
-		if (FormData !== 'undefined')
+		if (FormData === 'undefined')
 			throw 'Invalid environment, this only works on browser';
 		//eslint-disable-next-line no-undef
-		if (picture instanceof File) throw 'Picture must be a File';
+		if (!(picture instanceof File)) throw 'Picture must be a File';
 
 		//eslint-disable-next-line no-undef
 		let data = new FormData();
@@ -482,9 +529,9 @@ module.exports = class Project extends Base {
 	}
 
 	async refresh() {
-		let { data: projects } = await this.axios.get(`/projects`);
-
-		let project = projects.find((m) => m.idProject == this._idProject);
+		let { data: project } = await this.axios.get(
+			`/projects/${this._idProject}`
+		);
 		this.title = project.title;
 		this.picture = project.picture;
 		this._activeSprintId = project.activeSprint;

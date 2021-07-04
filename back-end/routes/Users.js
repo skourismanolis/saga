@@ -305,6 +305,15 @@ app.get('/:idUser', async (req, res) => {
 			[req.params.idUser]
 		);
 
+		if (result[0].picture != null) {
+			result[0].picture =
+				req.protocol +
+				'://' +
+				req.get('host') +
+				'/projectPics/' +
+				result[0].picture;
+		}
+
 		if (req.params.idUser == req.user.idUser) {
 			delete result[0]['plan'];
 		}
