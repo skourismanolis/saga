@@ -1,4 +1,4 @@
-const URLSearchParams = require('../URLSearchParams');
+// const URLSearchParams = require('../URLSearchParams');
 const Base = require('./Base');
 const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
@@ -237,7 +237,10 @@ module.exports = class Project extends Base {
 			query.search = search;
 		}
 
-		let queryParams = new URLSearchParams(query);
+		let queryParams;
+		if (typeof process === 'undefined')
+			queryParams = new require('url').URLSearchParams(query);
+		else queryParams = new URLSearchParams(query);
 		let url =
 			`/projects/${this._idProject}/issues?` + queryParams.toString();
 
