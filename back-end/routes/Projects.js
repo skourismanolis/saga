@@ -177,6 +177,40 @@ app.post('/', async (req, res) => {
 	}
 });
 
+app.get('/:idProject', async (req, res) => {
+	try {
+		let [project] = await db.pool.query(
+			`SELECT * FROM project 
+			WHERE idProject = ? AND idProject IN 
+			( SELECT idProject FROM member WHERE idUser = ?)`,
+			[req.params.idProject, req.user.idUser]
+		);
+
+		if (project.length == 0) {
+			res.sendStatus(404);
+			return;
+		}
+
+		project = project[0];
+
+		let [users] = await db.pool.query(
+			`
+			SELECT user.idUser, user.name, user.surname, member.role, member.idProject, user.picture
+			FROM user, member
+			WHERE member.idProject = ?
+			AND user.idUser = member.idUser`,
+			[req.params.idProject]
+		);
+
+		project.members = users;
+
+		res.send(project);
+	} catch (error) {
+		console.error(error);
+		res.sendStatus(500);
+	}
+});
+
 app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
 	try {
 		Joi.attempt(req.body, schemas.ProjectUpdate);

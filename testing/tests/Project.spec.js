@@ -110,7 +110,7 @@ if (__TEST_MODE__ === 'REST') {
 					points: 1,
 					priority: IssuePriority.NEUTRAL,
 				})
-			).resolves.toBeInstanceOf(Issue);
+			).resolves.toBeCalledWith(expect.objectContaining({code: expect.any(String)}));
 		});
 
 		it('returns a specific issue', async () => {

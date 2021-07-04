@@ -100,7 +100,7 @@ issue
 					description,
 					deadline,
 					label,
-					assignees
+					assignees,
 				});
 				console.log(code);
 			} catch (error) {
@@ -113,19 +113,17 @@ issue
 issue
 	.command('delete <idProject> <code>')
 	.description('delete issue in project with code')
-	.action(
-		async (idProject, code) => {
-			try {
-				let project = await client.getProject({ idProject });
-				let myissue = await project.getIssue(code);
-				await project.deleteIssue(myissue);
-				console.log('Success!');
-			} catch (error) {
-				if (error.response) console.error(error.response.statusText);
-				else console.error(error);
-			}
+	.action(async (idProject, code) => {
+		try {
+			let project = await client.getProject({ idProject });
+			let myissue = await project.getIssue(code);
+			await project.deleteIssue(myissue);
+			console.log('Success!');
+		} catch (error) {
+			if (error.response) console.error(error.response.statusText);
+			else console.error(error);
 		}
-	);
+	});
 
 // issue
 // 	.command('get')
