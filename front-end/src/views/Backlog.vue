@@ -147,12 +147,14 @@
 				>
 					<SprintBox
 						:sprint="sprint"
+						:id="sprint.id"
 						:issuesNum="sprint_issues[index].content.length"
 						class="drag-inner-list sprint-box"
 					>
 						<IssueRow
 							v-for="issue in sprint_issues[index].content"
 							:key="issue.code"
+							:id="issue.code"
 							:issue="issue"
 							class="drag-item issue-row"
 						/>
@@ -164,11 +166,13 @@
 				<BacklogBox
 					:totalIssues="issues.content.length"
 					:activeButton="true"
+					:id="null"
 					class="drag-inner-list backlog-box"
 				>
 					<IssueRow
 						v-for="issue in issues.content"
 						:key="issue.code"
+						:id="issue.code"
 						:issue="issue"
 						class="drag-item issue-row"
 					/>
@@ -233,10 +237,10 @@ export default {
 			return points;
 		},
 		async drop(event) {
-			// console.log(event);
-			let item_id = event.items[0].attributes['data-id'].value;
-			let owner_id = event.owner.attributes['data-id'].value;
-			let target_id = event.droptarget.attributes['data-id'].value;
+			console.log(event);
+			let item_id = event.items[0].id;
+			let owner_id = event.owner.id;
+			let target_id = event.droptarget.id;
 
 			console.log('item ' + item_id);
 			console.log('owner ' + owner_id);
