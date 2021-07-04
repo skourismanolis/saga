@@ -11,7 +11,7 @@ module.exports = class Sprint extends IssueContainer {
 		super(
 			client,
 			{
-				start,
+				start: start === undefined ? null : start,
 				deadline,
 				title,
 			},
