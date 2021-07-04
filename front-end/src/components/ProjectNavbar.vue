@@ -69,13 +69,15 @@ export default {
 	height: 73px;
 	width: 100%;
 	border-radius: 0;
+	border-left-width: 0px;
+	border-right-width: 0px;
 	padding: 0 0;
 	position: relative;
 }
 
 .line {
 	background-color: #aaaaaa;
-	width: 110%;
+	width: 100%;
 	height: 3px;
 
 	position: absolute;
