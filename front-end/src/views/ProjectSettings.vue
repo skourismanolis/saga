@@ -64,11 +64,11 @@
 				<input
 					type="text"
 					class="form-control"
-					v-model="generatedLink"
+					v-model="invite"
 					disabled
 				/>
 				<div class="input-group-append">
-					<button class="btn btn-primary" type="button">
+					<button class="btn btn-primary" @click.prevent="copy">
 						Αντιγραφή
 					</button>
 				</div>
@@ -131,6 +131,7 @@ export default {
 			selectedPicture: null,
 			admins: [],
 			members: [],
+			invite: '',
 		};
 	},
 	computed: {
@@ -184,12 +185,14 @@ export default {
 				alert(error);
 			}
 		},
-
 		async refreshMembers() {
 			[this.members, this.admins] = await Promise.all([
 				this.project.getNonAdmins(),
 				this.project.getAdmins(),
 			]);
+		},
+		async copy() {
+			await navigator.clipboard.writeText(this.invite);
 		},
 	},
 	async created() {
@@ -199,6 +202,14 @@ export default {
 			});
 			await this.refreshMembers();
 			this.projectTitle = this.project.title;
+			let link = await this.project.getInvite();
+			link = link.split('/');
+			let token = link[link.length - 1];
+			let current = window.location.toString();
+			this.invite =
+				current.slice(0, current.indexOf('/projects/')) +
+				'/invite?token=' +
+				token;
 		} catch (error) {
 			alert(error);
 		}
