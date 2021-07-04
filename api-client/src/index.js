@@ -157,7 +157,7 @@ module.exports = class SagaClient {
 
 	async getProject({ idProject }) {
 		if (!this.isLoggedIn) throw LOGINERROR;
-		let {data} = await this.axios.get('/projects/'+idProject);
+		let { data } = await this.axios.get('/projects/' + idProject);
 		return new Project(this, {
 			idProject,
 			title: data.title,
@@ -169,7 +169,9 @@ module.exports = class SagaClient {
 
 	async getProjectIssue({ idProject, code }) {
 		if (!this.isLoggedIn) throw LOGINERROR;
-		let {data} = await this.axios.get('/projects/'+idProject+'/issues/'+code);
+		let { data } = await this.axios.get(
+			'/projects/' + idProject + '/issues/' + code
+		);
 		return new Issue(this, data, idProject);
 	}
 

@@ -26,13 +26,17 @@ module.exports = class Project extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({
-			idProject: this._idProject,
-			title: this.title,
-			picture: this.picture,
-			members: this._members,
-			activeSprint: this._activeSprintId,
-		}, null, 4);
+		return JSON.stringify(
+			{
+				idProject: this._idProject,
+				title: this.title,
+				picture: this.picture,
+				members: this._members,
+				activeSprint: this._activeSprintId,
+			},
+			null,
+			4
+		);
 	}
 
 	/**
