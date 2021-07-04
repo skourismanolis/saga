@@ -54,6 +54,27 @@ if (__TEST_MODE__ === 'REST') {
 				expect(member).toBeInstanceOf(Member)
 			);
 		});
+
+		test('demote admin', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.demoteAdmin({ member: members[0] })
+			).resolves.not.toThrow();
+		});
+
+		test('promote admin', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.promoteAdmin({ member: members[0] })
+			).resolves.not.toThrow();
+		});
+
+		test('delete member', async () => {
+			let members = await project.getMembers();
+			await expect(
+				project.deleteMember({ member: members[0] })
+			).resolves.not.toThrow();
+		});
 	});
 
 	test('refresh', async () => {
