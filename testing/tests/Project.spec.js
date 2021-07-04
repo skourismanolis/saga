@@ -122,6 +122,13 @@ if (__TEST_MODE__ === 'REST') {
 			expect(label).toBeInstanceOf(Label);
 		});
 
+		it('returns a specific column', async () => {
+			let columns = await project.getColumns();
+			await expect(
+				project.getColumn(columns[0].id)
+			).resolves.toBeInstanceOf(Column);
+		});
+
 		it('deletes existing label', async () => {
 			let label = await project.createLabel({
 				name: 'lorem',
@@ -379,6 +386,13 @@ if (__TEST_MODE__ === 'REST') {
 			sprints.content.forEach((s) => expect(s).toBeInstanceOf(Sprint));
 		});
 
+		it('returns a specific sprint', async () => {
+			let sprints = await project.getSprints();
+			await expect(
+				project.getSprint(sprints.content[0].id)
+			).resolves.toBeInstanceOf(Sprint);
+		});
+
 		it('deletes a sprint', async () => {
 			let sprints = await project.getSprints();
 
@@ -399,6 +413,13 @@ if (__TEST_MODE__ === 'REST') {
 			let epics = await project.getEpics();
 			expect(epics).toBeInstanceOf(PaginatedList);
 			epics.content.forEach((s) => expect(s).toBeInstanceOf(Epic));
+		});
+
+		it('returns a specific epic', async () => {
+			let epics = await project.getEpics();
+			await expect(
+				project.getEpic(epics.content[0].id)
+			).resolves.toBeInstanceOf(Epic);
 		});
 
 		it('deletes a epic', async () => {

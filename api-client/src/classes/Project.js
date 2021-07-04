@@ -75,6 +75,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
+	}
+
+	/**
 	 * Get all the epics belonging to the project
 	 * @returns {Object[]} array of Epics
 	 */
@@ -89,6 +102,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific epic from the api
+	 * @param {Number} idEpic
+	 * @returns {Object} Epic
+	 */
+	async getEpic(idEpic) {
+		let { data: epic } = await this.axios.get(
+			`/projects/${this._idProject}/epics/${idEpic}`
+		);
+
+		return new Epic(this.client, epic, this._idProject);
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
@@ -96,6 +122,19 @@ module.exports = class Project extends Base {
 			`/projects/${this._idProject}/labels`
 		);
 		return labels.map((l) => new Label(this.client, l, this._idProject));
+	}
+
+	/**
+	 * Get a specific label from the api
+	 * @param {Number} idLabel
+	 * @returns {Object} Label
+	 */
+	async getLabel(idLabel) {
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${idLabel}`
+		);
+
+		return new Label(this.client, label, this._idProject);
 	}
 
 	/**
