@@ -15,7 +15,11 @@ const schema = Joi.object().keys({
 		.max(c.MAX_TEXT)
 		.required()
 		.allow(null),
-	assignees: Joi.array().min(1).items(Joi.number().integer()).required().allow(null),
+	assignees: Joi.array()
+		.min(1)
+		.items(Joi.number().integer())
+		.required()
+		.allow(null),
 });
 
 module.exports = schema;
