@@ -37,6 +37,15 @@ beforeAll(async () => {
 	project = new Project(client, MOCKPROJECT);
 });
 
+test('toJSON', () => {
+	let proj = project.toJSON();
+	expect(proj).toBeTruthy();
+	expect(() => {
+		proj = JSON.parse(proj);
+	}).not.toThrow();
+	expect(proj).toMatchObject(MOCKPROJECT);
+});
+
 test('project constructor', () => {
 	expect(project.id).toBe(MOCKPROJECT.idProject);
 });
@@ -55,34 +64,30 @@ test('members', async () => {
 });
 
 test('refresh', async () => {
-	let mockAxios = {
-		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-	};
-	project.axios = mockAxios;
+	if (__TEST_MODE__ === 'CLIENT') {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+		};
+		project.axios = mockAxios;
+	}
 	await expect(project.refresh()).resolves.not.toThrow();
-	project.axios = client.axios;
+	if (__TEST_MODE__ === 'CLIENT') {
+		project.axios = client.axios;
+	}
 });
 
 test('updates', async () => {
-	let mockAxios = {
-		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		put: client.axios.put,
-	};
-	project.axios = mockAxios;
-	await expect(
-		project.update({ title: 'test' /*, picture: 'http://google.com'*/ })
-	).resolves.not.toThrow();
-	project.axios = client.axios;
-});
-
-test('toJSON', () => {
-	let proj = project.toJSON();
-	expect(proj).toBeTruthy();
-	expect(() => {
-		proj = JSON.parse(proj);
-	}).not.toThrow();
-
-	expect(proj).toMatchObject(MOCKPROJECT);
+	if (__TEST_MODE__ === 'CLIENT') {
+		let mockAxios = {
+			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			put: client.axios.put,
+		};
+		project.axios = mockAxios;
+	}
+	await expect(project.update({ title: 'test' })).resolves.not.toThrow();
+	if (__TEST_MODE__ === 'CLIENT') {
+		project.axios = client.axios;
+	}
 });
 
 describe('labels', () => {
@@ -94,7 +99,7 @@ describe('labels', () => {
 	it('creates a new label', async () => {
 		let label = await project.createLabel({
 			name: 'lorem',
-			color: '123456',
+			color: '#123456',
 		});
 		expect(label).toBeInstanceOf(Label);
 	});
@@ -102,7 +107,7 @@ describe('labels', () => {
 	it('deletes existing label', async () => {
 		let label = await project.createLabel({
 			name: 'lorem',
-			color: '123456',
+			color: '#123456',
 		});
 		await expect(project.deleteLabel(label)).resolves.not.toThrow();
 	});
