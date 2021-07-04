@@ -4,20 +4,20 @@
 		<i
 			id="issue-icon"
 			class="bi bi-bug issue-element"
-			v-if="issue.type == 'bug'"
+			v-if="issue.category == 'Bug'"
 		></i>
 		<i
 			id="issue-icon"
 			class="bi-book issue-element"
-			v-else-if="issue.type == 'story'"
+			v-else-if="issue.category == 'Story'"
 		></i>
 		<i
 			id="issue-icon"
 			class="bi bi-bullseye issue-element"
-			v-else-if="issue.type == 'task'"
+			v-else-if="issue.category == 'Task'"
 		></i>
-		<span id="issue-id" class="issue-element">{{ '#' + issue.id }}</span>
-		<img
+		<span id="issue-id" class="issue-element">{{ '#' + issue.code }}</span>
+		<!-- <img
 			id="issue-assignee-icon"
 			v-if="issue.assignees.length > 0"
 			:src="issue.assignees[0]"
@@ -37,8 +37,8 @@
 			"
 		>
 			{{ '+' + (issue.assignees.length - 1) }}
-		</div>
-		<span class="issue-element">{{ issue.name }}</span>
+		</div> -->
+		<span class="issue-element">{{ issue.title }}</span>
 		<div
 			id="issue-date"
 			class="
@@ -49,7 +49,7 @@
 				ml-auto
 			"
 		>
-			{{ issue.date }}
+			{{ issue.deadline.toDateString() }}
 		</div>
 		<div
 			id="issue-points"
