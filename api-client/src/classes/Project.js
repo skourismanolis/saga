@@ -89,6 +89,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific epic from the api
+	 * @param {Number} idEpic
+	 * @returns {Object} Epic
+	 */
+	async getEpic(idEpic) {
+		let { data: epic } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${idEpic}`
+		);
+
+		return new Epic(this.client, epic, this._idProject);
+	}
+
+	/**
 	 * @returns {Object[]} array of Label's belonging to this project
 	 */
 	async getLabels() {
