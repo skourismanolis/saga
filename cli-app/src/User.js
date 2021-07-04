@@ -12,7 +12,8 @@ const login = program
 			await client.login({ email, password });
 			await keytar.setPassword('Saga', 'Saga', client._token);
 		} catch (error) {
-			console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
+			else console.error(error);
 		}
 	});
 
@@ -23,7 +24,7 @@ const logout = program
 		try {
 			await keytar.deletePassword('Saga', 'Saga');
 		} catch (error) {
-			if (error.response) console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
 		}
 	});
@@ -46,12 +47,13 @@ const register = program
 				'Registration Complete! We have sent you a verification email'
 			);
 		} catch (error) {
-			if (error.response) console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
 		}
 	});
 
-const user = program.command('user');
+const user = program.command('user').description('users related supercommand');
+
 user.command('delete <password>')
 	.description('delete this user profile')
 	.action(async (password) => {
@@ -60,7 +62,7 @@ user.command('delete <password>')
 			console.log('User deleted successfully!');
 			await keytar.deletePassword('Saga', 'Saga');
 		} catch (error) {
-			if (error.response) console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
 		}
 	});
@@ -79,7 +81,7 @@ user.command('update <username> <email> <password> <name> <surname> <plan>')
 			});
 			console.log('User updated successfully!');
 		} catch (error) {
-			if (error.response) console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
 		}
 	});
@@ -91,7 +93,7 @@ user.command('get')
 			let data = await client.getProfile();
 			console.log(data);
 		} catch (error) {
-			if (error.response) console.error(error.response.data);
+			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
 		}
 	});

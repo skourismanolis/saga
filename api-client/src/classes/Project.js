@@ -12,11 +12,13 @@ module.exports = class Project extends Base {
 	 * @param {SagaClient} client client this Project is attached to.
 	 * @param {Number} idProject project id
 	 */
-	constructor(client, { idProject, title, activeSprint }) {
+	constructor(client, { idProject, title, picture, activeSprint, members }) {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
 		this._activeSprintId = activeSprint;
+		this.picture = picture;
+		this._members = members;
 	}
 
 	get id() {
@@ -24,12 +26,17 @@ module.exports = class Project extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({
-			idProject: this._idProject,
-			title: this.title,
-			picture: this.picture,
-			activeSprint: this._activeSprintId,
-		});
+		return JSON.stringify(
+			{
+				idProject: this._idProject,
+				title: this.title,
+				picture: this.picture,
+				members: this._members,
+				activeSprint: this._activeSprintId,
+			},
+			null,
+			4
+		);
 	}
 
 	/**
@@ -378,6 +385,7 @@ module.exports = class Project extends Base {
 		description,
 		deadline,
 		label,
+		assignees,
 	}) {
 		let labelValue;
 
@@ -392,7 +400,7 @@ module.exports = class Project extends Base {
 			priority: priority || null,
 			description: description || null,
 			deadline: deadline || null,
-			assignees: [],
+			assignees: assignees || null,
 		};
 
 		let {
@@ -442,11 +450,9 @@ module.exports = class Project extends Base {
 		this._activeSprintId = project.activeSprint;
 	}
 
-	async update({ title, picture }) {
+	async update({ title }) {
 		await this.axios.put(`/projects/${this._idProject}`, {
 			title,
-			picture,
-			activeSprint: this._activeSprintId,
 		});
 
 		await this.refresh();
