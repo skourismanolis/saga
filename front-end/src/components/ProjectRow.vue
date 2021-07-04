@@ -1,23 +1,30 @@
 <template>
-	<div class="d-flex flex-row align-items-center project-entry">
+	<router-link
+		class="d-flex flex-row align-items-center project-entry"
+		:to="`/projects/${project.id}/backlog`"
+	>
 		<img
-			:src="project.pic"
+			:src="project.picture || DEFAULT_PICTURE"
 			width="24px"
 			height="24px"
 			class="rounded-circle align-self-center mr8"
 		/>
-		<span id="project-name">{{ project.name }}</span>
+		<span class="project-name">{{ project.title }}</span>
 		<div class="ml-auto members-container d-flex flex-row">
-			<img
+			<a
 				v-for="(admin, index) in firstNadmins"
 				:key="index"
-				:src="project.admins[index]"
-				width="24px"
-				height="24px"
-				class="rounded-circle align-self-center mr8"
-			/>
-			<div
-				v-if="project.admins.length > n"
+				v-b-tooltip.hover="admin.name + ' ' + admin.surname"
+			>
+				<img
+					:src="admin.picture || DEFAULT_PICTURE"
+					width="24px"
+					height="24px"
+					class="rounded-circle align-self-center mr8"
+				/>
+			</a>
+			<a
+				v-if="admins.length > MAX_USERS"
 				class="
 					d-flex
 					flex-row
@@ -25,22 +32,27 @@
 					justify-content-center
 					overflow-num
 				"
+				v-b-tooltip.hover="admins.length + ' ακόμα χρήστες'"
 			>
-				{{ '+' + (project.admins.length - n) }}
-			</div>
+				{{ '+' + (admins.length - MAX_USERS) }}
+			</a>
 		</div>
 		<div class="ml100 members-container d-flex flex-row">
-			<img
+			<a
 				v-for="(member, index) in firstNmembers"
 				:key="index"
-				:src="project.members[index]"
-				width="24px"
-				height="24px"
-				class="rounded-circle align-self-center mr8"
-			/>
-			<div
+				v-b-tooltip.hover="member.name + ' ' + member.surname"
+			>
+				<img
+					:src="member || picture"
+					width="24px"
+					height="24px"
+					class="rounded-circle align-self-center mr8"
+				/>
+			</a>
+			<a
 				id="issue-assignees-num"
-				v-if="project.members.length > n"
+				v-if="members.length > MAX_USERS"
 				class="
 					d-flex
 					flex-row
@@ -48,14 +60,18 @@
 					justify-content-center
 					overflow-num
 				"
+				v-b-tooltip.hover="members.length + ' ακόμα χρήστες'"
 			>
-				{{ '+' + (project.members.length - n) }}
-			</div>
+				{{ '+' + (members.length - MAX_USERS) }}
+			</a>
 		</div>
-	</div>
+	</router-link>
 </template>
 
 <script>
+const DEFAULT_PICTURE = require('@/assets/profile pics/default-profile-pic.png');
+const MAX_USERS = 5;
+
 export default {
 	components: {},
 	props: {
@@ -63,31 +79,49 @@ export default {
 	},
 	data() {
 		return {
-			n: 5,
-			membersTrimmed: false,
-			adminsTrimmed: false,
+			admins: [],
+			members: [],
 		};
 	},
 	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
+		MAX_USERS() {
+			return MAX_USERS;
+		},
 		firstNadmins() {
-			if (this.project.admins.length < this.n)
-				return this.project.admins.length;
+			if (this.admins.length < MAX_USERS) return this.admins;
 			else {
-				return this.project.admins.slice(0, this.n);
+				return this.admins.slice(0, MAX_USERS);
 			}
 		},
 		firstNmembers() {
-			if (this.project.members.length < this.n)
-				return this.project.members.length;
+			if (this.members.length < MAX_USERS) return this.members;
 			else {
-				return this.project.members.slice(0, this.n);
+				return this.members.slice(0, MAX_USERS);
 			}
 		},
+	},
+	async mounted() {
+		[this.admins, this.members] = await Promise.all([
+			this.project.getAdmins(),
+			this.project.getNonAdmins(),
+		]);
 	},
 };
 </script>
 
 <style scoped>
+a {
+	color: initial !important;
+	text-decoration: none !important;
+}
+
+a:hover {
+	text-decoration: none !important;
+}
+
 .project-entry {
 	height: 40px;
 	padding: 12px;

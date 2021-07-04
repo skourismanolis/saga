@@ -99,6 +99,15 @@ app.get('/', async (req, res) => {
 		// }
 		// create correct project objects
 		projects.forEach((project) => {
+			//create project picture url
+			if (project.picture != null)
+				project.picture =
+					req.protocol +
+					'://' +
+					req.get('host') +
+					'/projectPics/' +
+					project.picture;
+
 			// add members property inside projcet
 			project.members = [];
 			// find the members to add them
@@ -108,12 +117,6 @@ app.get('/', async (req, res) => {
 					project.members.push(user);
 				}
 			});
-		});
-		// Rename property "title" to "name"
-		projects = projects.map(function (obj) {
-			obj['name'] = obj['title']; // Assign new key
-			delete obj['title']; // Delete old key
-			return obj;
 		});
 		res.status(200)
 			.header('X-Pagination-Total', result_pag.length)
@@ -180,8 +183,8 @@ app.post('/', async (req, res) => {
 app.get('/:idProject', async (req, res) => {
 	try {
 		let [project] = await db.pool.query(
-			`SELECT * FROM project 
-			WHERE idProject = ? AND idProject IN 
+			`SELECT * FROM project
+			WHERE idProject = ? AND idProject IN
 			( SELECT idProject FROM member WHERE idUser = ?)`,
 			[req.params.idProject, req.user.idUser]
 		);
@@ -192,6 +195,13 @@ app.get('/:idProject', async (req, res) => {
 		}
 
 		project = project[0];
+		if (project.picture != null)
+			project.picture =
+				req.protocol +
+				'://' +
+				req.get('host') +
+				'/projectPics/' +
+				project.picture;
 
 		let [users] = await db.pool.query(
 			`
@@ -225,10 +235,10 @@ app.put('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		if (project.length == 0) {
 			res.sendStatus(404);
 		}
-		await db.pool.query('UPDATE project title = ? WHERE idProject = ?', [
-			req.body.title,
-			req.params.idProject,
-		]);
+		await db.pool.query(
+			'UPDATE project SET title = ? WHERE idProject = ?',
+			[req.body.title, req.params.idProject]
+		);
 		res.sendStatus(200);
 	} catch (error) {
 		console.error(error);
@@ -308,8 +318,8 @@ app.put(
 			let [result] = await db.pool.query(
 				'UPDATE project SET picture = ? WHERE idProject = ?',
 				[
-					req.file != undefined ? req.file.filename : null,
-					req.user.idUser,
+					req.file !== undefined ? req.file.filename : null,
+					req.params.idProject,
 				]
 			);
 			if (result.length == 0) {
