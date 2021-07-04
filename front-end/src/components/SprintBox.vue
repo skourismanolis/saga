@@ -1,8 +1,22 @@
 <template>
 	<div class="sprint-container">
 		<div class="d-flex flex-row top justify-content-between">
-			<div>
-				<span id="sprint-title"> {{ sprint.name }} </span>
+			<div class="d-flex flex-row align-items-baseline">
+				<span
+					v-if="editTitle == false"
+					class="sprint-title"
+					@dblclick="toggleEditTitle()"
+				>
+					{{ sprint.name }}
+				</span>
+				<b-form-input
+					v-else
+					class="title-input"
+					type="text"
+					v-model="sprint.name"
+					required
+					@focusout="toggleEditTitle()"
+				></b-form-input>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<div class="d-flex align-items-baseline flex-row">
@@ -71,6 +85,11 @@ export default {
 	props: {
 		sprint: Object,
 	},
+	data() {
+		return {
+			editTitle: false,
+		};
+	},
 	computed: {
 		issuesNum() {
 			if (this.sprint.issues != undefined && this.sprint.issues != null) {
@@ -80,6 +99,15 @@ export default {
 		},
 		dateTime() {
 			return 'Tue 23 Mar - Wed 36 Mar';
+		},
+	},
+	methods: {
+		toggleEditTitle() {
+			if (this.editTitle == false) {
+				this.editTitle = true;
+			} else {
+				this.editTitle = false;
+			}
 		},
 	},
 };
@@ -96,10 +124,23 @@ export default {
 	margin-bottom: 12px;
 }
 
-#sprint-title {
+.sprint-title {
 	font-size: 24px;
 	font-weight: bold;
 	color: white;
+	max-width: 286px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.title-input {
+	/* background: none; */
+	height: 36px;
+	border: 0;
+	padding: 6px;
+	font-size: 24px;
+	font-weight: bold;
 }
 
 #issues-num {
