@@ -130,7 +130,7 @@
 			<div class="drag-container" v-drag-and-drop:options="options">
 				<div
 					class="align-self-center d-flex flex-column"
-					v-if="renderedSprints.length === 0"
+					v-if="sprints.content.length === 0"
 				>
 					<img
 						id="empty-sprint-art"
@@ -140,56 +140,40 @@
 						Δεν υπάρχουν sprints!
 					</span>
 				</div>
-				<div v-else>
-					<vue-draggable-group
-						v-for="sprint in renderedSprints"
-						v-model="sprint.issues"
-						:groups="dropZones"
-						itemsKey="issues"
-						:key="sprint.id"
-						:data-id="sprint.id"
-						@change="updateSprint()"
+				<div
+					v-else
+					v-for="(sprint, index) in sprints.content"
+					:key="index"
+				>
+					<SprintBox
+						:sprint="sprint"
+						:issuesNum="sprint_issues[index].content.length"
+						class="drag-inner-list sprint-box"
 					>
-						<SprintBox
-							:sprint="sprint"
-							class="drag-inner-list sprint-box"
-						>
-							<IssueRow
-								v-for="issue in sprint.issues"
-								:key="issue.code"
-								:data-id="issue.code"
-								:issue="issue"
-								class="drag-item issue-row"
-							/>
-						</SprintBox>
-					</vue-draggable-group>
+						<IssueRow
+							v-for="issue in sprint_issues[index].content"
+							:key="issue.code"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</SprintBox>
 				</div>
 
 				<div id="line"><hr /></div>
 
-				<vue-draggable-group
-					v-for="backlog in renderedBacklog"
-					v-model="backlog.issues"
-					:groups="dropZones"
-					itemsKey="issues"
-					:key="backlog.id"
-					:data-id="backlog.id"
-					@change="updateBacklog()"
+				<!-- <BacklogBox
+					:backlog="backlog"
+					:activeButton="true"
+					class="drag-inner-list backlog-box"
 				>
-					<BacklogBox
-						:backlog="backlog"
-						:activeButton="true"
-						class="drag-inner-list backlog-box"
-					>
-						<IssueRow
-							v-for="issue in backlog.issues"
-							:key="issue.code"
-							:data-id="issue.code"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</BacklogBox>
-				</vue-draggable-group>
+					<IssueRow
+						v-for="issue in backlog.issues"
+						:key="issue.code"
+						:data-id="issue.code"
+						:issue="issue"
+						class="drag-item issue-row"
+					/>
+				</BacklogBox> -->
 			</div>
 		</div>
 	</div>
@@ -197,13 +181,13 @@
 
 <script>
 import IssueRow from '../components/IssueRow.vue';
-import BacklogBox from '../components/BacklogBox.vue';
+// import BacklogBox from '../components/BacklogBox.vue';
 import SprintBox from '../components/SprintBox.vue';
 
 export default {
 	components: {
 		IssueRow,
-		BacklogBox,
+		// BacklogBox,
 		SprintBox,
 	},
 	data() {
@@ -491,7 +475,7 @@ export default {
 			//get render data
 			this.renderedBacklog = this.getRenderedBacklog();
 			// this.renderedEpics = this.getRenderedEpics();
-			this.renderedSprints = this.getRenderedSprints();
+			// this.renderedSprints = this.getRenderedSprints();
 
 			this.loaded = true;
 		} catch (error) {
