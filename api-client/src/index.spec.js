@@ -41,3 +41,16 @@ it('saves and restores login', async () => {
 	expect(client.token).toBe(token);
 	expect(client.user).toEqual(usr);
 });
+
+it('applies token', async () => {
+	let client = new SagaClient({ url: __APIURL__ });
+	const TOKEN = '123';
+	let mock = jest.fn(async () => {
+		return {};
+	});
+	client.axios = {
+		get: mock,
+	};
+	await client.applyToken({ token: TOKEN });
+	expect(mock.mock.calls[0][0]).toMatch(TOKEN);
+});
