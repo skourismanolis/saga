@@ -19,7 +19,7 @@
 				Νέο Epic
 				<i class="bi bi-plus create-epic-button-icon"></i>
 			</button>
-			<div class="d-flex flex-column" v-if="renderedEpics.length === 0">
+			<div class="d-flex flex-column" v-if="epics.content.length === 0">
 				<img id="empty-epic-art" src="../assets/empty-epic-art.png" />
 				<div class="d-flex flex-row justify-content-center">
 					<span id="empty-epic-msg"> Δεν υπάρχουν Epics! </span>
@@ -30,7 +30,7 @@
 			</div>
 			<div v-else id="epic-container">
 				<div
-					v-for="(epic, index) in renderedEpics"
+					v-for="(epic, index) in epics.content"
 					:key="index"
 					class="d-flex flex-column"
 				>
@@ -70,10 +70,10 @@
 								justify-content-center
 							"
 						>
-							{{ epicPoints(epic) }}
+							{{ epicPoints(index) }}
 						</div>
 						<span id="epic-issues-num">
-							{{ epic.issues.length }}
+							{{ epic_issues[index].content.length }}
 						</span>
 						<i
 							v-if="epic.expanded == false"
@@ -90,7 +90,7 @@
 					</div>
 					<div v-if="epic.expanded == true">
 						<IssueRow
-							v-for="(issue, index) in epic.issues"
+							v-for="(issue, index) in epic_issues[index].content"
 							:key="index"
 							:issue="issue"
 						>
@@ -280,41 +280,81 @@ export default {
 			return sprintsArray;
 		},
 
-		epicPoints(epic) {
+		epicPoints(index) {
 			let points = 0;
-			epic.issues.forEach((issue) => {
+			this.epic_issues[index].content.forEach((issue) => {
 				points += issue.points;
 			});
 			return points;
 		},
-		drop(event) {
+		async drop(event) {
 			// console.log(event);
 			let item_id = event.items[0].attributes['data-id'].value;
 			let owner_id = event.owner.attributes['data-id'].value;
 			let target_id = event.droptarget.attributes['data-id'].value;
 
-			// console.log('item ' + item_id);
-			// console.log('owner ' + owner_id);
-			// console.log('target ' + target_id);
+			console.log('item ' + item_id);
+			console.log('owner ' + owner_id);
+			console.log('target ' + target_id);
 
-			let owner = this.dropZones.find((obj) => obj.id == owner_id);
-			let target = this.dropZones.find((obj) => obj.id == target_id);
-			let item = owner.issues.find(
-				(obj) => parseInt(obj.code) == item_id
-			);
+			// let owner = this.dropZones.find((obj) => obj.id == owner_id);
+			// let target = this.dropZones.find((obj) => obj.id == target_id);
+			// let item = owner.issues.find(
+			// 	(obj) => parseInt(obj.code) == item_id
+			// );
 
-			console.log(item);
+			// console.log(item);
 			// console.log(owner);
 			// console.log(target);
 
-			owner.issues = owner.issues.filter(
-				(elem) => parseInt(elem.code) != item_id
-			);
+			// owner.issues = owner.issues.filter(
+			// 	(elem) => parseInt(elem.code) != item_id
+			// );
+			var target;
+			var owner;
+			var item;
+			try {
+				//get owner & item from non rendered data
+				if (owner_id != -1) {
+					// look in sprints
+					let index = this.sprints.content.findIndex(
+						(obj) => obj.id == owner_id
+					);
+					owner = this.sprints.content[index];
 
-			if (target_id == -1) item._idSprint = null;
-			else item._idSprint = target_id;
+					item = this.sprint_issues[index].content.find(
+						(obj) => obj.code == item_id
+					);
+				} else {
+					owner = this.project;
 
-			target.issues.push(item);
+					item = this.issues.content.find(
+						(obj) => obj.code == item_id
+					);
+				}
+
+				// get target from non rendered data
+				if (target_id != -1) {
+					// look in sprints
+					target = this.sprints.content.find(
+						(obj) => obj.id == target_id
+					);
+					item._idSprint = parseInt(target_id);
+				} else {
+					// it'sthe backlog
+					target = this.project;
+					item._idSprint = null;
+				}
+
+				console.log(owner);
+				console.log(item);
+				console.log(target);
+
+				await owner.removeIssues(item);
+				await target.addIssues(item);
+			} catch (error) {
+				alert(error);
+			}
 		},
 
 		toggleExpanded(epic) {
@@ -451,7 +491,7 @@ export default {
 
 			//get render data
 			this.renderedBacklog = this.getRenderedBacklog();
-			this.renderedEpics = this.getRenderedEpics();
+			// this.renderedEpics = this.getRenderedEpics();
 			this.renderedSprints = this.getRenderedSprints();
 
 			this.loaded = true;
