@@ -302,8 +302,8 @@ app.put(
 			let [result] = await db.pool.query(
 				'UPDATE project SET picture = ? WHERE idProject = ?',
 				[
-					req.file != undefined ? req.file.filename : null,
-					req.user.idUser,
+					req.file !== undefined ? req.file.filename : null,
+					req.params.idProject,
 				]
 			);
 			if (result.length == 0) {
