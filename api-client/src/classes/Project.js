@@ -406,7 +406,7 @@ module.exports = class Project extends Base {
 			newIssue
 		);
 
-		return {code};
+		return await this.getIssue(code);
 	}
 
 	async refresh() {
