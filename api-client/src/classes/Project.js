@@ -40,6 +40,16 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * @returns {String} the invitation link
+	 */
+	async getInvite() {
+		let { data } = await this.axios.get(
+			`/projects/${this._idProject}/invite`
+		);
+		return data.inviteLink;
+	}
+
+	/**
 	 * Returns the active sprint or null if there isn't any;
 	 * @returns {Object|Null} the current active sprint
 	 */
