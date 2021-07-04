@@ -147,7 +147,8 @@ app.post('/', async (req, res) => {
 				process.env.EMAIL_SECRET
 			);
 
-			const url = `http://localhost:3000/token/${emailToken}`;
+			const url =
+				req.protocol + '://' + req.get('host') + `/token/${emailToken}`;
 
 			var transporter = nodemailer.createTransport({
 				host: 'mail.gmx.com',
