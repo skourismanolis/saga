@@ -10,6 +10,7 @@ import EpicCreate from '../views/EpicCreate.vue';
 import EpicView from '../views/EpicView.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
 import Projects from '../views/Projects.vue';
+import Invite from '@/views/Invite.vue';
 
 Vue.use(VueRouter);
 
@@ -94,6 +95,14 @@ const routes = [
 			projectNavbar: false,
 		},
 	},
+	{
+		path: '/invite',
+		name: 'Invite',
+		component: Invite,
+		meta: {
+			projectNavbar: false,
+		},
+	},
 ];
 
 const router = new VueRouter({
@@ -119,7 +128,7 @@ router.beforeEach((to, from, next) => {
 		console.log('navigation cancelled');
 		next({
 			path: '/login',
-			query: { redir: to.path },
+			query: { redir: to.fullPath },
 		});
 		return;
 	} else next();

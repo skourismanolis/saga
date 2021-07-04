@@ -64,11 +64,11 @@
 				<input
 					type="text"
 					class="form-control"
-					v-model="generatedLink"
+					v-model="invite"
 					disabled
 				/>
 				<div class="input-group-append">
-					<button class="btn btn-primary" type="button">
+					<button class="btn btn-primary" @click.prevent="copy">
 						Αντιγραφή
 					</button>
 				</div>
@@ -90,9 +90,9 @@
 					:member="admin"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
-					@upgrade="upgradeMember"
-					@downgrade="downgradeMember"
-					@remove="removeMember"
+					@promote="promoteMember"
+					@demote="demoteMember"
+					@delete="deleteMember"
 				/>
 			</div>
 			<div class="mb24">
@@ -107,9 +107,9 @@
 					:member="member"
 					class="list-item"
 					v-bind:class="{ oddrow: index % 2 != 0 }"
-					@upgrade="upgradeMember"
-					@downgrade="downgradeMember"
-					@remove="removeMember"
+					@promote="promoteMember"
+					@demote="demoteMember"
+					@delete="deleteMember"
 				/>
 			</div>
 		</div>
@@ -131,6 +131,7 @@ export default {
 			selectedPicture: null,
 			admins: [],
 			members: [],
+			invite: '',
 		};
 	},
 	computed: {
@@ -160,17 +161,38 @@ export default {
 				alert(error);
 			}
 		},
-		async upgradeMember(member) {
-			console.log(member);
-			//todo: add implementation
+		async promoteMember(member) {
+			try {
+				await this.project.promoteAdmin({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
 		},
-		async downgradeMember(member) {
-			console.log(member);
-			//todo: add implementation
+		async demoteMember(member) {
+			try {
+				await this.project.demoteAdmin({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
 		},
-		async removeMember(member) {
-			console.log(member);
-			//todo: add implementation
+		async deleteMember(member) {
+			try {
+				await this.project.deleteMember({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
+		},
+		async refreshMembers() {
+			[this.members, this.admins] = await Promise.all([
+				this.project.getNonAdmins(),
+				this.project.getAdmins(),
+			]);
+		},
+		async copy() {
+			await navigator.clipboard.writeText(this.invite);
 		},
 	},
 	async created() {
@@ -178,11 +200,16 @@ export default {
 			this.project = await this.$client.getProject({
 				idProject: this.$route.params.idProject,
 			});
-			[this.members, this.admins] = await Promise.all([
-				this.project.getNonAdmins(),
-				this.project.getAdmins(),
-			]);
+			await this.refreshMembers();
 			this.projectTitle = this.project.title;
+			let link = await this.project.getInvite();
+			link = link.split('/');
+			let token = link[link.length - 1];
+			let current = window.location.toString();
+			this.invite =
+				current.slice(0, current.indexOf('/projects/')) +
+				'/invite?token=' +
+				token;
 		} catch (error) {
 			alert(error);
 		}
