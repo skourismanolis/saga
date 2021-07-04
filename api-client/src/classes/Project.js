@@ -18,7 +18,8 @@ module.exports = class Project extends Base {
 		this.title = title;
 		this._activeSprintId = activeSprint !== undefined ? activeSprint : null;
 		this.picture = picture !== undefined ? picture : null;
-		this._members = (members == undefined || members.length === 0) ? null : members;
+		this._members =
+			members == undefined || members.length === 0 ? null : members;
 	}
 
 	get id() {
@@ -44,10 +45,14 @@ module.exports = class Project extends Base {
 	 * @returns {Object|Null} the current active sprint
 	 */
 	async getActiveSprint() {
+		if (this._activeSprintId == null) return null;
 		let { data } = await this.axios.get(
 			`/projects/${this._idProject}/active`
 		);
-		if (data == null) return null;
+		if (data == null) {
+			await this.refresh();
+			return null;
+		}
 		return new Sprint(this.client, data, this._idProject);
 	}
 
