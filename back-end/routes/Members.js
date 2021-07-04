@@ -118,7 +118,6 @@ async function members_promote(req, res) {
 
 async function members_demote(req, res) {
 	try {
-		console.log(req.body);
 		if (req.body.idUser == null) {
 			res.sendStatus(400);
 			return;

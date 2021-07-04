@@ -79,7 +79,6 @@ describe('members', () => {
 
 	test('demote admin', async () => {
 		let members = await project.getMembers();
-		console.log(members[1]);
 		await expect(
 			project.demoteAdmin({ member: members[1] })
 		).resolves.not.toThrow();
