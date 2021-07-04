@@ -116,4 +116,13 @@ p.card-text {
 	white-space: nowrap;
     overflow: hidden;
 }
+h6{
+	width:255.96px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+    overflow: hidden;
+}
+#main{
+	width: 325px;
+}
 </style>
