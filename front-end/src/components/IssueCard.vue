@@ -9,6 +9,7 @@
 				<b-card-text v-b-popover.hover.top="`{{issue.title}}`">
 					<h6 style=" float:left">{{ issue.title }}</h6>
 					<div id="dets-column" class="footer-element">
+						
 						<i
 							id="issue-icon"
 							class="bi bi-bug issue-element"
@@ -72,8 +73,8 @@ export default {
 <style scoped>
 footer.card-footer {
 	border-radius: 0px;
-	padding: 6px;
-	padding-top: 9px;
+	padding: 0px;
+	padding-top: 6px;
 	padding-right: 12px;
 	background-color: rgb(218, 218, 218);
 }
@@ -85,6 +86,10 @@ footer.card-footer {
 
 p.card-body {
 	display: inline;
+}
+
+.card-body{
+	padding-right: 12px;
 }
 
 #date-label {
@@ -110,18 +115,23 @@ i {
 	padding-top: 0;
 	margin-top: 0;
 	color:#DB5461;
+	width: 24px;
+	height: 24px;
 }
+
 p.card-text {
 	text-overflow: ellipsis;
 	white-space: nowrap;
     overflow: hidden;
 }
+
 h6{
 	width:255.96px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
     overflow: hidden;
 }
+
 #main{
 	width: 325px;
 }
