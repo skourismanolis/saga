@@ -99,6 +99,19 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Get a specific label from the api
+	 * @param {Number} idLabel
+	 * @returns {Object} Label
+	 */
+	async getLabel(idLabel) {
+		let { data: label } = await this.axios.get(
+			`/projects/${this._idProject}/labels/${idLabel}`
+		);
+
+		return new Label(this.client, label, this._idProject);
+	}
+
+	/**
 	 * @returns {Object[]} array of Columns belonging to this project
 	 */
 	async getColumns() {
