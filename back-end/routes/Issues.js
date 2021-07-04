@@ -76,28 +76,40 @@ async function issues_get(req, res) {
 	try {
 		let query_string = 'SELECT * FROM issue WHERE idProject = ?';
 		let query_params = [req.params.idProject];
-		if (req.query.inSprint != null) {
-			if (isNaN(req.query.inSprint)) {
-				res.sendStatus(400);
-				return;
+		if (req.query.inSprint !== undefined) {
+			if (req.query.inSprint === 'null' || req.query.inSprint === null) {
+				query_string += ' AND idSprint IS NULL';
+			} else {
+				if (isNaN(req.query.inSprint)) {
+					res.sendStatus(400);
+					return;
+				}
+				query_string += ' AND idSprint = ?';
+				query_params.push(req.query.inSprint);
 			}
-			query_string += ' AND idSprint = ?';
-			query_params.push(req.query.inSprint);
 		}
-		if (req.query.column != null) {
-			if (isNaN(req.query.column)) {
-				res.sendStatus(400);
-				return;
+		if (req.query.column !== undefined) {
+			if (req.query.column === null) {
+				query_string += ' AND idColumn IS ?';
+			} else {
+				if (isNaN(req.query.column)) {
+					res.sendStatus(400);
+					return;
+				}
+				query_string += ' AND idColumn = ?';
 			}
-			query_string += ' AND idColumn = ?';
 			query_params.push(req.query.column);
 		}
-		if (req.query.inEpic != null) {
-			if (isNaN(req.query.inEpic)) {
-				res.sendStatus(400);
-				return;
+		if (req.query.inEpic !== undefined) {
+			if (req.query.inEpic === null) {
+				query_string += ' AND idEpic IS ?';
+			} else {
+				if (isNaN(req.query.inEpic)) {
+					res.sendStatus(400);
+					return;
+				}
+				query_string += ' AND idEpic = ?';
 			}
-			query_string += ' AND idEpic = ?';
 			query_params.push(req.query.inEpic);
 		}
 		if (req.query.assignee != null) {
