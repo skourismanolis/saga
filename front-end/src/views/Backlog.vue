@@ -79,13 +79,13 @@
 							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
-							@click="toggleExpanded(index)"
+							@click="toggleExpanded(epic)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
-							@click="toggleExpanded(index)"
+							@click="toggleExpanded(epic)"
 						></i>
 					</div>
 					<div v-if="epic.expanded == true">
@@ -207,6 +207,8 @@ export default {
 	data() {
 		return {
 			loaded: false,
+			renderComponent: true,
+
 			project: {},
 
 			//epic data
@@ -222,6 +224,11 @@ export default {
 
 			//backlog data
 			issues: {},
+
+			//render data
+			renderedBacklog: [],
+			renderedEpics: [],
+			renderedSprints: [],
 		};
 	},
 	computed: {
@@ -229,33 +236,42 @@ export default {
 			return {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
-				// onDrop: this.drop,
+				onDrop: this.drop,
 			};
 		},
 
-		renderedEpics() {
+		dropZones() {
+			return [].concat(this.renderedBacklog, this.renderedSprints);
+		},
+	},
+	methods: {
+		forceRerender() {
+			this.$forceUpdate();
+		},
+
+		getRenderedEpics() {
 			let epicsArray = this.epics.content;
 			for (let i = 0; i < epicsArray.length; i++) {
-				epicsArray[i].issues = this.epic_issues[i].content;
+				epicsArray[i].issues = [...this.epic_issues[i].content];
 				epicsArray[i].expanded = true;
 			}
 			return epicsArray;
 		},
 
-		renderedBacklog() {
+		getRenderedBacklog() {
 			let backlogArray = [
 				{
 					id: -1,
-					issues: this.issues.content,
+					issues: [...this.issues.content],
 				},
 			];
 			return backlogArray;
 		},
 
-		renderedSprints() {
+		getRenderedSprints() {
 			let sprintsArray = this.sprints.content;
 			for (let i = 0; i < sprintsArray.length; i++) {
-				sprintsArray[i].issues = this.sprint_issues[i].content;
+				sprintsArray[i].issues = [...this.sprint_issues[i].content];
 				sprintsArray[i].active = false;
 				if (this.active_sprint == null) {
 					sprintsArray[i].exists_active = false;
@@ -266,11 +282,6 @@ export default {
 			return sprintsArray;
 		},
 
-		dropZones() {
-			return [].concat(this.renderedBacklog, this.renderedSprints);
-		},
-	},
-	methods: {
 		epicPoints(epic) {
 			let points = 0;
 			epic.issues.forEach((issue) => {
@@ -279,23 +290,26 @@ export default {
 			return points;
 		},
 		drop(event) {
-			let item_id = event.items[0].attributes['data-id'].value;
-			let target_id = event.droptarget.attributes['data-id'].value;
+			console.log(event);
+			// let item_id = event.items[0].attributes['data-id'].value;
+			// let target_id = event.droptarget.attributes['data-id'].value;
 
-			let target = this.dropZones.find((obj) => obj.id == target_id);
+			// let target = this.dropZones.find((obj) => obj.id == target_id);
 
-			let item = target.issues.find((obj) => obj.id == item_id);
-			item.sprintId = parseInt(target_id);
+			// let item = target.issues.find((obj) => obj.id == item_id);
+			// item.sprintId = parseInt(target_id);
 		},
 
-		toggleExpanded(i) {
-			console.log(i);
-			if (this.epic_expanded[i] == true) {
-				this.epic_expanded[i] = false;
-			} else if (this.epic_expanded[i] == false) {
-				console.log('here');
-				this.epic_expanded[i] = true;
+		toggleExpanded(epic) {
+			console.log(epic);
+			if (epic.expanded == true) {
+				console.log('its true');
+				epic.expanded = false;
+			} else if (epic.expanded == false) {
+				console.log('its false');
+				epic.expanded = true;
 			}
+			this.forceRerender();
 		},
 		addIssuesToActiveSprint(i) {
 			let active_sprint_id = this.sprints[0].id;
@@ -393,7 +407,9 @@ export default {
 			}
 
 			//getting backlog data
-			this.issues = await this.project.searchIssues({});
+			this.issues = await this.project.searchIssues({
+				/*inSprint: null*/
+			});
 
 			//getting sprint data
 			this.active_sprint = await this.project.getActiveSprint();
@@ -404,6 +420,11 @@ export default {
 				let tempIssues = await this.sprints.content[i].getIssues();
 				this.sprint_issues.push(tempIssues);
 			}
+
+			//get render data
+			this.renderedBacklog = this.getRenderedBacklog();
+			this.renderedEpics = this.getRenderedEpics();
+			this.renderedSprints = this.getRenderedSprints();
 
 			this.loaded = true;
 		} catch (error) {
