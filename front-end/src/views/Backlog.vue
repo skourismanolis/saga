@@ -155,8 +155,8 @@
 						>
 							<IssueRow
 								v-for="issue in sprint.issues"
-								:key="issue.id"
-								:data-id="issue.id"
+								:key="issue.code"
+								:data-id="issue.code"
 								:issue="issue"
 								class="drag-item issue-row"
 							/>
@@ -181,8 +181,8 @@
 					>
 						<IssueRow
 							v-for="issue in backlog.issues"
-							:key="issue.id"
-							:data-id="issue.id"
+							:key="issue.code"
+							:data-id="issue.code"
 							:issue="issue"
 							class="drag-item issue-row"
 						/>
@@ -229,7 +229,7 @@ export default {
 			return {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
-				onDrop: this.drop,
+				// onDrop: this.drop,
 			};
 		},
 
