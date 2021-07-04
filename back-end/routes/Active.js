@@ -15,6 +15,8 @@ async function get_active_sprint(req, res) {
 			[req.params.idProject]
 		);
 
+		if (result.length == 0) result = null;
+
 		res.send(result);
 	} catch (error) {
 		if (error != c.INVALID_TRANSACTION) {
