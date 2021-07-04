@@ -7,13 +7,13 @@
 					class="sprint-title"
 					@dblclick="toggleEditTitle()"
 				>
-					{{ sprint.name }}
+					{{ sprint.title }}
 				</span>
 				<b-form-input
 					v-else
 					class="title-input"
 					type="text"
-					v-model="sprint.name"
+					v-model="sprint.title"
 					required
 					@focusout="toggleEditTitle()"
 				></b-form-input>
@@ -23,24 +23,18 @@
 				<b-form-datepicker
 					class="sprint-date"
 					size="sm"
-					v-model="sprint.start_date"
+					v-model="sprint.start"
 					:date-format-options="{
 						year: 'numeric',
 						month: 'numeric',
 						day: 'numeric',
 					}"
 				></b-form-datepicker>
-				<span
-					v-if="editTitle == false"
-					class="sprint-title"
-					@dblclick="toggleEditTitle()"
-				>
-					-
-				</span>
+				<span v-if="editTitle == false" class="sprint-title"> - </span>
 				<b-form-datepicker
 					class="sprint-date"
 					size="sm"
-					v-model="sprint.start_date"
+					v-model="sprint.deadline"
 					:date-format-options="{
 						year: 'numeric',
 						month: 'numeric',

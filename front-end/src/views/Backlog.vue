@@ -130,7 +130,7 @@
 			<div class="drag-container" v-drag-and-drop:options="options">
 				<div
 					class="align-self-center d-flex flex-column"
-					v-if="sprints.length === 0"
+					v-if="renderedSprints.length === 0"
 				>
 					<img
 						id="empty-sprint-art"
@@ -142,7 +142,7 @@
 				</div>
 				<div v-else>
 					<vue-draggable-group
-						v-for="sprint in sprints"
+						v-for="sprint in renderedSprints"
 						v-model="sprint.issues"
 						:groups="dropZones"
 						itemsKey="issues"
@@ -167,7 +167,7 @@
 				<div id="line"><hr /></div>
 
 				<vue-draggable-group
-					v-for="backlog in backlogs"
+					v-for="backlog in renderedBacklog"
 					v-model="backlog.issues"
 					:groups="dropZones"
 					itemsKey="issues"
@@ -195,14 +195,14 @@
 
 <script>
 import IssueRow from '../components/IssueRow.vue';
-// import BacklogBox from '../components/BacklogBox.vue';
-// import SprintBox from '../components/SprintBox.vue';
+import BacklogBox from '../components/BacklogBox.vue';
+import SprintBox from '../components/SprintBox.vue';
 
 export default {
 	components: {
 		IssueRow,
-		// BacklogBox,
-		// SprintBox,
+		BacklogBox,
+		SprintBox,
 	},
 	data() {
 		return {
@@ -215,138 +215,13 @@ export default {
 			epic_expanded: [],
 
 			//sprint data
+			active_sprint: {},
+			active_sprint_issues: [],
 			sprints: {},
-
-			// sprints: [
-			// 	{
-			// 		id: 1,
-			// 		name: 'Example Sprint',
-			// 		start_date: new Date('08/14/2020'),
-			// 		end_date: new Date('09/14/2020'),
-			// 		active: true,
-			// 		exists_active: true,
-			// 		issues: [
-			// 			{
-			// 				id: 1,
-			// 				epicId: 1,
-			// 				sprintId: 1,
-			// 				color: '#EE0000',
-			// 				type: 'task',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Neutral',
-			// 			},
-			// 			{
-			// 				id: 2,
-			// 				epicId: 1,
-			// 				sprintId: 1,
-			// 				color: '#047C97',
-			// 				type: 'story',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Low',
-			// 			},
-			// 		],
-			// 	},
-
-			// 	{
-			// 		id: 2,
-			// 		name: 'Example Sprint',
-			// 		start_date: new Date(1995, 1, 17),
-			// 		end_date: new Date(1995, 11, 17),
-			// 		active: false,
-			// 		exists_active: true,
-			// 		issues: [
-			// 			{
-			// 				id: 3,
-			// 				epicId: 2,
-			// 				sprintId: 2,
-			// 				color: '#EE0000',
-			// 				type: 'task',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Neutral',
-			// 			},
-			// 			{
-			// 				id: 4,
-			// 				epicId: 2,
-			// 				sprintId: 2,
-			// 				color: '#047C97',
-			// 				type: 'story',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Low',
-			// 			},
-			// 		],
-			// 	},
-			// ],
+			sprint_issues: [],
 
 			//backlog data
-			issues: [],
-
-			// backlogs: [
-			// 	{
-			// 		id: -1,
-			// 		issues: [
-			// 			{
-			// 				id: 5,
-			// 				epicId: 3,
-			// 				sprintId: -1,
-			// 				color: '#EE0000',
-			// 				type: 'task',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Neutral',
-			// 			},
-			// 			{
-			// 				id: 6,
-			// 				epicId: 3,
-			// 				sprintId: -1,
-			// 				color: '#047C97',
-			// 				type: 'story',
-			// 				assignees: [
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 					require('../assets/profile pics/default-profile-pic.png'),
-			// 				],
-			// 				name: 'Example Issue',
-			// 				date: '23 Μαρ',
-			// 				points: 2,
-			// 				priority: 'Low',
-			// 			},
-			// 		],
-			// 	},
-			// ],
+			issues: {},
 		};
 	},
 	computed: {
@@ -358,10 +233,6 @@ export default {
 			};
 		},
 
-		dropZones() {
-			return [].concat(this.sprints, this.backlogs);
-		},
-
 		renderedEpics() {
 			let epicsArray = this.epics.content;
 			for (let i = 0; i < epicsArray.length; i++) {
@@ -369,6 +240,34 @@ export default {
 				epicsArray[i].expanded = true;
 			}
 			return epicsArray;
+		},
+
+		renderedBacklog() {
+			let backlogArray = [
+				{
+					id: -1,
+					issues: this.issues.content,
+				},
+			];
+			return backlogArray;
+		},
+
+		renderedSprints() {
+			let sprintsArray = this.sprints.content;
+			for (let i = 0; i < sprintsArray.length; i++) {
+				sprintsArray[i].issues = this.sprint_issues[i].content;
+				sprintsArray[i].active = false;
+				if (this.active_sprint == null) {
+					sprintsArray[i].exists_active = false;
+				} else {
+					sprintsArray[i].exists_active = true;
+				}
+			}
+			return sprintsArray;
+		},
+
+		dropZones() {
+			return [].concat(this.renderedBacklog, this.renderedSprints);
 		},
 	},
 	methods: {
@@ -495,6 +394,16 @@ export default {
 
 			//getting backlog data
 			this.issues = await this.project.searchIssues({});
+
+			//getting sprint data
+			this.active_sprint = await this.project.getActiveSprint();
+			this.sprints = await this.project.getSprints();
+
+			for (let i = 0; i < this.sprints.content.length; i++) {
+				//issue fetching
+				let tempIssues = await this.sprints.content[i].getIssues();
+				this.sprint_issues.push(tempIssues);
+			}
 
 			this.loaded = true;
 		} catch (error) {
