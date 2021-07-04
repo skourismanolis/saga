@@ -161,16 +161,35 @@ export default {
 			}
 		},
 		async promoteMember(member) {
-			console.log(member);
-			//todo: add implementation
+			try {
+				await this.project.promoteAdmin({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
 		},
 		async demoteMember(member) {
-			console.log(member);
-			//todo: add implementation
+			try {
+				await this.project.demoteAdmin({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
 		},
 		async deleteMember(member) {
-			console.log(member);
-			//todo: add implementation
+			try {
+				await this.project.deleteMember({ member });
+				await this.refreshMembers();
+			} catch (error) {
+				alert(error);
+			}
+		},
+
+		async refreshMembers() {
+			[this.members, this.admins] = await Promise.all([
+				this.project.getNonAdmins(),
+				this.project.getAdmins(),
+			]);
 		},
 	},
 	async created() {
@@ -178,10 +197,7 @@ export default {
 			this.project = await this.$client.getProject({
 				idProject: this.$route.params.idProject,
 			});
-			[this.members, this.admins] = await Promise.all([
-				this.project.getNonAdmins(),
-				this.project.getAdmins(),
-			]);
+			await this.refreshMembers();
 			this.projectTitle = this.project.title;
 		} catch (error) {
 			alert(error);
