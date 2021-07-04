@@ -10,14 +10,15 @@ const c = require('../constants');
 async function get_active_sprint(req, res) {
 	try {
 		let [result] = await db.pool.query(
-			`SELECT s.idSprint,s.title,s.start,s.deadline
-            FROM sprint s, project p WHERE s.idSprint = p.activeSprint AND s.idProject = p.idProject AND p.idProject = ?`,
+			`SELECT s.idSprint,s.start,s.deadline,s.title
+		    FROM sprint s, project p WHERE s.idSprint = p.activeSprint AND s.idProject = p.idProject AND p.idProject = ?`,
 			[req.params.idProject]
 		);
-
-		if (result.length == 0) result = null;
-
-		res.send(result);
+		if (result.length == 0) {
+			res.send(null);
+			return;
+		}
+		res.send(result[0]);
 	} catch (error) {
 		if (error != c.INVALID_TRANSACTION) {
 			console.error(error);
