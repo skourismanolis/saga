@@ -148,7 +148,7 @@ describe('projects', () => {
 	it('deletes a project', async () => {
 		let projects = await client.getProjects();
 		await expect(
-			client.deleteProject({ project: projects.content[0] })
+			client.deleteProject({ project: projects.content[1] })
 		).resolves.not.toThrow();
 	});
 });
