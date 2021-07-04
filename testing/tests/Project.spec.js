@@ -381,19 +381,17 @@ describe('sprints', () => {
 		if (__TEST_MODE__ === 'CLIENT') {
 			let mockAxios = {
 				get: jest.fn(async () => ({
-					data: [{ ...MOCKPROJECT, activeSprint: spr.id }],
+					data: { ...MOCKPROJECT, activeSprint: spr.id },
 				})),
 				put: client.axios.put,
 			};
 			project.axios = mockAxios;
 		}
 		await expect(project.setActiveSprint(spr)).resolves.not.toThrow();
-		await project.refresh();
 		if (__TEST_MODE__ === 'CLIENT') project.axios = client.axios;
 		spr = await project.getActiveSprint();
 		expect(spr).toBeInstanceOf(Sprint);
-		content = await project.getSprints();
-		content = content._content;
+		({ content } = await project.getSprints());
 		if (__TEST_MODE__ === 'REST') expect(content).toContainEqual(spr);
 	});
 
