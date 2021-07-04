@@ -76,19 +76,19 @@
 							{{ epic_issues[index].content.length }}
 						</span>
 						<i
-							v-if="epic.expanded == false"
+							v-if="epic_expanded[index] == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
-							@click="toggleExpanded(epic)"
+							@click="toggleExpanded(index)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
-							@click="toggleExpanded(epic)"
+							@click="toggleExpanded(index)"
 						></i>
 					</div>
-					<div v-if="epic.expanded == true">
+					<div v-if="epic_expanded[index] == true">
 						<IssueRow
 							v-for="(issue, index) in epic_issues[index].content"
 							:key="index"
@@ -357,14 +357,13 @@ export default {
 			}
 		},
 
-		toggleExpanded(epic) {
-			console.log(epic);
-			if (epic.expanded == true) {
+		toggleExpanded(index) {
+			if (this.epic_expanded[index] == true) {
 				console.log('its true');
-				epic.expanded = false;
-			} else if (epic.expanded == false) {
+				this.epic_expanded[index] = false;
+			} else if (this.epic_expanded[index] == false) {
 				console.log('its false');
-				epic.expanded = true;
+				this.epic_expanded[index] = true;
 			}
 			this.$forceUpdate();
 		},
