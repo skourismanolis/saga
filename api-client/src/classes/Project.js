@@ -37,7 +37,6 @@ module.exports = class Project extends Base {
 	 * @returns {Object|Null} the current active sprint
 	 */
 	async getActiveSprint() {
-		// if (this._activeSprintId == null) return null;
 		let { data } = await this.axios.get(
 			`/projects/${this._idProject}/active`
 		);
