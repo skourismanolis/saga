@@ -1,5 +1,8 @@
 <template>
-	<div class="d-flex justify-content-start">
+	<div v-if="!loaded" class="d-flex justify-content-center">
+		<b-spinner />
+	</div>
+	<div v-else class="d-flex justify-content-start">
 		<div class="d-flex flex-column" id="left">
 			<span id="epics-label">Epics</span>
 			<button
@@ -16,7 +19,7 @@
 				Νέο Epic
 				<i class="bi bi-plus create-epic-button-icon"></i>
 			</button>
-			<div class="d-flex flex-column" v-if="epics.length === 0">
+			<div class="d-flex flex-column" v-if="renderedEpics.length === 0">
 				<img id="empty-epic-art" src="../assets/empty-epic-art.png" />
 				<div class="d-flex flex-row justify-content-center">
 					<span id="empty-epic-msg"> Δεν υπάρχουν Epics! </span>
@@ -27,7 +30,7 @@
 			</div>
 			<div v-else id="epic-container">
 				<div
-					v-for="(epic, index) in epics"
+					v-for="(epic, index) in renderedEpics"
 					:key="index"
 					class="d-flex flex-column"
 				>
@@ -76,13 +79,13 @@
 							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
-							@click="toggleExpanded(index)"
+							@click="toggleExpanded(epic)"
 						></i>
 						<i
 							v-else
 							id="epic-chevron"
 							class="bi bi-chevron-down"
-							@click="toggleExpanded(index)"
+							@click="toggleExpanded(epic)"
 						></i>
 					</div>
 					<div v-if="epic.expanded == true">
@@ -96,7 +99,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="d-flex flex-column" id="right">
+		<!-- <div class="d-flex flex-column" id="right">
 			<span id="sprints-label">Sprints</span>
 			<div class="d-flex flex-row align-items-baseline">
 				<div class="d-flex flex-row" id="filter-row-container">
@@ -186,25 +189,27 @@
 					</BacklogBox>
 				</vue-draggable-group>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </template>
 
 <script>
 import IssueRow from '../components/IssueRow.vue';
-import BacklogBox from '../components/BacklogBox.vue';
-import SprintBox from '../components/SprintBox.vue';
+// import BacklogBox from '../components/BacklogBox.vue';
+// import SprintBox from '../components/SprintBox.vue';
 
 export default {
 	components: {
 		IssueRow,
-		BacklogBox,
-		SprintBox,
+		// BacklogBox,
+		// SprintBox,
 	},
 	data() {
 		return {
+			loaded: false,
 			project: {},
-			epics: [],
+			epics: {},
+			epic_issues: [],
 
 			sprints: [
 				{
@@ -346,6 +351,15 @@ export default {
 		dropZones() {
 			return [].concat(this.sprints, this.backlogs);
 		},
+
+		renderedEpics() {
+			let epicsArray = this.epics.content;
+			for (let i = 0; i < epicsArray.length; i++) {
+				epicsArray[i].issues = this.epic_issues[i].content;
+				epicsArray[i].expanded = true;
+			}
+			return epicsArray;
+		},
 	},
 	methods: {
 		epicPoints(epic) {
@@ -365,17 +379,15 @@ export default {
 			item.sprintId = parseInt(target_id);
 		},
 
-		toggleExpanded(i) {
-			if (this.epics[i].expanded == false) {
-				this.epics[i].expanded = true;
-			} else if (this.epics[i].expanded == true) {
-				this.epics[i].expanded = false;
-			}
+		toggleExpanded(epic) {
+			console.log(epic);
+			if (epic.expanded) epic.expanded = false;
+			else epic.expanded = true;
 		},
 		addIssuesToActiveSprint(i) {
 			let active_sprint_id = this.sprints[0].id;
 
-			this.epics[i].issues.forEach((epic_issue) => {
+			this.renderedEpics[i].issues.forEach((epic_issue) => {
 				//check backlog
 				for (let j = 0; j < this.backlogs[0].issues.length; j++) {
 					if (
@@ -456,13 +468,13 @@ export default {
 
 			//getting epic data
 			this.epics = await this.project.getEpics();
-			this.epics = this.epics.content;
+			this.epic_issues = [];
 
-			this.epics.forEach(async (epic) => {
-				let issues = await epic.getIssues();
-				epic['issues'] = issues.content;
-				epic['expanded'] = false;
-			});
+			for (let i = 0; i < this.epics.content.length; i++) {
+				let tempIssues = await this.epics.content[i].getIssues();
+				this.epic_issues.push(tempIssues);
+			}
+			this.loaded = true;
 		} catch (error) {
 			alert(error);
 		}
