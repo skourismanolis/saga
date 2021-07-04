@@ -286,16 +286,14 @@ export default {
 			return points;
 		},
 		drop(event) {
-			console.log(event);
+			// console.log(event);
 			let item_id = event.items[0].attributes['data-id'].value;
 			let owner_id = event.owner.attributes['data-id'].value;
 			let target_id = event.droptarget.attributes['data-id'].value;
 
-			console.log('item ' + item_id);
-			console.log('owner ' + owner_id);
-			console.log('target ' + target_id);
-
-			// console.log(this.dropZones());
+			// console.log('item ' + item_id);
+			// console.log('owner ' + owner_id);
+			// console.log('target ' + target_id);
 
 			let owner = this.dropZones.find((obj) => obj.id == owner_id);
 			let target = this.dropZones.find((obj) => obj.id == target_id);
@@ -304,12 +302,16 @@ export default {
 			);
 
 			console.log(item);
-			console.log(owner);
-			console.log(target);
+			// console.log(owner);
+			// console.log(target);
 
 			owner.issues = owner.issues.filter(
 				(elem) => parseInt(elem.code) != item_id
 			);
+
+			if (target_id == -1) item._idSprint = null;
+			else item._idSprint = target_id;
+
 			target.issues.push(item);
 		},
 
@@ -421,7 +423,7 @@ export default {
 
 			//getting backlog data
 			this.issues = await this.project.searchIssues({
-				/*inSprint: null*/
+				inSprint: null,
 			});
 
 			//getting sprint data
