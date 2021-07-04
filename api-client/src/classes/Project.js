@@ -355,6 +355,17 @@ module.exports = class Project extends Base {
 	}
 
 	/**
+	 * Remove member from project
+	 * @param {String} idUser
+	 */
+	async deleteMember(idUser) {
+		await this.axios.delete(
+			`projects/${this._idProject}/members`, {idUser}
+		);
+		this.refresh();
+	}
+
+	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code
 	 */
