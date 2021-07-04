@@ -49,5 +49,7 @@ app.get('/', async (req, res) => {
 app.use('/users', require('./routes/Users'));
 app.use('/token', require('./routes/Token'));
 app.use('/projects', require('./routes/Projects'));
+app.use('/projectPics/', express.static('./assets/projectPics'));
+app.use('/profilePics/', express.static('./assets/profilePics'));
 
 module.exports = app;

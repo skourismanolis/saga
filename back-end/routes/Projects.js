@@ -99,6 +99,15 @@ app.get('/', async (req, res) => {
 		// }
 		// create correct project objects
 		projects.forEach((project) => {
+			//create project picture url
+			if (project.picture != null)
+				project.picture =
+					req.protocol +
+					'://' +
+					req.get('host') +
+					'/projectPics/' +
+					project.picture;
+
 			// add members property inside projcet
 			project.members = [];
 			// find the members to add them
@@ -186,6 +195,13 @@ app.get('/:idProject', async (req, res) => {
 		}
 
 		project = project[0];
+		if (project.picture != null)
+			project.picture =
+				req.protocol +
+				'://' +
+				req.get('host') +
+				'/projectPics/' +
+				project.picture;
 
 		let [users] = await db.pool.query(
 			`
