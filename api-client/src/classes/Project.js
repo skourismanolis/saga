@@ -239,10 +239,9 @@ module.exports = class Project extends Base {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.deadline when will this sprint end
 	 */
-	async createSprint({ start, deadline, title }) {
+	async createSprint({ deadline, title }) {
 		let newSprint = {
 			title: title,
-			start: start || null,
 			deadline: deadline || null,
 		};
 
