@@ -92,7 +92,7 @@
 		</div>
 		<slot></slot>
 		<div
-			v-if="sprint.issues.length == 0"
+			v-if="issuesNum == 0"
 			class="empty-msg d-flex justify-content-center"
 		>
 			<span> Δεν υπάρχουν issues! </span>
@@ -104,22 +104,12 @@
 export default {
 	props: {
 		sprint: Object,
+		issuesNum: Number,
 	},
 	data() {
 		return {
 			editTitle: false,
 		};
-	},
-	computed: {
-		issuesNum() {
-			if (this.sprint.issues != undefined && this.sprint.issues != null) {
-				return this.sprint.issues.length;
-			}
-			return 0;
-		},
-		dateTime() {
-			return 'Tue 23 Mar - Wed 36 Mar';
-		},
 	},
 	methods: {
 		toggleEditTitle() {
