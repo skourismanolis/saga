@@ -250,8 +250,23 @@ export default {
 		},
 	},
 	methods: {
-		async editSprint() {
-			console.log('here');
+		async createSprint() {
+			await this.project.createSprint({
+				title: 'Νέο sprint',
+				deadline: new Date(),
+			});
+			location.reload();
+		},
+
+		async editSprint(value) {
+			let sprint = this.sprints.content.find(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+			await sprint.update({
+				title: sprint.title,
+				deadline: sprint.deadline,
+			});
+			await this.sprints.refresh();
 		},
 
 		async dectivateSprint() {
@@ -367,14 +382,6 @@ export default {
 			if (this.active_sprint != null) {
 				console.log(epic);
 			}
-		},
-
-		async createSprint() {
-			await this.project.createSprint({
-				title: 'Νέο sprint',
-				deadline: new Date(),
-			});
-			location.reload();
 		},
 
 		filterByEpic() {
