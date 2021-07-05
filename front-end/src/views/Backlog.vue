@@ -502,13 +502,8 @@ export default {
 				})
 				.catch(() => {});
 		},
-	},
-	async created() {
-		try {
-			this.project = await this.$client.getProject({
-				idProject: this.$route.params.idProject,
-			});
 
+		async initEpicData() {
 			//getting epic data
 			this.epics = await this.project.getEpics();
 			this.epic_issues = [];
@@ -521,12 +516,16 @@ export default {
 				//expanded init
 				this.epic_expanded.push(false);
 			}
+		},
 
+		async initBacklogData() {
 			//getting backlog data
 			this.issues = await this.project.searchIssues({
 				inSprint: null,
 			});
+		},
 
+		async initSprintData() {
 			//getting sprint data
 			this.active_sprint = await this.project.getActiveSprint();
 			this.sprints = await this.project.getSprints();
@@ -556,6 +555,16 @@ export default {
 						this.sprints.content[0],
 					];
 			}
+		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+			this.initEpicData();
+			this.initBacklogData();
+			this.initSprintData();
 
 			//filter data
 			this.labels = await this.project.getLabels();
