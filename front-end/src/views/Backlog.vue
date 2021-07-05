@@ -246,19 +246,46 @@ export default {
 			console.log('owner ' + owner_id);
 			console.log('target ' + target_id);
 
-			// let owner = this.dropZones.find((obj) => obj.id == owner_id);
-			// let target = this.dropZones.find((obj) => obj.id == target_id);
-			// let item = owner.issues.find(
-			// 	(obj) => parseInt(obj.code) == item_id
-			// );
+			var item;
+			//if owner is not the backlog
+			if (owner_id != '') {
+				//find owner index in sprints
+				let owner_index = this.sprints.content.findIndex(
+					(obj) => parseInt(obj.id) == parseInt(owner_id)
+				);
 
-			// console.log(item);
-			// console.log(owner);
-			// console.log(target);
+				// find item
+				let item_index = this.sprint_issues[
+					owner_index
+				].content.findIndex(
+					(obj) => parseInt(obj.code) == parseInt(item_id)
+				);
 
-			// owner.issues = owner.issues.filter(
-			// 	(elem) => parseInt(elem.code) != item_id
-			// );
+				item = this.sprint_issues[owner_index].content.splice(
+					item_index,
+					1
+				);
+				item = item.pop();
+			} else {
+				let item_index = this.issues.content.findIndex(
+					(obj) => parseInt(obj.code) == parseInt(item_id)
+				);
+
+				item = this.issues.content.splice(item_index, 1);
+				item = item.pop();
+			}
+
+			// check target
+			if (target_id != '') {
+				let target_Index = this.sprints.content.findIndex(
+					(obj) => parseInt(obj.id) == parseInt(target_id)
+				);
+				item._idSprint = parseInt(target_id);
+				this.sprint_issues[target_Index].content.push(item);
+			} else {
+				item._idSprint = null;
+				this.issues.content.push(item);
+			}
 		},
 
 		toggleExpanded(index) {
