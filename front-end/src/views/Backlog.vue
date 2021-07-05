@@ -98,19 +98,40 @@
 		</div>
 		<div class="d-flex flex-column" id="right">
 			<span id="sprints-label">Sprints</span>
-			<div class="d-flex flex-row align-items-baseline">
-				<div class="d-flex flex-row" id="filter-row-container">
+			<div
+				class="
+					d-flex
+					flex-row
+					align-items-baseline
+					justify-content-between
+				"
+			>
+				<div class="d-flex flex-row align-items-baseline">
 					<span id="filter-text" class="filter-element"
 						>Φίλτραρε issues με:</span
 					>
-					<a type="button" class="link filter-element">Epic</a>
-					<a type="button" class="link">Label</a>
+
+					<b-form-select
+						class="filter-box filter-element"
+						v-model="selected_epic"
+						:options="epicTitles"
+						@change="refreshIssues"
+					></b-form-select>
+					<b-form-select
+						class="filter-box"
+						v-model="selected_label"
+						:options="labelTitles"
+					></b-form-select>
+
 				</div>
 
 				<button
 					id="create-sprint-button"
 					type="button"
-					class="btn btn-primary d-flex align-items-center mx-auto"
+
+					class="btn btn-primary d-flex align-items-center"
+					@click="createSprint()"
+
 				>
 					Δημιουργία Sprint
 					<i class="bi bi-plus create-epic-button-icon"></i>
@@ -195,269 +216,64 @@ export default {
 	},
 	data() {
 		return {
-			epics: [
-				{
-					id: 1,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 1,
-							epicId: 1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 2,
-							epicId: 1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
+			loaded: false,
+			renderComponent: true,
 
-				{
-					id: 2,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 3,
-							epicId: 2,
-							sprintId: 2,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 4,
-							epicId: 2,
-							sprintId: 2,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
+			project: {},
 
-				{
-					id: 3,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [
-						{
-							id: 5,
-							epicId: 3,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: 3,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-					expanded: false,
-				},
-				{
-					id: 4,
-					name: 'Example Epic',
-					date: '23 Μαρ',
-					points: 10,
-					issues: [],
-					expanded: false,
-				},
-			],
+			//epic data
+			epics: {},
+			epic_issues: [],
+			epic_expanded: [],
 
-			sprints: [
-				{
-					id: 1,
-					name: 'Example Sprint',
-					start_date: new Date('08/14/2020'),
-					end_date: new Date('09/14/2020'),
-					active: true,
-					exists_active: true,
-					issues: [
-						{
-							id: 1,
-							epicId: 1,
-							sprintId: 1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 2,
-							epicId: 1,
-							sprintId: 1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
+			//sprint data
+			active_sprint: {},
+			sprints: {},
+			sprint_issues: [],
 
-				{
-					id: 2,
-					name: 'Example Sprint',
-					start_date: new Date(1995, 1, 17),
-					end_date: new Date(1995, 11, 17),
-					active: false,
-					exists_active: true,
-					issues: [
-						{
-							id: 3,
-							epicId: 2,
-							sprintId: 2,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 4,
-							epicId: 2,
-							sprintId: 2,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
-			backlogs: [
-				{
-					id: -1,
-					issues: [
-						{
-							id: 5,
-							epicId: 3,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: 3,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
+			//backlog data
+			issues: {},
+
+			//filter data
+			selected_epic: null,
+			selected_label: null,
+			labels: {},
+
 		};
 	},
 	computed: {
+		epicTitles() {
+			let epic_titles = [
+				{
+					value: null,
+					text: 'Επιλέξτε epic',
+				},
+			];
+			this.epics.content.forEach((element) => {
+				epic_titles.push({
+					value: element,
+					text: element.title,
+				});
+			});
+			return epic_titles;
+		},
+
+		labelTitles() {
+			let label_titles = [
+				{
+					value: null,
+					text: 'Επιλέξτε label',
+				},
+			];
+			this.labels.forEach((element) => {
+				label_titles.push({
+					value: element,
+					text: element.name,
+				});
+			});
+			return label_titles;
+		},
+
 		options() {
 			return {
 				dropzoneSelector: '.drag-inner-list',
@@ -466,16 +282,112 @@ export default {
 			};
 		},
 
-		dropZones() {
-			return [].concat(this.sprints, this.backlogs);
-		},
 	},
 	methods: {
 		drop(event) {
 			let item_id = event.items[0].attributes['data-id'].value;
 			let target_id = event.droptarget.attributes['data-id'].value;
 
-			let target = this.dropZones.find((obj) => obj.id == target_id);
+
+		async editSprint(value) {
+			let sprint = this.sprints.content.find(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+			await sprint.update({
+				title: sprint.title,
+				deadline: sprint.deadline,
+			});
+			await this.sprints.refresh();
+		},
+
+		async dectivateSprint() {
+			await this.project.setActiveSprint(null);
+			this.active_sprint = null;
+			await this.sprints.refresh();
+		},
+
+		async activateSprint(value) {
+			console.log(value);
+			let sprint = this.sprints.content.find(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+
+			await this.project.setActiveSprint(sprint);
+			this.active_sprint = sprint;
+			await this.sprints.refresh();
+
+			let sprint_index = this.sprints.content.findIndex(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+			//move issues array
+			[this.sprint_issues[0], this.sprint_issues[sprint_index]] = [
+				this.sprint_issues[sprint_index],
+				this.sprint_issues[0],
+			];
+			//move sprint
+			[this.sprints.content[0], this.sprints.content[sprint_index]] = [
+				this.sprints.content[sprint_index],
+				this.sprints.content[0],
+			];
+			this.$forceUpdate();
+		},
+
+		epicPoints(index) {
+			let points = 0;
+			this.epic_issues[index].content.forEach((issue) => {
+				points += issue.points;
+			});
+			return points;
+		},
+		async drop(event) {
+			try {
+				let item_id = event.items[0].id;
+				let owner_id = event.owner.id;
+				let target_id = event.droptarget.id;
+
+				var item;
+				var owner;
+				var target;
+				var owner_index;
+				var target_index;
+				//if owner is not the backlog
+				if (owner_id != '') {
+					//find owner index in sprints
+					owner_index = this.sprints.content.findIndex(
+						(obj) => parseInt(obj.id) == parseInt(owner_id)
+					);
+
+					owner = this.sprints.content.find(
+						(obj) => parseInt(obj.id) == parseInt(owner_id)
+					);
+
+					// find item
+					item = this.sprint_issues[owner_index].content.find(
+						(obj) => parseInt(obj.code) == parseInt(item_id)
+					);
+				} else {
+					item = this.issues.content.find(
+						(obj) => parseInt(obj.code) == parseInt(item_id)
+					);
+					owner = this.issues;
+				}
+				// check target
+				if (target_id != '') {
+					target_index = this.sprints.content.findIndex(
+						(obj) => parseInt(obj.id) == parseInt(target_id)
+					);
+
+					target = this.sprints.content.find(
+						(obj) => parseInt(obj.id) == parseInt(target_id)
+					);
+
+					await target.addIssues([item]);
+					await this.sprint_issues[target_index].refresh();
+				} else {
+					await owner.removeIssues([item]);
+					await this.issues.refresh();
+				}
+
 
 			let item = target.issues.find((obj) => obj.id == item_id);
 			item.sprintId = parseInt(target_id);
@@ -524,8 +436,20 @@ export default {
 							}
 						}
 					}
-				}
-			});
+
+				});
+				this.$forceUpdate();
+			}
+		},
+
+		redirectEpicView(id) {
+			this.$router
+				.push({
+					//this is sleepless code it probably sucks
+					path: `/projects/${this.$route.params.idProject}/epic/${id}`,
+				})
+				.catch(() => {});
+
 		},
 		redirectEpicCreate() {
 			this.$router
@@ -534,7 +458,103 @@ export default {
 				})
 				.catch(() => {});
 		},
+
+		async refreshIssues() {
+			let params = {};
+			if (this.selected_label != null) {
+				params.labels = [this.selected_label];
+			}
+			if (this.selected_epic != null) {
+				params.inEpic = this.selected_epic;
+			}
+
+			//update backlog
+			this.issues = await this.project.searchIssues({
+				inSprint: null,
+				...params,
+			});
+			this.issues.refresh();
+
+			//update sprints
+			for (let i = 0; i < this.sprints.content.length; i++) {
+				this.sprint_issues[i] = await this.project.searchIssues({
+					inSprint: this.sprints.content[i],
+					...params,
+				});
+				this.sprint_issues[i].refresh();
+				this.$forceUpdate();
+			}
+		},
 	},
+
+	async created() {
+		try {
+			this.loaded = false;
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+
+			//getting epic data
+			this.epics = await this.project.getEpics();
+			this.epic_issues = [];
+
+			for (let i = 0; i < this.epics.content.length; i++) {
+				//issue fetching
+				let tempIssues = await this.epics.content[i].getIssues();
+				this.epic_issues.push(tempIssues);
+
+				//expanded init
+				this.epic_expanded.push(false);
+			}
+
+			//getting backlog data
+			this.issues = await this.project.searchIssues({
+				inSprint: null,
+			});
+			console.log('here');
+
+			//getting sprint data
+			this.active_sprint = await this.project.getActiveSprint();
+			this.sprints = await this.project.getSprints({ finished: 0 });
+
+			for (let i = 0; i < this.sprints.content.length; i++) {
+				//issue fetching
+				let tempIssues = await this.project.searchIssues({
+					inSprint: this.sprints.content[i],
+				});
+				// let tempIssues = await this.sprints.content[i].getIssues();
+				this.sprint_issues.push(tempIssues);
+			}
+
+			//move active sprint to first pos
+			if (this.active_sprint != null) {
+				let sprint_index = this.sprints.content.findIndex(
+					(obj) => parseInt(obj.id) == parseInt(this.active_sprint.id)
+				);
+
+				//move issues array
+				[this.sprint_issues[0], this.sprint_issues[sprint_index]] = [
+					this.sprint_issues[sprint_index],
+					this.sprint_issues[0],
+				];
+
+				//move sprints
+				[this.sprints.content[0], this.sprints.content[sprint_index]] =
+					[
+						this.sprints.content[sprint_index],
+						this.sprints.content[0],
+					];
+			}
+
+			//filter data
+			this.labels = await this.project.getLabels();
+
+			this.loaded = true;
+		} catch (error) {
+			alert(error);
+		}
+	},
+
 };
 </script>
 
@@ -632,7 +652,6 @@ export default {
 	margin-left: 36px;
 	margin-right: 36px;
 	width: 865px;
-	position: relative;
 }
 
 #sprints-label {
@@ -647,17 +666,13 @@ export default {
 }
 
 #filter-text {
+	width: 145px;
 	font-size: 16px;
 }
 
 #create-sprint-button {
 	height: 36px;
 	margin-bottom: 24px;
-}
-
-#filter-row-container {
-	position: absolute;
-	left: 0;
 }
 
 .backlog-box {
@@ -682,5 +697,9 @@ export default {
 	padding: 0;
 	background-color: #c4c4c4;
 	border: 0;
+}
+
+.filter-box {
+	width: 150px;
 }
 </style>
