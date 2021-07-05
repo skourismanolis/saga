@@ -147,6 +147,9 @@ jobs:
         steps:
             - name: checkout
               uses: actions/checkout@v2
+            - name: initialize docker
+              run: docker-compose up -d
+              working-directory: ./back-end/tests
             - uses: actions/setup-node@v2
               with:
                   node-version: '14'
@@ -154,12 +157,9 @@ jobs:
             - name: install modules
               run: yarn
               working-directory: ./cli-app
-            - name: initialize docker
-              run: docker-compose up -d
-              working-directory: ./back-end/tests
             - name: run backend server
               run: yarn test-serve
-              working-directory: ./back-end
+              working-directory: ./back-end\tests
             - name: run tests
               run: |
                   yarn test
