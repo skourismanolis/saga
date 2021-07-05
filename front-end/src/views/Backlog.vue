@@ -186,8 +186,10 @@
 						<div class="d-flex justify-content-center mt-2">
 							<b-pagination
 								v-if="sprint_issues[index].content.length > 0"
-								@input="sprint_issues[index].setPage($event)"
-								:value="sprint_issues[index].currentPage"
+								@input="
+									sprint_issues[index].setPage($event - 1)
+								"
+								:value="sprint_issues[index].currentPage + 1"
 								:perPage="sprint_issues[index].perPage"
 								:total-rows="sprint_issues[index].total"
 							/>
