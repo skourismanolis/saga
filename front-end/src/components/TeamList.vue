@@ -1,18 +1,22 @@
 <template>
 	<div>
 		<b-avatar-group size="36px" id="team">
-			<b-avatar
-				v-for="member in printMembers"
-				:key="member"
-				:text="member.username"
-				v-b-popover.hover.top="member.username"
-			>
-			</b-avatar>
+			<span>
+				<b-avatar
+					v-for="(member, idx) in printMembers"
+					:key="idx"
+					:text="getFullName(member)"
+					:src="member.picture || DEFAULT_PICTURE"
+					v-b-popover.hover.top="getFullName(member)"
+				/>
+			</span>
 		</b-avatar-group>
 	</div>
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 //in b-avatar print image
 export default {
 	props: {
@@ -20,10 +24,18 @@ export default {
 		max: Number,
 	},
 	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
 		printMembers() {
 			if (this.max == 0) return this.members; //not having === won't cause a problem here
 
 			return this.members.slice(0, this.max);
+		},
+	},
+	methods: {
+		getFullName(member) {
+			return member.name + ' ' + member.surname;
 		},
 	},
 };

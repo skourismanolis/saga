@@ -1,7 +1,7 @@
 <template>
 	<div v-if="!loaded"><b-spinner /></div>
 	<div v-else class="p-4">
-		<TeamList class="mb-4 ml-3" :members="[{ username: 'asd' }]" max="10" />
+		<TeamList class="mb-4 ml-3" :members="members" :max="10" />
 		<div class="d-flex">
 			<div class="column rounded-sm todo">
 				<h3>TODO</h3>
