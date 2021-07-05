@@ -315,7 +315,7 @@ app.get('/:idUser', async (req, res) => {
 				result[0].picture;
 		}
 
-		if (req.params.idUser == req.user.idUser) {
+		if (req.params.idUser != req.user.idUser) {
 			delete result[0]['plan'];
 		}
 		res.status(200).send(result[0]);
