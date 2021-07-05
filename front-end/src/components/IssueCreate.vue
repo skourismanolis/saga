@@ -9,7 +9,6 @@
 					size="lg"
 					header-class="py-4"
 					modal-class="issue-modal-border"
-					style="border-left-color: blue"
 					static
 				>
 					<div class="header">
@@ -92,27 +91,60 @@
 						</div>
 					</div>
 					<div class="right">
-						<div
-							@dblclick="toggleEditable()"
-							@focusout="toggleEditable()"
-						>
-							<label class="issue-elem-select">
-								<Priority
-									v-if="editable == false"
-									class="issue-element"
-									:priority="issue.priority"
-								/>
-								<b-form-select
-									v-else
-									type=""
-									size="sm"
-									class="mt-3"
-									v-model="issue.priority"
-									:options="Priorities"
-									required
-								>
-								</b-form-select>
-							</label>
+						<div class="priority-column-row">
+							<div
+								@dblclick="toggleEditable()"
+								@focusout="toggleEditable()"
+							>
+								<label class="issue-elem-select">
+									<Priority
+										v-if="editable == false"
+										class="issue-element"
+										:priority="issue.priority"
+										style="
+											margin-top: 8px;
+											margin-right: 6px;
+										"
+									/>
+									<b-form-select
+										v-else
+										type=""
+										size="sm"
+										class="mt-1"
+										v-model="issue.priority"
+										:options="Priorities"
+										required
+									>
+									</b-form-select>
+								</label>
+							</div>
+							<div
+								@dblclick="toggleEditable()"
+								@focusout="toggleEditable()"
+							>
+								<label class="issue-elem-select">
+									<label
+										v-if="editable == false"
+										class="text-white rounded-xl"
+										:style="getColumnStyle()"
+										style="
+											padding: 9px;
+											border-radius: 50px;
+										"
+									>
+										{{ issue.column }}
+									</label>
+									<b-form-select
+										v-else
+										size="sm"
+										class="mt-1"
+										v-model="issue.column"
+										:options="Columns"
+										required
+									>
+									</b-form-select>
+								</label>
+							</div>
 						</div>
 						<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
 						<p class="details-text">TeamList(0)</p>
@@ -151,6 +183,7 @@ export default {
 		return {
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
 			Types: ['Task', 'Bug', 'Story'],
+			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
 			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
 			issue: {
 				id: '#ED3452',
@@ -162,6 +195,7 @@ export default {
 				label: 'Front-end',
 				deadline: new Date(),
 				points: 120,
+				column: 'IN PROGRESS',
 			},
 			editable: false,
 		};
@@ -173,6 +207,19 @@ export default {
 	methods: {
 		toggleEditable: function () {
 			this.editable = this.editable == false ? true : false;
+		},
+		getColumnStyle() {
+			if (this.issue.column == 'TO-DO') {
+				return 'background-color:#FFC95B';
+			}
+
+			if (this.issue.column == 'IN PROGRESS') {
+				return 'background-color: #F3B1B8';
+			}
+
+			if (this.issue.column == 'DONE') {
+				return 'background-color:#7B7393';
+			}
 		},
 	},
 };
@@ -251,5 +298,9 @@ i {
 	margin-top: -3%;
 	color: #db5461;
 	font-size: 22px;
+}
+
+.priority-column-row {
+	display: flex;
 }
 </style>
