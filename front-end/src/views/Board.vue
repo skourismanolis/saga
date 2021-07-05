@@ -4,11 +4,28 @@
 		<div class="d-flex p-4">
 			<div class="column rounded-sm todo">
 				<h3>TODO</h3>
+				<IssueCard
+					class="my-2"
+					v-for="issue in columnIssues[0].content"
+					:key="issue.code"
+				/>
 			</div>
 			<div class="column rounded-sm in-progress">
 				<h3>IN PROGRESS</h3>
+				<IssueCard
+					class="my-2"
+					v-for="issue in columnIssues[1].content"
+					:key="issue.code"
+				/>
 			</div>
-			<div class="column rounded-sm done"><h3>IN PROGRESS</h3></div>
+			<div class="column rounded-sm done">
+				<h3>IN PROGRESS</h3>
+				<IssueCard
+					class="my-2"
+					v-for="issue in columnIssues[2].content"
+					:key="issue.code"
+				/>
+			</div>
 			<div>
 				<a class="hand">
 					<span class="bg-gray px-2 py-1 rounded-sm">
@@ -22,8 +39,13 @@
 </template>
 
 <script>
+import IssueCard from '../components/IssueCard.vue';
+
 export default {
 	name: 'Board',
+	components: {
+		IssueCard,
+	},
 	data() {
 		return {
 			loaded: false,
@@ -36,7 +58,7 @@ export default {
 		async refreshAllIssues() {
 			let columns = await this.project.getColumns();
 			this.columnIssues = await Promise.all([
-				columns.map((c) => this.project.searchIssues({ column: c })),
+				...columns.map((c) => this.project.searchIssues({ column: c })),
 				this.project.searchIssues({ column: null }),
 			]);
 		},
