@@ -2,7 +2,7 @@
 	<div class="d-flex flex-row align-items-center issue-entry">
 		<div id="issue-label" :style="labelColor" class="issue-element"></div>
 		<IssueCategory class="issue-element" :category="issue.category" />
-		<span id="issue-id" class="issue-element">{{ '#' + issue.id }}</span>
+		<span id="issue-id" class="issue-element">{{ '#' + issue.code }}</span>
 		<img
 			id="issue-assignee-icon"
 			v-if="assignees.length > 0"
@@ -24,9 +24,9 @@
 		>
 			{{ '+' + (assignees.length - 1) }}
 		</div>
-		<span class="issue-element">{{ issue.name }}</span>
+		<span class="issue-element">{{ issue.title }}</span>
 		<IssueDate>
-			{{ issue.date }}
+			{{ issue.deadline.toDateString() }}
 		</IssueDate>
 
 		<div

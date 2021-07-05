@@ -89,11 +89,20 @@ module.exports = class Project extends Base {
 
 	/**
 	 * Get all the sprints belonging to the project
+	 * @param {Object} options
+	 * @param {Boolean=} options.finished filder sprints that are or are not finished
 	 * @returns {Object[]} array of Sprints
 	 */
-	async getSprints() {
+	async getSprints({ finished }) {
+		let query = '';
+
+		if (finished != null) {
+			if (finished) query = `?finished=1`;
+			else query = `?finished=0`;
+		}
+
 		let list = new PaginatedList(this.client, {
-			url: `/projects/${this._idProject}/sprints`,
+			url: `/projects/${this._idProject}/sprints${query}`,
 			dataTransformer: (sprints) =>
 				sprints.map((s) => new Sprint(this.client, s, this._idProject)),
 		});
@@ -365,9 +374,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} sprint the sprint to delete
 	 */
 	async deleteSprint(sprint) {
-		await this.axios.delete(
-			`/projects/${this._idProject}/sprints/${sprint.id}`
-		);
+		await this.axios({
+			method: 'DELETE',
+			url: `/projects/${this._idProject}/sprints/${sprint.id}`,
+		});
 	}
 
 	/**
@@ -375,18 +385,20 @@ module.exports = class Project extends Base {
 	 * @param {Object} epic the epic to delete
 	 */
 	async deleteEpic(epic) {
-		await this.axios.delete(
-			`/projects/${this._idProject}/epics/${epic.id}`
-		);
+		await this.axios({
+			method: 'DELETE',
+			url: `/projects/${this._idProject}/epics/${epic.id}`,
+		});
 	}
 
 	/**
 	 * @param {Object} label the label object to delete.
 	 */
 	async deleteLabel(label) {
-		await this.axios.delete(
-			`/projects/${this._idProject}/labels/${label.id}`
-		);
+		await this.axios({
+			method: 'DELETE',
+			url: `/projects/${this._idProject}/labels/${label.id}`,
+		});
 	}
 
 	/**
@@ -394,9 +406,10 @@ module.exports = class Project extends Base {
 	 * @param {Issue} issue the Issue to delete
 	 */
 	async deleteIssue(issue) {
-		await this.axios.delete(
-			`projects/${this._idProject}/issues/${issue.code}`
-		);
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/issues/${issue.code}`,
+		});
 	}
 
 	/**
@@ -404,9 +417,10 @@ module.exports = class Project extends Base {
 	 * @param {object} column Column object
 	 */
 	async deleteColumn(column) {
-		await this.axios.delete(
-			`projects/${this._idProject}/columns/${column.id}`
-		);
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/columns/${column.id}`,
+		});
 	}
 
 	/**

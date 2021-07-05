@@ -12,7 +12,7 @@ const MOCKLABEL = {
 };
 
 const MOCKPROJECT = {
-	idProject: 2,
+	idProject: 1,
 	title: 'asdasd',
 	picture: null,
 };
@@ -21,14 +21,14 @@ beforeAll(async () => {
 	client = new SagaClient({ url: __APIURL__ });
 	if (__TEST_MODE__ === 'REST') {
 		await client.login({
-			email: __APIUNAME__,
-			password: __APIPWD__,
+			email: 'random_user@test.com',
+			password: 'test_member',
 		});
 	}
 });
 
 it('constructs', async () => {
-	label = new Label(client, MOCKLABEL, 2);
+	label = new Label(client, MOCKLABEL, 1);
 	expect(label).toBeTruthy();
 });
 
