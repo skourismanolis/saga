@@ -102,6 +102,16 @@ describe('Issue', () => {
 		assignees.forEach((a) => expect(a).toBeInstanceOf(Member));
 	});
 
+	it('creates a comment', async () => {
+		if (__TEST_MODE__ === 'CLIENT') {
+			const token =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOjMsInBsYW4iOiJGcmVlIiwiaWF0IjoxNjI0NjQ2MDIxLCJleHAiOjE2MjUyNTA4MjF9.RMn4DytOEU9FjSXpMvAO1vxV8QlD_t92tkfMlou71rg';
+			client.setToken(token);
+		}
+		let comment = await issue.createComment({ content: 'lorem' });
+		expect(comment).toBeInstanceOf(Comment);
+	});
+
 	it('returns comments', async () => {
 		let comments = await issue.getComments();
 		expect(comments).toBeInstanceOf(PaginatedList);

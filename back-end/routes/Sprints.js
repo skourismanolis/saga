@@ -21,7 +21,8 @@ async function sprints_get(req, res) {
 			mysprintquery +=
 				' AND s.`start` IS NOT NULL AND (s.idSprint != p.activeSprint OR p.activeSprint IS NULL)';
 		} else if (req.query.finished == false) {
-			mysprintquery += ' AND s.`start` IS NULL';
+			mysprintquery +=
+				' AND s.start IS NULL OR s.idSprint = p.activeSprint';
 		} else if (req.query.finished != undefined) {
 			res.sendStatus(400);
 			throw c.INVALID_TRANSACTION;

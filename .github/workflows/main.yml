@@ -141,3 +141,26 @@ jobs:
                   NODE_ENV=test node ./server.js &
                   yarn run test
               working-directory: ./back-end
+        
+    test-cli-app:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v2
+            - name: initialize docker
+              run: docker-compose up -d
+              working-directory: ./back-end/tests
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: '14'
+            - uses: c-hive/gha-yarn-cache@v1
+            - name: install modules
+              run: yarn
+              working-directory: ./cli-app
+            - name: run backend server
+              run: yarn test-serve
+              working-directory: ./back-end\tests
+            - name: run tests
+              run: |
+                  yarn test
+              working-directory: ./cli-app
