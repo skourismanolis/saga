@@ -33,7 +33,7 @@
 							><i class="bi bi-person mr-1"></i>Ο Λογαριασμός
 							μου</b-dropdown-item
 						>
-						<b-dropdown-item class="log-out"
+						<b-dropdown-item class="log-out" @click="logout"
 							><i class="bi bi-box-arrow-in-right mr-1"></i
 							>Αποσύνδεση</b-dropdown-item
 						>
@@ -94,6 +94,17 @@ export default {
 			this.$router.push({
 				path: `/profile`,
 			});
+		},
+		async logout() {
+			try {
+				await this.$client.logout();
+				this.$router.push({
+					path: `/`,
+				});
+			} catch (error) {
+				console.error(error);
+				alert(error);
+			}
 		},
 	},
 };
