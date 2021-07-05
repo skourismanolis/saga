@@ -147,6 +147,8 @@
 				>
 					<SprintBox
 						:sprint="sprint"
+						:exists_active="active_sprint != null"
+						:active="sprint_active[index]"
 						:id="sprint.id"
 						:issuesNum="sprint_issues[index].content.length"
 						class="drag-inner-list sprint-box"
@@ -210,6 +212,7 @@ export default {
 			active_sprint_issues: [],
 			sprints: {},
 			sprint_issues: [],
+			sprint_active: [],
 
 			//backlog data
 			issues: {},
@@ -387,6 +390,9 @@ export default {
 				//issue fetching
 				let tempIssues = await this.sprints.content[i].getIssues();
 				this.sprint_issues.push(tempIssues);
+
+				//active init
+				this.sprint_active.push(false);
 			}
 
 			this.loaded = true;
