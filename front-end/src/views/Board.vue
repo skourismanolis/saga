@@ -60,6 +60,7 @@
 					class="mt-2"
 					:labels="labels"
 					v-model="selectedLabel"
+					@input="refreshAllIssues"
 				/>
 			</div>
 		</div>
@@ -112,11 +113,17 @@ export default {
 			}
 		},
 		async refreshAllIssues() {
+			let params = {};
+			if (this.selectedLabel != null) {
+				params.labels = [this.selectedLabel];
+			}
 			let columns = await this.project.getColumns();
 			this.columnIds = columns.map((c) => c.id);
 			this.columnIssues = await Promise.all([
-				...columns.map((c) => this.project.searchIssues({ column: c })),
-				this.project.searchIssues({ column: null }),
+				...columns.map((c) =>
+					this.project.searchIssues({ column: c, ...params })
+				),
+				this.project.searchIssues({ column: null, ...params }),
 			]);
 		},
 	},
