@@ -40,6 +40,7 @@
 		</div>
 		<span class="issue-element">{{ issue.title }}</span>
 		<div
+			v-if="issue.deadline != null"
 			id="issue-date"
 			class="
 				d-flex
@@ -51,6 +52,8 @@
 		>
 			{{ issue.deadline.toDateString() }}
 		</div>
+		<div v-else class="ml-auto" />
+
 		<div
 			id="issue-points"
 			class="d-flex flex-row align-items-center justify-content-center"
