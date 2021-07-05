@@ -28,26 +28,39 @@
 				/>
 			</div>
 			<div>
-				<a class="hand">
-					<span class="bg-gray px-2 py-1 rounded-sm">
-						<b-icon icon="search" class="text-white" />
-					</span>
-					Αναζήτηση
-				</a>
+				<div>
+					<a class="hand">
+						<span class="bg-gray px-2 py-1 rounded-sm">
+							<b-icon icon="search" class="text-white" />
+						</span>
+						Αναζήτηση
+					</a>
+				</div>
+				<div class="mt-2">
+					<a class="hand" v-b-modal.viewIssue>
+						<span class="bg-gray px-2 py-1 rounded-sm">
+							<b-icon icon="plus" class="text-white" />
+						</span>
+						Νέο Issue
+					</a>
+				</div>
 			</div>
 		</div>
+		<b-modal id="viewIssue"><IssueCreate /> </b-modal>
 	</div>
 </template>
 
 <script>
-import IssueCard from '../components/IssueCard.vue';
-import TeamList from '../components/TeamList.vue';
+import IssueCard from '@/components/IssueCard.vue';
+import TeamList from '@/components/TeamList.vue';
+import IssueCreate from '@/components/IssueCreate.vue';
 
 export default {
 	name: 'Board',
 	components: {
 		IssueCard,
 		TeamList,
+		IssueCreate,
 	},
 	data() {
 		return {
