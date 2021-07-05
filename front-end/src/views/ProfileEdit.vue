@@ -6,7 +6,7 @@
 
 			<div class="flex-row d-flex">
 				<img
-					:src="profilePic"
+					:src="profile.picture || DEFAULT_PICTURE"
 					width="130px"
 					height="130px"
 					class="rounded-circle align-self-center"
@@ -27,7 +27,7 @@
 					class="form-control"
 					id="username-input"
 					placeholder="Εισάγεται όνομα χρήστη..."
-					v-model="userInfo.username"
+					v-model="profile.username"
 					required
 				/>
 			</div>
@@ -38,7 +38,7 @@
 					class="form-control"
 					id="name-input"
 					placeholder="Εισάγεται όνομα..."
-					v-model="userInfo.name"
+					v-model="profile.name"
 					required
 				/>
 			</div>
@@ -49,7 +49,7 @@
 					class="form-control"
 					id="surname-input"
 					placeholder="Εισάγεται επίθετο..."
-					v-model="userInfo.surname"
+					v-model="profile.surname"
 					required
 				/>
 			</div>
@@ -62,6 +62,7 @@
 					class="form-control"
 					id="password-input"
 					placeholder="Εισάγεται τον κωδικό σας..."
+					v-model="password"
 					required
 				/>
 				<small id="passwordHelp" class="form-text text-muted"
@@ -78,6 +79,7 @@
 				<button
 					type="submit"
 					class="btn d-flex btn-primary align-self-end"
+					@click="editProfile()"
 				>
 					Αποθήκευση αλλαγών
 				</button>
@@ -85,42 +87,56 @@
 		</form>
 
 		<div class="d-flex justify-content-center" id="rate-plans">
-			<RatePlans :plan="userInfo.plan" @plan-change="changePlan" />
+			<RatePlans :plan="user.plan" @plan-change="changePlan" />
 		</div>
 	</div>
 </template>
 
 <script>
-import RatePlans from '../components/RatePlans.vue';
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
 
+import RatePlans from '../components/RatePlans.vue';
 export default {
 	components: {
 		RatePlans,
 	},
 	data() {
 		return {
-			userInfo: {
-				username: 'Όνομα Χρήστη',
-				name: 'Όνομα',
-				surname: 'Επίθετο',
-				email: 'example@provider.domain',
-				plan: '',
-			},
+			password: '',
+			profile: {},
+			user: {},
 		};
 	},
 	computed: {
-		profilePic: function () {
-			let filename = 'default-profile-pic.png';
-			// if (this.user && this.user.ProfilePicPath)
-			// 	filename = this.user.ProfilePicPath;
-			return require(`../assets/profile pics/${filename}`);
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
 		},
 	},
 
 	methods: {
 		changePlan(value) {
-			this.userInfo.plan = value;
+			this.user.plan = value;
 		},
+
+		async editProfile() {
+			try {
+				await this.$client.userEdit({
+					username: this.profile.username,
+					email: this.profile.email,
+					password: this.password,
+					name: this.profile.name,
+					surname: this.profile.surname,
+					plan: this.user.plan,
+				});
+				location.reload();
+			} catch (error) {
+				alert(error);
+			}
+		},
+	},
+	async created() {
+		this.profile = await this.$client.getProfile();
+		this.user = await this.$client.user;
 	},
 };
 </script>
