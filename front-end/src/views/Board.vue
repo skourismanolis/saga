@@ -67,7 +67,7 @@
 			</div>
 		</div>
 		<b-modal id="viewIssue"><IssueCreate /> </b-modal>
-		<b-modal id="editLabel" @ok="saveLabel">
+		<b-modal id="editLabel" @ok="saveLabel" @cancel="resetEditLabel">
 			<label class="mr-2">
 				Όνομα
 				<b-input v-model="currentLabel.name" />
@@ -77,7 +77,7 @@
 				<b-input v-model="currentLabel.color" />
 			</label>
 		</b-modal>
-		<b-modal id="searchIssues" size="lg" centerd>
+		<b-modal id="searchIssues" size="lg" hide-footer @hide="clearSearch">
 			<label>
 				Αναζήτηση
 				<b-input v-model="search.text" />
@@ -138,6 +138,10 @@ export default {
 		},
 	},
 	methods: {
+		clearSearch() {
+			this.search.issues = null;
+			this.search.text = '';
+		},
 		async searchIssues() {
 			try {
 				this.search.issues = await this.project.searchIssues({
