@@ -1,8 +1,52 @@
 <template>
 	<b-container id="create-issue-body">
 		<h4><strong>Create an issue</strong></h4>
+		<div>
+			<b-button v-b-modal.modal-lg>Launch demo modal</b-button>
+
+			<b-modal
+				id="modal-lg"
+				size="lg"
+				style="border-left: 18px solid red"
+			>
+				<div id="header">
+					<i
+						id="issue-icon"
+						class="bi bi-bug issue-element"
+						v-if="issue.type == 'bug'"
+					></i>
+					<i
+						id="issue-icon"
+						class="bi-book issue-element"
+						v-else-if="issue.type == 'story'"
+					></i>
+					<i
+						id="issue-icon"
+						class="bi bi-bullseye issue-element"
+						v-else-if="issue.type == 'task'"
+					></i>
+					<h4>{{ issue.title }}</h4>
+				</div>
+				<div id="left" class="width:75%;">
+					<label class="details-label">ΠΕΡΙΓΡΑΦΗ</label>
+					<p class="details-text">{{ issue.description }}</p>
+				</div>
+				<div id="right">
+					<Priority
+						class="issue-element"
+						:priority="issue.priority"
+					/>
+					<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
+					<p class="details-text">TeamList(0)</p>
+					<label class="details-label">LABEL</label>
+					<p class="details-text" id="p-tag">
+						{{ issue.label }}
+					</p>
+				</div>
+			</b-modal>
+		</div>
 		<form @submit.prevent="CreateIssue">
-			<b-row class="my-1">
+			<b-row class="my-1" no-gutters>
 				<b-col sm="3">
 					<label for="input-title"
 						>Title<br />({{ getTitleLength }}/30)</label
@@ -37,14 +81,14 @@
 				</b-col>
 			</b-row>
 
-			<h4>Choose category and tags</h4>
+			<h4>Choose type and tags</h4>
 			<b-row class="my-1">
-				<label for="category-selector" id="label0">Category </label>
+				<label for="type-selector" id="label0">type </label>
 
 				<b-select
-					id="category-selector"
-					v-model="issue.category"
-					:options="Categories"
+					id="type-selector"
+					v-model="issue.type"
+					:options="Types"
 					class="my-1"
 					required
 				></b-select>
@@ -64,15 +108,18 @@
 </template>
 
 <script>
-//import { Priority } from './IssuePriority.vue';
+import Priority from './IssuePriority.vue';
 export default {
 	data() {
 		return {
-			Categories: ['Task', 'Epic', 'Story'],
+			Types: ['task', 'epic', 'story'],
 			issue: {
-				category: '',
-				title: '',
-				description: '',
+				type: 'task',
+				title: 'Doomdoom',
+				description:
+					'Lorem ipsum Kalimba KalimbaLorem ipsum Kalimba KalimbaLorem ipsum Kalimba Kalimba',
+				priority: 'Low',
+				label: 'Front-end',
 			},
 		};
 	},
@@ -87,26 +134,19 @@ export default {
 			return this.issue.description.length;
 		},
 	},
-	/*components: {
+	components: {
 		Priority,
-	},*/
+	},
 };
 </script>
 
 <style scoped>
-label {
-	margin-right: 0px;
-	font-weight: 540;
-	color: rgb(151, 151, 151);
-	text-align: right;
-}
-
 div.col-sm-3 {
 	width: 10%;
 	text-align: end;
 	padding-top: 0.25%;
 }
-select#category-selector {
+select#type-selector {
 	flex: 1%;
 	margin-left: 3%;
 	margin-right: 1%;
@@ -122,8 +162,7 @@ h4 {
 	letter-spacing: 0.5px;
 	margin: 12px;
 	margin-bottom: 18px;
-	font-weight: 540;
-	display: flex;
+	font-weight: 440;
 	justify-content: center;
 }
 div.row.my-1 {
@@ -138,5 +177,56 @@ div.row.my-1 {
 	width: 75%;
 	padding-right: 8%;
 	padding-top: 2px;
+}
+
+.details-label {
+	font-size: smaller;
+	font-weight: bold;
+	letter-spacing: 0.3em;
+	margin-bottom: 0;
+	color: rgb(151, 151, 151);
+}
+
+.details-text {
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+}
+
+#left {
+	width: 75%;
+	float: left;
+}
+
+#right {
+	width: 25%;
+	float: right;
+}
+
+.modal-body {
+	padding-top: 0;
+}
+
+#p-tag {
+	border-left: 6px solid red;
+	padding-left: 1%;
+}
+
+div#modal-lg___BV_modal_content_.modal-content {
+	border-left: 6px solid red;
+	padding-left: 1%;
+}
+
+#header {
+	display: flex;
+	margin-top: -9.5%;
+}
+
+i {
+	padding-top: 0.3%;
+	padding-left: 1%;
+	margin-top: 2%;
+	color: #db5461;
+	width: 22px;
+	height: 24px;
 }
 </style>
