@@ -284,14 +284,15 @@ export default {
 					);
 					await target.addIssues([item]);
 
-					await this.sprint_issues[owner_index].refresh();
 					await this.sprint_issues[target_index].refresh();
 				} else {
 					owner.removeIssues([item]);
 					await this.issues.refresh();
 				}
 
-				this.$forceUpdate();
+				if (owner_id != '') {
+					await this.sprint_issues[owner_index].refresh();
+				}
 			} catch (error) {
 				alert(error);
 			}
