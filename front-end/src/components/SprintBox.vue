@@ -51,6 +51,7 @@
 						align-items-center
 						button-container
 					"
+					@click="$emit('deactivate-sprint')"
 				>
 					Τερματισμός Sprint
 					<i class="bi bi-check-circle button-icon"></i>

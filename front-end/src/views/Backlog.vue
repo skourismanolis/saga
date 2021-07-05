@@ -160,6 +160,7 @@
 						:issuesNum="sprint_issues[index].content.length"
 						class="drag-inner-list sprint-box"
 						@activate-sprint="activateSprint"
+						@deactivate-sprint="dectivateSprint"
 					>
 						<IssueRow
 							v-for="issue in sprint_issues[index].content"
@@ -248,6 +249,12 @@ export default {
 		},
 	},
 	methods: {
+		async dectivateSprint() {
+			await this.project.setActiveSprint(null);
+			this.active_sprint = await this.project.getActiveSprint();
+			await this.sprints.refresh();
+		},
+
 		async activateSprint(value) {
 			console.log(value);
 			let sprint = this.sprints.content.find(
