@@ -2,53 +2,69 @@
 	<b-container id="create-issue-body">
 		<h4 id="issue-title" class="primary">
 			<h5
-				v-if="editTitle == false"
+				v-if="editable == false"
 				class="issue-title"
-				@dblclick="toggleEditTitle()"
+				@dblclick="toggleEditable()"
 			>
-				{{ sprint.title }}
+				{{ issue.title }}
 			</h5>
 			<b-form-input
 				v-else
 				class="title-input"
 				type="text"
-				v-model="sprint.title"
+				v-model="issue.title"
 				required
-				@focusout="toggleEditTitle()"
+				@focusout="toggleEditable()"
 			></b-form-input>
-			<IssuePriority class="issue-element" :priority="issue.priority" />
-			<strong>{{ issue.title }}</strong>
 		</h4>
+		<label
+			class="issue-elem-select"
+			@dblclick="toggleEditable()"
+			@focusout="toggleEditable()"
+		>
+			<IssuePriority
+				v-if="editable == false"
+				class="issue-element"
+				:priority="issue.priority"
+			/>
+			<b-form-select
+				v-else
+				type=""
+				size="sm"
+				class="mt-3"
+				v-model="issue.priority"
+				:options="Priorities"
+				required
+			>
+			</b-form-select>
+		</label>
 	</b-container>
 </template>
 
 <script>
 import IssuePriority from './IssuePriority.vue';
+
 export default {
 	data() {
 		return {
 			Categories: ['Task', 'Epic', 'Story'],
+			Priorities: ['High', 'Very High', 'Very Low', 'Low', 'Neutral'],
 			issue: {
 				category: '',
 				title: 'doomdoom',
 				description: '',
 				priority: 'High',
 			},
+			editable: false,
 		};
-	},
-	computed: {
-		checkTitleLength() {
-			return this.issue.title.length > 0 && this.issue.title.length < 31;
-		},
-		getTitleLength() {
-			return this.issue.title.length;
-		},
-		getDescriptionLength() {
-			return this.issue.description.length;
-		},
 	},
 	components: {
 		IssuePriority,
+	},
+	methods: {
+		toggleEditable: function () {
+			this.editable = this.editable == false ? true : false;
+		},
 	},
 };
 </script>
