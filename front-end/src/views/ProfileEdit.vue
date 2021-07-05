@@ -82,7 +82,7 @@
 			</div>
 
 			<div class="d-flex d-flex justify-content-between">
-				<button type="submit" class="btn btn-link">
+				<button type="submit" class="btn btn-link" @click="deleteUser">
 					<i class="bi bi-trash link-icon"></i>
 					Διαγραφή λογαριασμού
 				</button>
@@ -130,6 +130,22 @@ export default {
 			this.user.plan = value;
 		},
 
+		async deleteUser() {
+			try {
+				if (this.password != '') {
+					let res = await this.$client.deleteUser({
+						password: this.password,
+					});
+					console.log(res);
+					location.reload();
+				}
+			} catch (error) {
+				alert(
+					'Σιγουρέψου ότι ο κωδικός δεν είναι σωστός ή δεν είσαι διαχειριστής κάποιου project.'
+				);
+			}
+		},
+
 		async savePicture() {
 			try {
 				await this.$client.setUserPicture({
@@ -138,7 +154,6 @@ export default {
 				location.reload();
 			} catch (error) {
 				console.error(error);
-				alert(error);
 			}
 		},
 
