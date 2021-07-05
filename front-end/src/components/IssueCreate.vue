@@ -219,6 +219,7 @@ div#modal-lg___BV_modal_content_.modal-content {
 #header {
 	display: flex;
 	margin-top: -9.5%;
+	margin-right: 36px;
 }
 
 i {
