@@ -68,11 +68,14 @@ module.exports = async function setup() {
 		'ALTER TABLE `column` AUTO_INCREMENT = 6',
 		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (1, 1, "test_epic", null,"2023-07-07", "test_description")',
 		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (2, 1, "test_epic_2", null,"2022-07-07", "test_description_2")',
-		'ALTER TABLE epic AUTO_INCREMENT = 3',
+		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (3, 1, "mansd", null, null, "asd")',
+		'ALTER TABLE epic AUTO_INCREMENT = 4',
 		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("ab",1,"test_title","Story","2","Low","2022-01-01","test",null,1,1)',
 		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("2F3D",1,"lorem","Task",12,"Neutral",null,"lorem ipsum dolor sit amet",1,2,2)',
 		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("issue1",2,"issue1","Task",2,"Low",null,"lorem ipsum dolor sit amet 11",null,3,1)',
 		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("issue2",2,"issue2","Story",98,"Very High",null,"lorem ipsum dolor sit amet 12",null,null,1)',
+		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("asdas",1,"asdas","Story",98,"Very High",null,"lorem ipsum dolor sit amet 11",null,null,1)',
+		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("aqwwsdas",1,"aqwwsdas","Task",2,"Low",null,"lorem ipsum dolor sit amet 12",null,null,1)',
 	]);
 	await request.post('/users/').send({
 		username: 'admin',

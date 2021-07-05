@@ -68,22 +68,6 @@ describe('main functions', () => {
 		expect(spr).toMatchObject(matcher);
 	});
 
-	// test('in sprint', async () => {
-	// 	let mockAxios = {
-	// 		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-	// 	};
-	// 	sprint.axios = mockAxios;
-	// 	let project = await sprint.getProject();
-	// 	sprint.axios = client.axios;
-
-	// 	let issue = await project.getIssue(ISSUEID);
-	// 	//THIS IS BECAUSE THE MOCK SERVER IS DUMB
-	// 	issue._code = ISSUEID;
-	// 	expect(sprint.includes(issue)).toBe(true);
-	// 	issue._code = 'loemrm 3-9r 9iefefj9euf';
-	// 	expect(sprint.includes(issue)).toBe(false);
-	// });
-
 	test('started', () => {
 		expect(sprint.started()).toBe(false);
 		sprint.start = new Date();
