@@ -2,29 +2,41 @@
 	<div v-if="!loaded"><b-spinner /></div>
 	<div v-else class="p-4">
 		<TeamList class="mb-4 ml-3" :members="members" :max="10" />
-		<div class="d-flex">
-			<div class="column rounded-sm todo">
+		<div class="d-flex" v-drag-and-drop:options="dropOptions">
+			<div
+				class="column rounded-sm todo drag-inner-list"
+				:id="columnIds[0]"
+			>
 				<h3>TODO</h3>
 				<IssueCard
-					class="my-2"
+					class="my-2 drag-item"
 					v-for="issue in columnIssues[0].content"
 					:key="issue.code"
+					:id="issue.code"
 				/>
 			</div>
-			<div class="column rounded-sm in-progress">
+			<div
+				class="column rounded-sm in-progress drag-inner-list"
+				:id="columnIds[1]"
+			>
 				<h3>IN PROGRESS</h3>
 				<IssueCard
-					class="my-2"
+					class="my-2 drag-item"
 					v-for="issue in columnIssues[1].content"
 					:key="issue.code"
+					:id="issue.code"
 				/>
 			</div>
-			<div class="column rounded-sm done">
-				<h3>IN PROGRESS</h3>
+			<div
+				class="column rounded-sm done drag-inner-list"
+				:id="columnIds[2]"
+			>
+				<h3>DONE</h3>
 				<IssueCard
-					class="my-2"
+					class="my-2 drag-item"
 					v-for="issue in columnIssues[2].content"
 					:key="issue.code"
+					:id="issue.code"
 				/>
 			</div>
 			<div>
@@ -67,12 +79,32 @@ export default {
 			loaded: false,
 			project: null,
 			members: null,
+			columnIds: [],
 			columnIssues: [],
 		};
 	},
+	computed: {
+		dropOptions() {
+			return {
+				dropzoneSelector: '.drag-inner-list',
+				draggableSelector: '.drag-item',
+				onDrop: this.drop,
+			};
+		},
+	},
 	methods: {
+		async drop(e) {
+			try {
+				let issue = await this.project.getIssue(e.items[0].id);
+				await issue.update({ idColumn: e.droptarget.id || null });
+				await this.refreshAllIssues();
+			} catch (error) {
+				alert(error);
+			}
+		},
 		async refreshAllIssues() {
 			let columns = await this.project.getColumns();
+			this.columnIds = columns.map((c) => c.id);
 			this.columnIssues = await Promise.all([
 				...columns.map((c) => this.project.searchIssues({ column: c })),
 				this.project.searchIssues({ column: null }),
