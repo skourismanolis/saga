@@ -10,7 +10,8 @@ const login = program
 	.action(async (email, password) => {
 		try {
 			await client.login({ email, password });
-			await keytar.setPassword('Saga', 'Saga', client._token);
+			await keytar.setPassword('Saga', client.accountName, client._token);
+			console.log(`Logged in as account '${client.accountName}'`);
 		} catch (error) {
 			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
@@ -22,7 +23,7 @@ const logout = program
 	.description('logout of your account')
 	.action(async () => {
 		try {
-			await keytar.deletePassword('Saga', 'Saga');
+			await keytar.deletePassword('Saga', client.accountName);
 		} catch (error) {
 			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
@@ -60,7 +61,7 @@ user.command('delete <password>')
 		try {
 			await client.deleteUser({ password });
 			console.log('User deleted successfully!');
-			await keytar.deletePassword('Saga', 'Saga');
+			await keytar.deletePassword('Saga', client.accountName);
 		} catch (error) {
 			if (error.response) console.error(error.response.statusText);
 			else console.error(error);
