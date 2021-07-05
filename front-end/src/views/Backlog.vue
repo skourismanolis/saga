@@ -307,7 +307,7 @@ export default {
 
 		async dectivateSprint() {
 			await this.project.setActiveSprint(null);
-			this.active_sprint = await this.project.getActiveSprint();
+			this.active_sprint = null;
 			await this.sprints.refresh();
 		},
 
@@ -318,7 +318,7 @@ export default {
 			);
 
 			await this.project.setActiveSprint(sprint);
-			this.active_sprint = await this.project.getActiveSprint();
+			this.active_sprint = sprint;
 			await this.sprints.refresh();
 
 			let sprint_index = this.sprints.content.findIndex(
@@ -530,7 +530,7 @@ export default {
 
 			//getting sprint data
 			this.active_sprint = await this.project.getActiveSprint();
-			this.sprints = await this.project.getSprints({});
+			this.sprints = await this.project.getSprints({ finished: 0 });
 
 			for (let i = 0; i < this.sprints.content.length; i++) {
 				//issue fetching
