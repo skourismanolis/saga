@@ -122,7 +122,7 @@ async function issues_get(req, res) {
 			query_params.push(req.query.assignee);
 		}
 		if (req.query.label != null) {
-			let label = req.query.label.replace(/[\[\]]/g, '').split(',');
+			let label = req.query.label.replace(/[[\]]/g, '').split(',');
 			query_string += ' AND idLabel IN(?)';
 			query_params.push(label);
 		}
