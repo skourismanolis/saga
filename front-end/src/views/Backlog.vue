@@ -183,6 +183,15 @@
 							:issue="issue"
 							class="drag-item issue-row"
 						/>
+						<div class="d-flex justify-content-center mt-2">
+							<b-pagination
+								v-if="sprint_issues[index].content.length > 0"
+								@input="sprint_issues[index].setPage($event)"
+								:value="sprint_issues[index].currentPage"
+								:perPage="sprint_issues[index].perPage"
+								:total-rows="sprint_issues[index].total"
+							/>
+						</div>
 					</SprintBox>
 				</div>
 
@@ -201,6 +210,15 @@
 						:issue="issue"
 						class="drag-item issue-row"
 					/>
+					<div class="d-flex justify-content-center mt-2">
+						<b-pagination
+							v-if="issues.content.length > 0"
+							@input="issues.setPage($event - 1)"
+							:value="issues.currentPage + 1"
+							:perPage="issues.perPage"
+							:total-rows="issues.total"
+						/>
+					</div>
 				</BacklogBox>
 			</div>
 		</div>
