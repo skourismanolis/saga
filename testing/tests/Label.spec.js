@@ -1,12 +1,12 @@
-const SagaClient = require('../index');
-const Label = require('./Label');
-const Project = require('./Project');
+const SagaClient = require('@dira/api-client');
+const Label = require('@dira/api-client/src/classes/Label');
+const Project = require('@dira/api-client/src/classes/Project');
 
 let client;
 let label;
 
 const MOCKLABEL = {
-	idLabel: 2,
+	idLabel: 1,
 	name: 'Frontend',
 	color: '#123456',
 };
@@ -17,8 +17,14 @@ const MOCKPROJECT = {
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+beforeAll(async () => {
+	client = new SagaClient({ url: __APIURL__ });
+	if (__TEST_MODE__ === 'REST') {
+		await client.login({
+			email: __APIUNAME__,
+			password: __APIPWD__,
+		});
+	}
 });
 
 it('constructs', async () => {
@@ -45,12 +51,16 @@ test('refresh', async () => {
 });
 
 test('get project', async () => {
-	let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
-	label.axios = mockAxios;
+	if (__TEST_MODE__ === 'CLIENT') {
+		let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
+		label.axios = mockAxios;
+	}
 	await expect(label.getProject()).resolves.toBeInstanceOf(Project);
-	label.axios = client.axios;
+	if (__TEST_MODE__ === 'CLIENT') {
+		label.axios = client.axios;
+	}
 });
 
 it('updates', async () => {
-	await expect(label.update({ title: 'asdsad' })).resolves.not.toThrow();
+	await expect(label.update({ name: 'asdsad' })).resolves.not.toThrow();
 });

@@ -50,7 +50,13 @@ CREATE TABLE IF NOT EXISTS `saga`.`project` (
   `idProject` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `picture` VARCHAR(45) NULL,
   `title` VARCHAR(255) NULL,
-  PRIMARY KEY (`idProject`))
+  `activeSprint` INT UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`idProject`),
+  CONSTRAINT `fk_project_sprint1`
+    FOREIGN KEY (`activeSprint`)
+    REFERENCES `saga`.`sprint` (`idSprint`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -60,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`label` (
   `idLabel` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `idProject` INT UNSIGNED NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  `color` VARCHAR(6) NOT NULL,
+  `color` VARCHAR(7) NOT NULL,
   PRIMARY KEY (`idLabel`),
   CONSTRAINT `fk_label_project1`
     FOREIGN KEY (`idProject`)
@@ -133,8 +139,8 @@ CREATE TABLE IF NOT EXISTS `saga`.`issue` (
   `title` VARCHAR(255) NULL,
   `category` ENUM("Story", "Task", "Bug") NULL,
   `points` INT NULL,
-  `priority` ENUM("Very Low", "Low", "Neutral", "High", "Very High") NULL,
-  `deadline` DATETIME NULL,
+  `priority` ENUM("Very Low", "Low", "Neutral", "High", "Very High") DEFAULT "Neutral",
+  `deadline` DATE NULL,
   `description` TEXT NULL,
   PRIMARY KEY (`code`),
   CONSTRAINT `fk_issue_label1`

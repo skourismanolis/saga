@@ -71,9 +71,8 @@ beforeAll(async () => {
 });
 
 // Disconnect after all tests
-afterAll(async (done) => {
+afterAll(async () => {
 	await db.pool.end();
-	done();
 });
 
 describe('GET /token/<webToken> registration:', () => {

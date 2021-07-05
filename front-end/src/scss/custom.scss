@@ -1,5 +1,5 @@
 // Custom.scss
-$border-radius: 10pt;
+$border-radius: 4pt;
 $btn-padding-x: 1.625rem;
 $link-color: #db5461;
 
@@ -16,3 +16,10 @@ $theme-colors: (
 
 @import '../../../node_modules/bootstrap/scss/bootstrap';
 @import '../../../node_modules/bootstrap-vue/src/index.scss';
+
+.user_button {
+	border-top-right-radius: 50px;
+	border-bottom-right-radius: 50px;
+	padding-left: 5px;
+	padding-right: 3px;
+}

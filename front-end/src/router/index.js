@@ -5,6 +5,12 @@ import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Profile from '../views/Profile.vue';
 import ProfileEdit from '../views/ProfileEdit.vue';
+import Backlog from '../views/Backlog.vue';
+import EpicCreate from '../views/EpicCreate.vue';
+import EpicView from '../views/EpicView.vue';
+import ProjectSettings from '../views/ProjectSettings.vue';
+import Projects from '../views/Projects.vue';
+import Invite from '@/views/Invite.vue';
 
 Vue.use(VueRouter);
 
@@ -15,6 +21,7 @@ const routes = [
 		component: Home,
 		meta: {
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -24,6 +31,7 @@ const routes = [
 		meta: {
 			navbar: false,
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -33,6 +41,7 @@ const routes = [
 		meta: {
 			navbar: false,
 			projectNavbar: false,
+			public: true,
 		},
 	},
 	{
@@ -52,18 +61,77 @@ const routes = [
 		},
 	},
 	{
-		path: '/about',
-		name: 'About',
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () =>
-			import(/* webpackChunkName: "about" */ '../views/About.vue'),
+		path: '/projects/:idProject/backlog',
+		name: 'Backlog',
+		component: Backlog,
+	},
+	{
+		path: '/projects/:idProject/epic-create',
+		name: 'EpicCreate',
+		component: EpicCreate,
+		meta: {
+			projectNavbar: false,
+		},
+	},
+	{
+		path: '/projects/:idProject/epic/:idEpic',
+		name: 'EpicView',
+		component: EpicView,
+		meta: {
+			projectNavbar: false,
+		},
+	},
+
+	{
+		path: '/projects/:idProject/settings',
+		name: 'ProjectSettings',
+		component: ProjectSettings,
+	},
+	{
+		path: '/projects',
+		name: 'Projects',
+		component: Projects,
+		meta: {
+			projectNavbar: false,
+		},
+	},
+	{
+		path: '/invite',
+		name: 'Invite',
+		component: Invite,
+		meta: {
+			projectNavbar: false,
+		},
 	},
 ];
 
 const router = new VueRouter({
 	routes,
+});
+
+router.beforeEach((to, from, next) => {
+	let loggedIn = false;
+
+	try {
+		let token = window.localStorage.getItem('token');
+		loggedIn = token != null;
+	} catch (error) {
+		console.error(error);
+	}
+
+	if (
+		!loggedIn &&
+		(to.meta == null ||
+			(to.meta != null && to.meta.public == null) ||
+			to.meta.public === false)
+	) {
+		console.log('navigation cancelled');
+		next({
+			path: '/login',
+			query: { redir: to.fullPath },
+		});
+		return;
+	} else next();
 });
 
 export default router;

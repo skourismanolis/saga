@@ -14,7 +14,7 @@
 		"dayjs": "^1.10.5"
 	},
 	"devDependencies": {
-		"@stoplight/prism-cli": "^4.2.2",
+		"@stoplight/prism-cli": "^4.2.6",
 		"eslint": "^7.26.0",
 		"eslint-plugin-jest": "^24.3.6",
 		"eslint-plugin-prettier": "^3.4.0",

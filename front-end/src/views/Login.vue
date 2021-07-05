@@ -81,14 +81,21 @@ export default {
 	},
 
 	methods: {
-		loginUser() {
-			console.log('beep');
-
-			let object = {
+		async loginUser(evt) {
+			evt.preventDefault();
+			let options = {
 				email: this.loginForm.email,
 				password: this.loginForm.password,
 			};
-			console.log(object);
+			try {
+				await this.$client.login(options);
+			} catch (error) {
+				alert(error);
+			}
+			await this.$root.loadUser();
+			if (this.$route.query != null && this.$route.query.redir != null) {
+				this.$router.push(this.$route.query.redir).catch(() => {});
+			} else this.$router.push('/projects').catch(() => {});
 		},
 	},
 	created() {

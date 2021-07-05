@@ -12,7 +12,7 @@
 
 <script>
 import Footer from './components/Footer';
-import Navbar from './components/navbar_off';
+import Navbar from './components/Navbar';
 import ProjectNavbar from './components/ProjectNavbar.vue';
 import Issue from './components/Issue.vue';
 //import Card from './components/IssueCard.vue';
@@ -25,13 +25,6 @@ export default {
 		//Team,
 		//Card,
 		Issue,
-	},
-	data() {
-		return {};
-	},
-	methods: {},
-	mounted() {
-		console.log(this.$route);
 	},
 	computed: {
 		navbarFlag() {

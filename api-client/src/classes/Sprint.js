@@ -7,18 +7,13 @@ const IssueContainer = require('./IssueContainer');
 /****************************************************************************************/
 
 module.exports = class Sprint extends IssueContainer {
-	constructor(
-		client,
-		{ idSprint, start, deadline, title, issues },
-		idProject
-	) {
+	constructor(client, { idSprint, start, deadline, title }, idProject) {
 		super(
 			client,
 			{
-				start,
+				start: start === undefined ? null : start,
 				deadline,
 				title,
-				issues,
 			},
 			idProject,
 			`/projects/${idProject}/sprints/${idSprint}`
@@ -33,7 +28,6 @@ module.exports = class Sprint extends IssueContainer {
 	toJSON() {
 		return JSON.stringify({
 			idSprint: this._idSprint,
-			issues: this._issueIds,
 			idProject: this._idProject,
 			start: this.start,
 			deadline: this.deadline,
@@ -46,7 +40,6 @@ module.exports = class Sprint extends IssueContainer {
 			`/projects/${this._idProject}/sprints/${this._idSprint}`
 		);
 
-		this._issueIds = data.issues;
 		this.start = data.start != null ? new Date(data.start) : null;
 		this.deadline = data.deadline != null ? new Date(data.deadline) : null;
 	}
@@ -58,10 +51,9 @@ module.exports = class Sprint extends IssueContainer {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.finish when will this sprint end
 	 */
-	async update({ title, start, deadline }) {
+	async update({ title, deadline }) {
 		let newSprint = {
 			title: title || this.title,
-			start: start !== undefined ? start : this.start,
 			deadline: deadline !== undefined ? deadline : this.deadline,
 		};
 
