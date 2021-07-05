@@ -5,7 +5,7 @@ const program = new Command();
 const keytar = require('keytar');
 
 const domain = 'http://127.0.0.1';
-const port = 8080;
+const port = 3000;
 const SagaClient = require('@dira/api-client');
 let client = new SagaClient({ url: domain + ':' + port });
 
@@ -17,22 +17,15 @@ const User = require('./src/User');
 const Issue = require('./src/Issue');
 
 program.version('1.0.0');
-const timeLabel = 'command duration';
+
 program
-	.option('-p, --profile', 'show how long command takes')
+	.option('-a, --account <name>', 'account name to store login details to', 'Saga')
 	.hook('preAction', async (thisCommand) => {
-		if (thisCommand.opts().profile) {
-			console.time(timeLabel);
-		}
-		await keytar.getPassword('Saga', 'Saga').then((result) => {
+		client.accountName = program.opts().account;
+		await keytar.getPassword('Saga', client.accountName).then((result) => {
 			if (result) client.setToken(result);
 		});
 	})
-	.hook('postAction', async (thisCommand) => {
-		if (thisCommand.opts().profile) {
-			console.timeEnd(timeLabel);
-		}
-	});
 
 //user
 program.addCommand(User.login);
