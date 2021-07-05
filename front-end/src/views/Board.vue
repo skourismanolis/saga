@@ -251,6 +251,9 @@ export default {
 			if (this.selectedLabel != null) {
 				params.labels = [this.selectedLabel];
 			}
+			if (this.activeSprint != null) {
+				params.inSprint = this.activeSprint;
+			}
 			let columns = await this.project.getColumns();
 			this.columnIds = columns.map((c) => c.id);
 			this.columnIssues = await Promise.all([
@@ -271,6 +274,8 @@ export default {
 			});
 
 			this.activeSprint = await this.project.getActiveSprint();
+			// this.columnIssues
+
 			this.members = await this.project.getMembers();
 			await this.refreshLabels();
 			await this.refreshAllIssues();
