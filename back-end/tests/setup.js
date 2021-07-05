@@ -41,7 +41,6 @@ module.exports = async function setup() {
 		'ALTER TABLE `column` AUTO_INCREMENT = 1',
 		'ALTER TABLE comment AUTO_INCREMENT = 1',
 		'ALTER TABLE epic AUTO_INCREMENT = 1',
-		'ALTER TABLE issue AUTO_INCREMENT = 1',
 		'ALTER TABLE label AUTO_INCREMENT = 1',
 		'ALTER TABLE member AUTO_INCREMENT = 1',
 		'ALTER TABLE payment AUTO_INCREMENT = 1',
@@ -50,18 +49,24 @@ module.exports = async function setup() {
 		'ALTER TABLE user AUTO_INCREMENT = 1',
 
 		//starting values, order matters
-		'INSERT INTO project (idProject, title, picture, activeSprint) VALUES (2,"asdasd", null, null)',
-		'INSERT INTO label (idLabel,idProject,name,color) VALUES (1,2,"Frontend","#123456")',
-		'INSERT INTO label (idLabel,idProject,name,color) VALUES (2,2,"CLI","#000000")',
-		'INSERT INTO label (idLabel,idProject,name,color) VALUES (3,2,"Backend","#FF00FF")',
-		'INSERT INTO sprint (idSprint, idProject, title, deadline) VALUES (1,2,"sabsab","2023-07-07")',
-		'INSERT INTO sprint (idSprint, idProject, title, deadline) VALUES (2,2,"sprint_2",null)',
-		'INSERT INTO `column`  (idProject, name, `order`) VALUES (2, "TO-DO", 1)',
-		'INSERT INTO `column` (idProject, name, `order`) VALUES (2, "IN PROGRESS", 2)',
-		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (1, 2, "test_epic", null,"2023-07-07", "test_description")',
-		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (2, 2, "test_epic_2", null,"2022-07-07", "test_description_2")',
-		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("ab",2,"test_title","Story","2","Low","2022-01-01","test",null,1,1)',
-		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("2F3D",2,"lorem","Task",12,"Neutral",null,"lorem ipsum dolor sit amet",1,2,2)',
+		//project
+		'INSERT INTO project (idProject, title, picture, activeSprint) VALUES (1,"asdasd", null, null)',
+		'ALTER TABLE project AUTO_INCREMENT = 2',
+		'INSERT INTO label (idLabel,idProject,name,color) VALUES (1,1,"Frontend","#123456")',
+		'INSERT INTO label (idLabel,idProject,name,color) VALUES (2,1,"CLI","#000000")',
+		'INSERT INTO label (idLabel,idProject,name,color) VALUES (3,1,"Backend","#FF00FF")',
+		'ALTER TABLE label AUTO_INCREMENT = 4',
+		'INSERT INTO sprint (idSprint, idProject, title, deadline) VALUES (1,1,"sabsab","2023-07-07")',
+		'INSERT INTO sprint (idSprint, idProject, title, deadline) VALUES (2,1,"sprint_2",null)',
+		'ALTER TABLE sprint AUTO_INCREMENT = 3',
+		'INSERT INTO `column`  (idProject, name, `order`) VALUES (1, "TO-DO", 1)',
+		'INSERT INTO `column` (idProject, name, `order`) VALUES (1, "IN PROGRESS", 2)',
+		'ALTER TABLE `column` AUTO_INCREMENT = 3',
+		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (1, 1, "test_epic", null,"2023-07-07", "test_description")',
+		'INSERT INTO epic (idEpic, idProject, title, `start`, deadline, description) VALUES (2, 1, "test_epic_2", null,"2022-07-07", "test_description_2")',
+		'ALTER TABLE epic AUTO_INCREMENT = 3',
+		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("ab",1,"test_title","Story","2","Low","2022-01-01","test",null,1,1)',
+		'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel, idSprint, idColumn) VALUES ("2F3D",1,"lorem","Task",12,"Neutral",null,"lorem ipsum dolor sit amet",1,2,2)',
 	]);
 	await request.post('/users/').send({
 		username: 'admin',
@@ -69,6 +74,15 @@ module.exports = async function setup() {
 		password: 'admin',
 		name: 'string',
 		surname: 'string',
+		plan: 'Free',
+	});
+
+	await request.post('/users/').send({
+		username: 'test_member_2',
+		email: 'random_user@test.com',
+		password: 'test_member',
+		name: 'test_member_2',
+		surname: 'test_member_2',
 		plan: 'Free',
 	});
 
@@ -82,11 +96,11 @@ module.exports = async function setup() {
 	});
 
 	await request.post('/users/').send({
-		username: 'test_member_2',
-		email: 'random_user@test.com',
-		password: 'test_member',
-		name: 'test_member_2',
-		surname: 'test_member_2',
+		username: 'test_member',
+		email: 'test_member_2@test.com',
+		password: 'test_member_2',
+		name: 'test_member',
+		surname: 'test_member',
 		plan: 'Free',
 	});
 
@@ -94,12 +108,15 @@ module.exports = async function setup() {
 		'UPDATE user SET verified=1 WHERE email="admin@admin.com"',
 		'UPDATE user SET verified=1 WHERE email="test_member@test.com"',
 		'UPDATE user SET verified=1 WHERE email="random_user@test.com"',
-		'INSERT INTO member (idUser,idProject,role) VALUES (1,2,"Admin")',
-		'INSERT INTO member (idUser,idProject,role) VALUES (2,2,"Member")',
-		'INSERT INTO member (idUser,idProject,role) VALUES (3,2,"Member")',
-		'INSERT INTO assignee (code,idUser) VALUES ("2F3D",1)',
+		'UPDATE user SET verified=1 WHERE email="test_member_2@test.com"',
+
+		// 'INSERT INTO member (idUser,idProject,role) VALUES (1,2,"Admin")',
+		'INSERT INTO member (idUser,idProject,role) VALUES (2,1,"Admin")',
+		'INSERT INTO member (idUser,idProject,role) VALUES (3,1,"Member")',
+		'INSERT INTO member (idUser,idProject,role) VALUES (4,1,"Member")',
+
 		'INSERT INTO assignee (code,idUser) VALUES ("2F3D",2)',
-		'INSERT INTO assignee (code,idUser) VALUES ("2F3D",3)',
+		'INSERT INTO assignee (code,idUser) VALUES ("2F3D",4)',
 	]);
 	await db.pool.end();
 };

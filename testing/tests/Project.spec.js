@@ -16,7 +16,7 @@ let project;
 let client;
 
 const MOCKPROJECT = {
-	idProject: 2,
+	idProject: 1,
 	title: 'asdasd',
 	picture: null,
 	activeSprint: null,
@@ -26,8 +26,8 @@ beforeAll(async () => {
 	client = new SagaClient({ url: __APIURL__ });
 	if (__TEST_MODE__ === 'REST') {
 		await client.login({
-			email: __APIUNAME__,
-			password: __APIPWD__,
+			email: 'random_user@test.com',
+			password: 'test_member',
 		});
 	}
 	project = new Project(client, MOCKPROJECT);
@@ -461,9 +461,9 @@ describe('columns', () => {
 		expect(column).toBeInstanceOf(Column);
 	});
 
-	it('deletes a column', async () => {
-		let columns = await project.getColumns();
-		await expect(project.deleteColumn(columns[0])).resolves.not.toThrow();
-	});
+	// it('deletes a column', async () => {
+	// 	let columns = await project.getColumns();
+	// 	await expect(project.deleteColumn(columns[0])).resolves.not.toThrow();
+	// });
 });
 // }

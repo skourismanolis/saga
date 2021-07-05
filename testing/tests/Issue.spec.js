@@ -17,7 +17,7 @@ const MOCK_ISSUE = {
 	idColumn: 2,
 	idEpic: 2,
 	idLabel: 3,
-	assignees: [1, 2, 3],
+	assignees: [2, 4],
 	code: '2F3D',
 	title: 'lorem',
 	category: 'Task',
@@ -28,7 +28,7 @@ const MOCK_ISSUE = {
 };
 
 const MOCKPROJECT = {
-	idProject: 2,
+	idProject: 1,
 	title: 'asdasd',
 	picture: null,
 };
@@ -41,14 +41,14 @@ describe('Issue', () => {
 		client = new SagaClient({ url: __APIURL__ });
 		if (__TEST_MODE__ === 'REST') {
 			await client.login({
-				email: __APIUNAME__,
-				password: __APIPWD__,
+				email: 'random_user@test.com',
+				password: 'test_member',
 			});
 		}
 	});
 
 	it('constructs correctly', () => {
-		issue = new Issue(client, MOCK_ISSUE, 2);
+		issue = new Issue(client, MOCK_ISSUE, 1);
 		expect(issue).toBeTruthy();
 	});
 
@@ -63,7 +63,7 @@ describe('Issue', () => {
 	});
 
 	it('refreshes', async () => {
-		let is = new Issue(client, MOCK_ISSUE, 2);
+		let is = new Issue(client, MOCK_ISSUE, 1);
 		await expect(is.refresh()).resolves.not.toThrow();
 	});
 
@@ -73,7 +73,7 @@ describe('Issue', () => {
 	});
 
 	it("isn't done", () => {
-		let is = new Issue(client, { ...MOCK_ISSUE, idColumn: 2 }, 2);
+		let is = new Issue(client, { ...MOCK_ISSUE, idColumn: 2 }, 1);
 		expect(is.isDone()).toBe(false);
 	});
 
@@ -112,7 +112,7 @@ describe('Issue', () => {
 	});
 
 	it('updates fields', async () => {
-		let is = new Issue(client, MOCK_ISSUE, 2);
+		let is = new Issue(client, MOCK_ISSUE, 1);
 		await expect(
 			is.update({ title: 'asd', description: 'testing', label: null })
 		).resolves.not.toThrow();
@@ -131,18 +131,25 @@ describe('Issue', () => {
 	});
 
 	it('returns the column', async () => {
-		let mockGet = async (...args) => {
-			if (!args[0].includes('columns'))
-				return { data: [MOCKPROJECT] };
-			else return client.axios.get(args);
-		};
-		let mockAxios = {
-			get: jest.fn(mockGet),
-		};
-		issue.axios = mockAxios;
-		issue._idColumn = 2;
-		let c = await issue.getColumn();
-		expect(c).toBeInstanceOf(Column);
-		issue.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockGet = async (...args) => {
+				if (!args[0].includes('columns'))
+					return { data: [MOCKPROJECT] };
+				else return client.axios.get(args);
+			};
+			let mockAxios = {
+				get: jest.fn(mockGet),
+			};
+			issue.axios = mockAxios;
+			issue._idColumn = 2;
+			let c = await issue.getColumn();
+			expect(c).toBeInstanceOf(Column);
+			issue.axios = client.axios;
+		}
+		else if (__TEST_MODE__ === 'REST') {
+			issue._idColumn = 2;
+			let c = await issue.getColumn();
+			expect(c).toBeInstanceOf(Column);
+		}
 	});
 });
