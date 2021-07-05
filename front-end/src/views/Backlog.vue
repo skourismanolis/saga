@@ -387,15 +387,35 @@ export default {
 				let es = this.epic_issues[ei];
 
 				es.content.forEach(async (e) => {
+					var found;
 					//search backlog
-					let found = this.issues.content.find(
+					found = this.issues.content.find(
 						(obj) => parseInt(obj.code) == parseInt(e.code)
 					);
 					//found in backlog
 					if (found != undefined) {
 						await this.active_sprint.addIssues([found]);
-						this.sprint_issues[0].refresh();
-						this.issues.refresh();
+						await this.sprint_issues[0].refresh();
+						await this.issues.refresh();
+					}
+
+					//search in sprints
+					for (
+						let index = 1;
+						index < this.sprints.content.length;
+						index++
+					) {
+						let curr_spr_issues = this.sprint_issues[index];
+						found = curr_spr_issues.content.find(
+							(obj) => parseInt(obj.code) == parseInt(e.code)
+						);
+
+						//found in curr sprint
+						if (found != undefined) {
+							await this.active_sprint.addIssues([found]);
+							await curr_spr_issues.refresh();
+							await this.sprint_issues[0].refresh();
+						}
 					}
 				});
 			}
