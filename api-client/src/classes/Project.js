@@ -89,11 +89,15 @@ module.exports = class Project extends Base {
 
 	/**
 	 * Get all the sprints belonging to the project
+	 * @param {Object} options
+	 * @param {Boolean=} options.finished filder sprints that are or are not finished
 	 * @returns {Object[]} array of Sprints
 	 */
-	async getSprints() {
+	async getSprints({ finished }) {
+		let query = '';
+		if (finished != null) query = `?finished=${finished}`;
 		let list = new PaginatedList(this.client, {
-			url: `/projects/${this._idProject}/sprints`,
+			url: `/projects/${this._idProject}/sprints${query}`,
 			dataTransformer: (sprints) =>
 				sprints.map((s) => new Sprint(this.client, s, this._idProject)),
 		});
