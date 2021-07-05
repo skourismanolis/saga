@@ -5,6 +5,7 @@
 				class="list-item d-flex align-items-center rounded-sm"
 				:class="{ selected: value === label }"
 				@click="emitInput(label)"
+				@contextmenu.prevent="$emit('editLabel', label)"
 			>
 				<span
 					class="color-box mr-2 rounded-sm"
@@ -44,28 +45,6 @@ export default {
 		value: {
 			type: [Object, null],
 		},
-	},
-	data() {
-		return {
-			colors: ['orange', 'darkred', 'purple', 'black', 'darkblue'],
-			selected: 'null',
-			// labels: [
-			// 	{ text: 'Front-end', value: 'first', color: 'yellow' },
-			// 	{ text: 'Back-end', value: 'second', color: 'red' },
-			// 	{ text: 'Design', value: 'third', color: 'purple' },
-			// 	{ text: 'API Client', value: 'fourth', color: 'black' },
-			// 	{ text: 'Kalimba', value: 'fifth', color: 'blue' },
-			// ],
-			new: { text: '', value: '', color: '' },
-		};
-	},
-	computed: {
-		/*colors(){
-      let i=0;
-      for (i;i<this.options.length;i++){
-        this.colors.push(this.options[i].color);
-      }
-    }*/
 	},
 	methods: {
 		emitInput(label) {

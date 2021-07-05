@@ -62,12 +62,13 @@
 					v-model="selectedLabel"
 					@input="refreshAllIssues"
 					@addLabel="addLabel"
+					@editLabel="editLabel"
 				/>
 			</div>
 		</div>
 		<b-modal id="viewIssue"><IssueCreate /> </b-modal>
 		<b-modal id="editLabel" @ok="saveLabel">
-			<label>
+			<label class="mr-2">
 				Όνομα
 				<b-input v-model="currentLabel.name" />
 			</label>
@@ -126,6 +127,7 @@ export default {
 			this.currentLabel.label = label;
 			this.currentLabel.name = label.name;
 			this.currentLabel.color = label.color;
+			this.$bvModal.show('editLabel');
 		},
 		async saveLabel(evt) {
 			if (this.currentLabel.color.match(/^#[a-fA-f0-9]{6}$/) == null) {
@@ -143,7 +145,7 @@ export default {
 					//new label
 					await this.project.createLabel(newLabel);
 				} else {
-					this.currentLabel.label.update(newLabel);
+					await this.currentLabel.label.update(newLabel);
 				}
 				this.resetEditLabel();
 				await this.refreshLabels();
