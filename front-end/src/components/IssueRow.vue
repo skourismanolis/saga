@@ -1,21 +1,7 @@
 <template>
 	<div class="d-flex flex-row align-items-center issue-entry">
 		<div id="issue-label" :style="labelColor" class="issue-element"></div>
-		<i
-			id="issue-icon"
-			class="bi bi-bug issue-element"
-			v-if="issue.category == 'Bug'"
-		></i>
-		<i
-			id="issue-icon"
-			class="bi-book issue-element"
-			v-else-if="issue.category == 'Story'"
-		></i>
-		<i
-			id="issue-icon"
-			class="bi bi-bullseye issue-element"
-			v-else-if="issue.category == 'Task'"
-		></i>
+		<IssueCategory class="issue-element" :category="issue.category" />
 		<span id="issue-id" class="issue-element">{{ '#' + issue.code }}</span>
 		<img
 			id="issue-assignee-icon"
@@ -39,18 +25,9 @@
 			{{ '+' + (assignees.length - 1) }}
 		</div>
 		<span class="issue-element">{{ issue.title }}</span>
-		<div
-			id="issue-date"
-			class="
-				d-flex
-				flex-row
-				align-items-center
-				justify-content-center
-				ml-auto
-			"
-		>
+		<IssueDate>
 			{{ issue.deadline.toDateString() }}
-		</div>
+		</IssueDate>
 		<div
 			id="issue-points"
 			class="d-flex flex-row align-items-center justify-content-center"
@@ -64,10 +41,15 @@
 <script>
 const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
 
+import IssueDate from './IssueDate.vue';
 import IssuePriority from './IssuePriority.vue';
+import IssueCategory from './IssueCategory.vue';
+
 export default {
 	components: {
 		IssuePriority,
+		IssueDate,
+		IssueCategory,
 	},
 	props: {
 		issue: Object,
@@ -117,11 +99,6 @@ export default {
 	background-color: var(--bg-color);
 }
 
-#issue-icon {
-	color: #db5461;
-	font-size: 24px;
-}
-
 #issue-assignees-num {
 	background-color: white;
 	font-size: 16px;
@@ -136,18 +113,6 @@ export default {
 	border-style: solid;
 	border-color: black;
 	border-width: 1px;
-}
-
-#issue-date {
-	background-color: white;
-	font-size: 16px;
-	color: #047c97;
-	padding: 2px 10px;
-	border-radius: 12pt;
-	border-style: solid;
-	border-color: black;
-	border-width: 1px;
-	margin-right: 6px;
 }
 
 #issue-points {

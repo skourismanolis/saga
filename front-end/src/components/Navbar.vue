@@ -114,6 +114,8 @@ a {
 
 #sagalogo {
 	bottom: 0;
+	margin-left: -10%;
+	margin-bottom: -2%;
 }
 
 #user_image {

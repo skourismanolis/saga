@@ -100,16 +100,16 @@ async function issues_get(req, res) {
 			}
 		}
 		if (req.query.column !== undefined) {
-			if (req.query.column === null) {
-				query_string += ' AND idColumn IS ?';
+			if (req.query.column === 'null' || req.query.column === null) {
+				query_string += ' AND idColumn IS NULL';
 			} else {
 				if (isNaN(req.query.column)) {
 					res.sendStatus(400);
 					return;
 				}
 				query_string += ' AND idColumn = ?';
+				query_params.push(req.query.column);
 			}
-			query_params.push(req.query.column);
 		}
 		if (req.query.inEpic !== undefined) {
 			if (req.query.inEpic === 'null' || req.query.inEpic === null) {
@@ -133,9 +133,7 @@ async function issues_get(req, res) {
 			query_params.push(req.query.assignee);
 		}
 		if (req.query.label != null) {
-			let label = req.query.label
-				.substr(1, req.query.label.length - 2)
-				.split(',');
+			let label = req.query.label.replace(/[[\]]/g, '').split(',');
 			query_string += ' AND idLabel IN(?)';
 			query_params.push(label);
 		}

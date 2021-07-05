@@ -231,7 +231,7 @@ module.exports = class Project extends Base {
 
 		if (labels != null) {
 			if (!(labels instanceof Array)) throw 'Labels must be an array';
-			query.labels = labels.map((l) => l.id);
+			query.label = labels.map((l) => l.id);
 		}
 
 		if (assignee != null) {
