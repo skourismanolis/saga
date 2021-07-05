@@ -17,7 +17,7 @@
 				v-b-tooltip.hover="admin.name + ' ' + admin.surname"
 			>
 				<img
-					:src="admin.picture || DEFAULT_PICTURE"
+					:src="picOrDefault(admin)"
 					width="24px"
 					height="24px"
 					class="rounded-circle align-self-center mr8"
@@ -44,7 +44,7 @@
 				v-b-tooltip.hover="member.name + ' ' + member.surname"
 			>
 				<img
-					:src="member || picture"
+					:src="picOrDefault(member)"
 					width="24px"
 					height="24px"
 					class="rounded-circle align-self-center mr8"
@@ -100,6 +100,15 @@ export default {
 			if (this.members.length < MAX_USERS) return this.members;
 			else {
 				return this.members.slice(0, MAX_USERS);
+			}
+		},
+	},
+	methods: {
+		picOrDefault(object) {
+			if (object.picture != null) {
+				return 'http://localhost:3000/profilePics/' + object.picture;
+			} else {
+				return DEFAULT_PICTURE;
 			}
 		},
 	},

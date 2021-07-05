@@ -311,7 +311,7 @@ app.get('/:idUser', async (req, res) => {
 				req.protocol +
 				'://' +
 				req.get('host') +
-				'/projectPics/' +
+				'/profilePics/' +
 				result[0].picture;
 		}
 

@@ -6,7 +6,7 @@
 		<img
 			id="issue-assignee-icon"
 			v-if="assignees.length > 0"
-			:src="assignees[0].picture || DEFAULT_PICTURE"
+			:src="picOrDefault(assignees[0])"
 			width="24px"
 			height="24px"
 			class="rounded-circle align-self-center issue-element"
@@ -25,9 +25,12 @@
 			{{ '+' + (assignees.length - 1) }}
 		</div>
 		<span class="issue-element">{{ issue.title }}</span>
-		<IssueDate>
+
+		<IssueDate v-if="issue.deadline != null">
 			{{ issue.deadline.toDateString() }}
 		</IssueDate>
+		<div v-else class="ml-auto" />
+
 		<div
 			id="issue-points"
 			class="d-flex flex-row align-items-center justify-content-center"
@@ -65,6 +68,15 @@ export default {
 			return {
 				'--bg-color': this.issue.color,
 			};
+		},
+	},
+	methods: {
+		picOrDefault(object) {
+			if (object.picture != null) {
+				return 'http://localhost:3000/profilePics/' + object.picture;
+			} else {
+				return DEFAULT_PICTURE;
+			}
 		},
 	},
 	async created() {
