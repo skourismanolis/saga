@@ -159,7 +159,7 @@ jobs:
               working-directory: ./cli-app
             - name: start server backend
               run: |
-                  NODE_ENV=test node ./server.js
+                  NODE_ENV=test node ./server.js &
               working-directory: ./back-end
             - name: run tests
               run: |
