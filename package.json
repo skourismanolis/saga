@@ -6,6 +6,7 @@
 		"api-client",
 		"back-end",
 		"front-end",
-		"cli-app"
+		"cli-app",
+		"testing"
 	]
 }

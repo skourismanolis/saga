@@ -1,30 +1,34 @@
-const SagaClient = require('../index');
+const SagaClient = require('@dira/api-client');
 const dayjs = require('dayjs');
 
-const Sprint = require('./Sprint');
-const Project = require('./Project');
-const Issue = require('./Issue');
-const PaginatedList = require('./PaginatedList');
+const Sprint = require('@dira/api-client/src/classes/Sprint');
+const Project = require('@dira/api-client/src/classes/Project');
+const Issue = require('@dira/api-client/src/classes/Issue');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 
 let client;
 
-// const ISSUEID = 33;
-
 const MOCKSPRINT = {
-	idSprint: 1,
-	title: 'mansd',
+	idSprint: 3,
+	title: 'sprint_1',
 	start: null,
 	deadline: null,
 };
 
 const MOCKPROJECT = {
 	idProject: 2,
-	title: 'asdasd',
+	title: 'project2',
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+beforeAll(async () => {
+	client = new SagaClient({ url: __APIURL__ });
+	if (__TEST_MODE__ === 'REST') {
+		await client.login({
+			email: 'random_user@test.com',
+			password: 'test_member',
+		});
+	}
 });
 
 it('constructs correctly', () => {
@@ -40,12 +44,16 @@ describe('main functions', () => {
 	});
 
 	it('returns project', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		sprint.axios = mockAxios;
-		await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
-		sprint.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			};
+			sprint.axios = mockAxios;
+			await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
+			sprint.axios = client.axios;
+		} else if (__TEST_MODE__ === 'REST') {
+			await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
+		}
 	});
 
 	test('toJSON', () => {
@@ -59,22 +67,6 @@ describe('main functions', () => {
 
 		expect(spr).toMatchObject(matcher);
 	});
-
-	// test('in sprint', async () => {
-	// 	let mockAxios = {
-	// 		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-	// 	};
-	// 	sprint.axios = mockAxios;
-	// 	let project = await sprint.getProject();
-	// 	sprint.axios = client.axios;
-
-	// 	let issue = await project.getIssue(ISSUEID);
-	// 	//THIS IS BECAUSE THE MOCK SERVER IS DUMB
-	// 	issue._code = ISSUEID;
-	// 	expect(sprint.includes(issue)).toBe(true);
-	// 	issue._code = 'loemrm 3-9r 9iefefj9euf';
-	// 	expect(sprint.includes(issue)).toBe(false);
-	// });
 
 	test('started', () => {
 		expect(sprint.started()).toBe(false);
@@ -95,15 +87,21 @@ describe('main functions', () => {
 	});
 
 	test('add issues', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		sprint.axios = mockAxios;
-		let project = await sprint.getProject();
-		sprint.axios = client.axios;
+		let project;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			};
+			sprint.axios = mockAxios;
+			project = await sprint.getProject();
+			sprint.axios = client.axios;
+		} else if (__TEST_MODE__ === 'REST') {
+			project = await sprint.getProject();
+		}
 
-		let issue1 = await project.getIssue('asdas');
-		let issue2 = await project.getIssue('aqwwsdas');
+		// console.log(sprint);
+		let issue1 = await project.getIssue('issue1');
+		let issue2 = await project.getIssue('issue2');
 
 		await expect(sprint.addIssues([issue1, issue2])).resolves.not.toThrow();
 	});

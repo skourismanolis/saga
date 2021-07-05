@@ -11,7 +11,7 @@ module.exports = class Sprint extends IssueContainer {
 		super(
 			client,
 			{
-				start,
+				start: start === undefined ? null : start,
 				deadline,
 				title,
 			},
@@ -51,10 +51,9 @@ module.exports = class Sprint extends IssueContainer {
 	 * @param {Date|Null=} sprintConf.start When did this sprint start
 	 * @param {Date|Null=} sprintConf.finish when will this sprint end
 	 */
-	async update({ title, start, deadline }) {
+	async update({ title, deadline }) {
 		let newSprint = {
 			title: title || this.title,
-			start: start !== undefined ? start : this.start,
 			deadline: deadline !== undefined ? deadline : this.deadline,
 		};
 

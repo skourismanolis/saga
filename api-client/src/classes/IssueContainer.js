@@ -36,15 +36,6 @@ module.exports = class IssueContainer extends Base {
 	}
 
 	/**
-	 * Checks if the given issue is included.
-	 * @param {Object} issue Issue to check if it belongs to this object.
-	 * @returns {Boolean}
-	 */
-	// includes(issue) {
-	// 	return this._issueIds.indexOf(issue.id) !== -1;
-	// }
-
-	/**
 	 * Whether this sprint's start date has passed or not.
 	 * If no start date is set it means that the sprint hasn't started
 	 * @returns {Boolean}
@@ -95,7 +86,11 @@ module.exports = class IssueContainer extends Base {
 	 */
 	async removeIssues(issues) {
 		let issueIds = issues.map((i) => i.id);
-		await this.axios.delete(`${this._itemUrl}/issues`, issueIds);
+		await this.axios({
+			method: 'DELETE',
+			url: `${this._itemUrl}/issues`,
+			data: issueIds,
+		});
 	}
 };
 

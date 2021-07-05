@@ -1,4 +1,5 @@
 const Base = require('./Base');
+const PaginatedList = require('./PaginatedList');
 /****************************************************************************************/
 /*                                       WARNING                                        */
 /*    Move require's to the end of the file in order to avoid circular references       */
@@ -41,24 +42,28 @@ module.exports = class Issue extends Base {
 	}
 
 	toJSON() {
-		return JSON.stringify({
-			idProject: this._idProject,
-			idSprint: this._idSprint,
-			idColumn: this._idColumn,
-			idEpic: this._idEpic,
-			idLabel: this._idLabel,
-			assignees: this._assigneeIds,
-			code: this._code,
-			title: this.title,
-			category: this.category,
-			points: this.points,
-			priority: this.priority,
-			description: this.description,
-			deadline:
-				this.deadline instanceof Date
-					? this.deadline.toISOString()
-					: null,
-		});
+		return JSON.stringify(
+			{
+				idProject: this._idProject,
+				idSprint: this._idSprint,
+				idColumn: this._idColumn,
+				idEpic: this._idEpic,
+				idLabel: this._idLabel,
+				assignees: this._assigneeIds,
+				code: this._code,
+				title: this.title,
+				category: this.category,
+				points: this.points,
+				priority: this.priority,
+				description: this.description,
+				deadline:
+					this.deadline instanceof Date
+						? this.deadline.toISOString()
+						: null,
+			},
+			null,
+			4
+		);
 	}
 
 	async refresh() {
@@ -149,12 +154,26 @@ module.exports = class Issue extends Base {
 		);
 
 		let assignees = members.filter(
-			(m) => this._assigneeIds.indexOf(m.id) !== -1
+			(m) => this._assigneeIds.indexOf(m.idUser) !== -1
 		);
 
 		return assignees.map(
 			(a) => new Member(this.client, a, this._idProject)
 		);
+	}
+
+	async getComments() {
+		let list = new PaginatedList(this.client, {
+			url: `/projects/${this._idProject}/issues/${this._code}/comments`,
+			dataTransformer: (comments) =>
+				comments.map(
+					(comment) =>
+						new Comment(this.client, comment, this._idProject)
+				),
+		});
+
+		await list.refresh();
+		return list;
 	}
 
 	/**
@@ -194,6 +213,8 @@ module.exports = class Issue extends Base {
 		description,
 		deadline,
 		label,
+		idColumn,
+		assignees,
 	}) {
 		let labelValue;
 
@@ -203,15 +224,15 @@ module.exports = class Issue extends Base {
 
 		let newIssue = {
 			title: title != null ? title : this.title,
-			idColumn: this._idColumn,
+			idColumn: idColumn !== undefined ? idColumn : this._idColumn,
 			idLabel: labelValue,
 			category: category != null ? category : this.category,
-			points: points != null ? points : this.points,
+			points: points !== undefined ? points : this.points,
 			priority: priority != null ? priority : this.priority,
 			description:
 				description !== undefined ? description : this.description,
 			deadline: deadline !== undefined ? deadline : this.deadline,
-			assignees: this._assigneeIds,
+			assignees: assignees !== undefined ? assignees : this._assigneeIds,
 		};
 
 		await this.axios.put(
@@ -221,6 +242,32 @@ module.exports = class Issue extends Base {
 
 		await this.refresh();
 	}
+
+	/**
+	 * @param {object} commentConf
+	 * @param {string} commentConf.content the content of the comment
+	 * @returns {object} the newly created comment
+	 */
+	async createComment({ content }) {
+		let newComment = { content };
+		let {
+			data: { idComment },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/issues/${this._code}/comments`,
+			newComment
+		);
+
+		return new Comment(
+			this.client,
+			{
+				idComment,
+				content,
+				timestamp: new Date(),
+				idUser: this.client.user.idUser,
+			},
+			this._idProject
+		);
+	}
 };
 
 const Label = require('./Label');
@@ -228,3 +275,4 @@ const Member = require('./Member');
 const Project = require('./Project');
 const Sprint = require('./Sprint');
 const Epic = require('./Epic');
+const Comment = require('./Comment');

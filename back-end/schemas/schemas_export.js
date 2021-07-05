@@ -4,6 +4,8 @@ const Comment = require('./Comment');
 const CommentPost = require('./CommentPost');
 const Epic = require('./Epic');
 const EpicPutPost = require('./EpicPutPost');
+const Id = require('./Id');
+const IntegerArray = require('./IntegerArray');
 const Issue = require('./Issue');
 const IssuePost = require('./IssuePost');
 const IssuePut = require('./IssuePut');
@@ -17,6 +19,7 @@ const ProjectMember = require('./ProjectMember');
 const ProjectMemberShort = require('./ProjectMemberShort');
 const Sprint = require('./Sprint');
 const SprintPutPost = require('./SprintPutPost');
+const StringArray = require('./StringArray');
 const TokenObject = require('./TokenObject');
 const User = require('./User');
 const UserLoginPost = require('./UserLoginPost');
@@ -29,6 +32,8 @@ module.exports = {
 	CommentPost,
 	Epic,
 	EpicPutPost,
+	Id,
+	IntegerArray,
 	Issue,
 	IssuePost,
 	IssuePut,
@@ -42,6 +47,7 @@ module.exports = {
 	ProjectMemberShort,
 	Sprint,
 	SprintPutPost,
+	StringArray,
 	TokenObject,
 	User,
 	UserLoginPost,

@@ -173,6 +173,7 @@
 				</b-modal>
 			</div>
 		</div>
+
 	</b-container>
 </template>
 
@@ -222,30 +223,38 @@ export default {
 			}
 		},
 	},
+
 };
 </script>
 
 <style scoped>
+
+
 h4 {
 	color: rgb(255, 172, 17);
 	letter-spacing: 0.5px;
 	margin: 12px;
 	margin-bottom: 18px;
+
 	font-weight: 440;
 	justify-content: center;
 	margin-left: 0;
+
 }
 div.row.my-1 {
 	display: flex;
 	align-items: center;
 }
 
+
 .create-issue-body {
+
 	background-color: lavender;
 	width: 75%;
 	padding-right: 8%;
 	padding-top: 2px;
 }
+
 .details-label {
 	font-size: smaller;
 	font-weight: bold;
@@ -303,4 +312,5 @@ i {
 .priority-column-row {
 	display: flex;
 }
+
 </style>

@@ -12,7 +12,7 @@
 
 <script>
 import Footer from './components/Footer';
-import Navbar from './components/navbar_off';
+import Navbar from './components/Navbar';
 import ProjectNavbar from './components/ProjectNavbar.vue';
 import Issue from './components/IssueCreate.vue';
 
@@ -22,13 +22,6 @@ export default {
 		Navbar,
 		ProjectNavbar,
 		Issue,
-	},
-	data() {
-		return {};
-	},
-	methods: {},
-	mounted() {
-		console.log(this.$route);
 	},
 	computed: {
 		navbarFlag() {

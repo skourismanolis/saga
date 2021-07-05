@@ -1,12 +1,9 @@
-require('dotenv').config({ path: '../.env' });
-// const express = require('express');
-// const app = express.Router();
-// const jwt = require('jsonwebtoken');
-// const Joi = require('joi');
-// const { Project_auth } = require('../functions');
+require('dotenv').config({
+	path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+});
 
 const db = require('../db').db;
-// const schemas = require('../schemas/schemas_export');
+const c = require('../constants');
 
 async function members_get(req, res) {
 	try {
@@ -49,7 +46,7 @@ async function members_delete(req, res) {
 		// comment assignee member
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		conn.query(
+		await conn.query(
 			'UPDATE comment 				\
 			SET idUser = 0 					\
 			WHERE idUser = ? AND code IN (	\
@@ -58,7 +55,7 @@ async function members_delete(req, res) {
 				 WHERE idProject = ?)',
 			[req.body.idUser, req.params.idProject]
 		);
-		conn.query(
+		await conn.query(
 			'DELETE \
 			FROM assignee \
 			WHERE idUser = ? AND code IN (\
@@ -67,20 +64,22 @@ async function members_delete(req, res) {
 				WHERE idProject = ?)',
 			[req.body.idUser, req.params.idProject]
 		);
-		conn.query('DELETE FROM member WHERE idUser = ? AND idProject = ?', [
-			req.body.idUser,
-			req.params.idProject,
-		]);
+		await conn.query(
+			'DELETE FROM member WHERE idUser = ? AND idProject = ?',
+			[req.body.idUser, req.params.idProject]
+		);
 		await conn.commit();
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
-		console.error(error);
-		res.sendStatus(500);
+		if (error != c.INVALID_TRANSACTION) {
+			console.error(error);
+			res.sendStatus(500);
+		}
 		return;
 	} finally {
-		if (conn != null) conn.rollback();
+		if (conn != null) conn.release();
 	}
 }
 

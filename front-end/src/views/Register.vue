@@ -141,17 +141,19 @@ export default {
 			this.registerForm.plan = value;
 		},
 
-		async registerUser() {
+		async registerUser(evt) {
+			evt.preventDefault();
 			try {
 				if (
-					this.registerForm.plan != 'free' &&
-					this.registerForm.plan != 'normal' &&
-					this.registerForm.plan != 'premium'
+					this.registerForm.plan != 'Free' &&
+					this.registerForm.plan != 'Premium' &&
+					this.registerForm.plan != 'Host'
 				) {
 					alert('Παρακαλώ επιλέξτε κάποιο από τα πλάνα.');
 					this.scrollToElement('#rate-plans');
+					return;
 				} else {
-					let object = {
+					let options = {
 						username: null,
 						email: this.registerForm.email,
 						password: this.registerForm.password,
@@ -160,13 +162,18 @@ export default {
 						picture: null,
 						plan: this.registerForm.plan,
 					};
-					console.log(object);
+					await this.$client.register(options);
 					// alert('Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία!');
 				}
 			} catch (error) {
-				alert(this.errormessage);
+				if (this.errormessage != null) alert(this.errormessage);
 				console.log(error);
 			}
+
+			alert(
+				'Η δημιουργία λογαριασμού ολοκληρώθηκε με επιτυχία! Παρακαλώ ενεργοποιήστε τον λογαριασμό σας κανοντας κλικ στον σύνδεσμο που μολις λάβατε στο email σας. Έπειτα μπορείτε να συνδεθείτε!'
+			);
+			this.$router.push('/login').catch(() => {});
 		},
 		scrollToElement(i) {
 			const el = this.$el.querySelector(i);

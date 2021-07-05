@@ -1,17 +1,15 @@
-const SagaClient = require('../index');
+const SagaClient = require('@dira/api-client');
 const dayjs = require('dayjs');
 
-const Epic = require('./Epic');
-const Project = require('./Project');
-const Issue = require('./Issue');
-const PaginatedList = require('./PaginatedList');
+const Epic = require('@dira/api-client/src/classes/Epic');
+const Project = require('@dira/api-client/src/classes/Project');
+const Issue = require('@dira/api-client/src/classes/Issue');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 
 let client;
 
-// const ISSUEID = 33;
-
 const MOCKEPIC = {
-	idEpic: 1,
+	idEpic: 3,
 	title: 'mansd',
 	start: null,
 	deadline: null,
@@ -19,13 +17,13 @@ const MOCKEPIC = {
 };
 
 const MOCKPROJECT = {
-	idProject: 2,
+	idProject: 1,
 	title: 'asdasd',
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+beforeAll(async () => {
+	client = new SagaClient({ url: __APIURL__ });
 });
 
 it('constructs correctly', () => {
@@ -36,17 +34,25 @@ it('constructs correctly', () => {
 
 describe('main functions', () => {
 	let epic;
-	beforeAll(() => {
+	beforeAll(async () => {
 		epic = new Epic(client, MOCKEPIC, MOCKPROJECT.idProject);
+		if (__TEST_MODE__ === 'REST') {
+			await client.login({
+				email: 'random_user@test.com',
+				password: 'test_member',
+			});
+		}
 	});
 
 	it('returns project', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		epic.axios = mockAxios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			};
+			epic.axios = mockAxios;
+		}
 		await expect(epic.getProject()).resolves.toBeInstanceOf(Project);
-		epic.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') epic.axios = client.axios;
 	});
 
 	test('toJSON', () => {
@@ -60,22 +66,6 @@ describe('main functions', () => {
 
 		expect(epc).toMatchObject(matcher);
 	});
-
-	// test('in epic', async () => {
-	// 	let mockAxios = {
-	// 		get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-	// 	};
-	// 	epic.axios = mockAxios;
-	// 	let project = await epic.getProject();
-	// 	epic.axios = client.axios;
-
-	// 	let issue = await project.getIssue(ISSUEID);
-	// 	//THIS IS BECAUSE THE MOCK SERVER IS DUMB
-	// 	issue._code = ISSUEID;
-	// 	expect(epic.includes(issue)).toBe(true);
-	// 	issue._code = 'loemrm 3-9r 9iefefj9euf';
-	// 	expect(epic.includes(issue)).toBe(false);
-	// });
 
 	test('started', () => {
 		expect(epic.started()).toBe(false);
@@ -96,12 +86,14 @@ describe('main functions', () => {
 	});
 
 	test('add issues', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
-		};
-		epic.axios = mockAxios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: [MOCKPROJECT] })),
+			};
+			epic.axios = mockAxios;
+		}
 		let project = await epic.getProject();
-		epic.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') epic.axios = client.axios;
 
 		let issue1 = await project.getIssue('asdas');
 		let issue2 = await project.getIssue('aqwwsdas');
@@ -115,21 +107,25 @@ describe('main functions', () => {
 	});
 
 	it('refreshes', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: MOCKEPIC })),
-		};
-		epic.axios = mockAxios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: MOCKEPIC })),
+			};
+			epic.axios = mockAxios;
+		}
 		await expect(epic.refresh()).resolves.not.toThrow();
-		epic.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') epic.axios = client.axios;
 	});
 
 	it('updates', async () => {
-		let mockAxios = {
-			get: jest.fn(async () => ({ data: MOCKEPIC })),
-			put: client.axios.put,
-		};
-		epic.axios = mockAxios;
+		if (__TEST_MODE__ === 'CLIENT') {
+			let mockAxios = {
+				get: jest.fn(async () => ({ data: MOCKEPIC })),
+				put: client.axios.put,
+			};
+			epic.axios = mockAxios;
+		}
 		await expect(epic.update({ title: 'asd' })).resolves.not.toThrow();
-		epic.axios = client.axios;
+		if (__TEST_MODE__ === 'CLIENT') epic.axios = client.axios;
 	});
 });

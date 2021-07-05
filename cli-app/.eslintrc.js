@@ -1,7 +1,14 @@
+const jestGlobals = require('./jest.config.js').globals;
+
+let globals = {};
+Object.keys(jestGlobals).forEach((global) => (globals[global] = 'readonly'));
+
 module.exports = {
 	plugins: ['prettier'],
 	env: {
 		node: true,
+		jest: true,
+		es6: true,
 	},
 	extends: ['eslint:recommended', 'prettier'],
 	rules: {
@@ -11,15 +18,19 @@ module.exports = {
 		ecmaVersion: 2018,
 		sourceType: 'module',
 	},
-	// overrides: [
-	// 	{
-	// 		files: [
-	// 			'**/__tests__/*.{j,t}s?(x)',
-	// 			'**/tests/unit/**/*.spec.{j,t}s?(x)',
-	// 		],
-	// 		env: {
-	// 			jest: true,
-	// 		},
-	// 	},
-	// ],
+	overrides: [
+		{
+			globals,
+			plugins: ['jest'],
+			files: ['**/__tests__/*.{j,t}s?(x)', '**/*.spec.{j,t}s?(x)'],
+			extends: [
+				'eslint:recommended',
+				'plugin:jest/recommended',
+				'prettier',
+			],
+			env: {
+				'jest/globals': true,
+			},
+		},
+	],
 };

@@ -50,7 +50,7 @@ module.exports = class Member extends Base {
 
 	async refresh() {
 		let { data: members } = await this.axios.get(
-			`/project/${this._idProject}/members`
+			`/projects/${this._idProject}/members`
 		);
 
 		let member = members.find((m) => m.idUser == this._idUser);
