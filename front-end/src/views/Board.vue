@@ -1,7 +1,8 @@
 <template>
 	<div v-if="!loaded"><b-spinner /></div>
-	<div v-else>
-		<div class="d-flex p-4">
+	<div v-else class="p-4">
+		<TeamList class="mb-4 ml-3" :members="[{ username: 'asd' }]" max="10" />
+		<div class="d-flex">
 			<div class="column rounded-sm todo">
 				<h3>TODO</h3>
 				<IssueCard
@@ -40,11 +41,13 @@
 
 <script>
 import IssueCard from '../components/IssueCard.vue';
+import TeamList from '../components/TeamList.vue';
 
 export default {
 	name: 'Board',
 	components: {
 		IssueCard,
+		TeamList,
 	},
 	data() {
 		return {
