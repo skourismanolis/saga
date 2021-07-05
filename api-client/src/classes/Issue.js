@@ -242,6 +242,32 @@ module.exports = class Issue extends Base {
 
 		await this.refresh();
 	}
+
+	/**
+	 * @param {object} commentConf
+	 * @param {string} commentConf.content the content of the comment
+	 * @returns {object} the newly created comment
+	 */
+	async createComment({ content }) {
+		let newComment = { content };
+		let {
+			data: { idComment },
+		} = await this.axios.post(
+			`/projects/${this._idProject}/issues/${this._code}/comments`,
+			newComment
+		);
+
+		return new Comment(
+			this.client,
+			{
+				idComment,
+				content,
+				timestamp: new Date(),
+				idUser: this.client.user.idUser,
+			},
+			this._idProject
+		);
+	}
 };
 
 const Label = require('./Label');

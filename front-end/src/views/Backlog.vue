@@ -1,8 +1,5 @@
 <template>
-	<div v-if="!loaded" class="d-flex justify-content-center">
-		<b-spinner />
-	</div>
-	<div v-else class="d-flex justify-content-start">
+	<div class="d-flex justify-content-start">
 		<div class="d-flex flex-column" id="left">
 			<span id="epics-label">Epics</span>
 			<button
@@ -19,7 +16,7 @@
 				Νέο Epic
 				<i class="bi bi-plus create-epic-button-icon"></i>
 			</button>
-			<div class="d-flex flex-column" v-if="epics.content.length === 0">
+			<div class="d-flex flex-column" v-if="epics.length === 0">
 				<img id="empty-epic-art" src="../assets/empty-epic-art.png" />
 				<div class="d-flex flex-row justify-content-center">
 					<span id="empty-epic-msg"> Δεν υπάρχουν Epics! </span>
@@ -30,7 +27,7 @@
 			</div>
 			<div v-else id="epic-container">
 				<div
-					v-for="(epic, index) in epics.content"
+					v-for="(epic, index) in epics"
 					:key="index"
 					class="d-flex flex-column"
 				>
@@ -42,17 +39,13 @@
 						<button
 							type="button"
 							class="btn btn-primary epic-sprint-button"
-							@click="addIssuesToActiveSprint(epic)"
+							@click="addIssuesToActiveSprint(index)"
 						>
 							<i class="bi bi-plus-lg"></i>
 						</button>
-						<span
-							class="d-flex align-items-center"
-							@click="redirectEpicView(epic.id)"
-						>
-							<i id="epic-icon" class="bi bi-hourglass"></i>
-							<span id="epic-name">{{ epic.title }}</span>
-						</span>
+						<i id="epic-icon" class="bi bi-hourglass"></i>
+						<span id="epic-name">{{ epic.name }}</span>
+
 						<div
 							id="epic-date"
 							class="
@@ -63,7 +56,7 @@
 								ml-auto
 							"
 						>
-							{{ epic.deadline.toDateString() }}
+							{{ epic.date }}
 						</div>
 						<div
 							id="epic-points"
@@ -74,13 +67,13 @@
 								justify-content-center
 							"
 						>
-							{{ epicPoints(index) }}
+							{{ epic.points }}
 						</div>
 						<span id="epic-issues-num">
-							{{ epic_issues[index].content.length }}
+							{{ epic.issues.length }}
 						</span>
 						<i
-							v-if="epic_expanded[index] == false"
+							v-if="epic.expanded == false"
 							id="epic-chevron"
 							class="bi bi-chevron-right"
 							@click="toggleExpanded(index)"
@@ -92,9 +85,9 @@
 							@click="toggleExpanded(index)"
 						></i>
 					</div>
-					<div v-if="epic_expanded[index] == true">
+					<div v-if="epic.expanded == true">
 						<IssueRow
-							v-for="(issue, index) in epic_issues[index].content"
+							v-for="(issue, index) in epic.issues"
 							:key="index"
 							:issue="issue"
 						>
@@ -117,6 +110,7 @@
 					<span id="filter-text" class="filter-element"
 						>Φίλτραρε issues με:</span
 					>
+
 					<b-form-select
 						class="filter-box filter-element"
 						v-model="selected_epic"
@@ -128,13 +122,16 @@
 						v-model="selected_label"
 						:options="labelTitles"
 					></b-form-select>
+
 				</div>
 
 				<button
 					id="create-sprint-button"
 					type="button"
+
 					class="btn btn-primary d-flex align-items-center"
 					@click="createSprint()"
+
 				>
 					Δημιουργία Sprint
 					<i class="bi bi-plus create-epic-button-icon"></i>
@@ -143,7 +140,7 @@
 			<div class="drag-container" v-drag-and-drop:options="options">
 				<div
 					class="align-self-center d-flex flex-column"
-					v-if="sprints.content.length === 0"
+					v-if="sprints.length === 0"
 				>
 					<img
 						id="empty-sprint-art"
@@ -153,55 +150,54 @@
 						Δεν υπάρχουν sprints!
 					</span>
 				</div>
-				<div
-					v-else
-					v-for="(sprint, index) in sprints.content"
-					:key="index"
-				>
-					<SprintBox
-						:sprint="sprint"
-						:active="
-							active_sprint != null &&
-							active_sprint.id == sprint.id
-						"
-						:other_active="
-							active_sprint != null &&
-							active_sprint.id != sprint.id
-						"
-						:no_active="active_sprint == null"
-						:id="sprint.id"
-						:issuesNum="sprint_issues[index].content.length"
-						class="drag-inner-list sprint-box"
-						@activate-sprint="activateSprint"
-						@deactivate-sprint="dectivateSprint"
-						@sprint-edited="editSprint"
+				<div v-else>
+					<vue-draggable-group
+						v-for="sprint in sprints"
+						v-model="sprint.issues"
+						:groups="dropZones"
+						itemsKey="issues"
+						:key="sprint.id"
+						:data-id="sprint.id"
 					>
-						<IssueRow
-							v-for="issue in sprint_issues[index].content"
-							:key="issue.code"
-							:id="issue.code"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</SprintBox>
+						<SprintBox
+							:sprint="sprint"
+							class="drag-inner-list sprint-box"
+						>
+							<IssueRow
+								v-for="issue in sprint.issues"
+								:key="issue.id"
+								:data-id="issue.id"
+								:issue="issue"
+								class="drag-item issue-row"
+							/>
+						</SprintBox>
+					</vue-draggable-group>
 				</div>
 
 				<div id="line"><hr /></div>
 
-				<BacklogBox
-					:totalIssues="issues.content.length"
-					:activeButton="true"
-					:id="null"
-					class="drag-inner-list backlog-box"
+				<vue-draggable-group
+					v-for="backlog in backlogs"
+					v-model="backlog.issues"
+					:groups="dropZones"
+					itemsKey="issues"
+					:key="backlog.id"
+					:data-id="backlog.id"
 				>
-					<IssueRow
-						v-for="issue in issues.content"
-						:key="issue.code"
-						:id="issue.code"
-						:issue="issue"
-						class="drag-item issue-row"
-					/>
-				</BacklogBox>
+					<BacklogBox
+						:backlog="backlog"
+						:activeButton="true"
+						class="drag-inner-list backlog-box"
+					>
+						<IssueRow
+							v-for="issue in backlog.issues"
+							:key="issue.id"
+							:data-id="issue.id"
+							:issue="issue"
+							class="drag-item issue-row"
+						/>
+					</BacklogBox>
+				</vue-draggable-group>
 			</div>
 		</div>
 	</div>
@@ -242,6 +238,7 @@ export default {
 			selected_epic: null,
 			selected_label: null,
 			labels: {},
+
 		};
 	},
 	computed: {
@@ -284,15 +281,13 @@ export default {
 				onDrop: this.drop,
 			};
 		},
+
 	},
 	methods: {
-		async createSprint() {
-			await this.project.createSprint({
-				title: 'Νέο sprint',
-				deadline: new Date(),
-			});
-			location.reload();
-		},
+		drop(event) {
+			let item_id = event.items[0].attributes['data-id'].value;
+			let target_id = event.droptarget.attributes['data-id'].value;
+
 
 		async editSprint(value) {
 			let sprint = this.sprints.content.find(
@@ -393,66 +388,55 @@ export default {
 					await this.issues.refresh();
 				}
 
-				if (owner_id != '') {
-					await this.sprint_issues[owner_index].refresh();
-				} else {
-					await this.issues.refresh();
-				}
-				this.$forceUpdate();
-			} catch (error) {
-				alert(error);
+
+			let item = target.issues.find((obj) => obj.id == item_id);
+			item.sprintId = parseInt(target_id);
+		},
+		toggleExpanded(i) {
+			if (this.epics[i].expanded == false) {
+				this.epics[i].expanded = true;
+			} else if (this.epics[i].expanded == true) {
+				this.epics[i].expanded = false;
 			}
 		},
+		addIssuesToActiveSprint(i) {
+			let active_sprint_id = this.sprints[0].id;
 
-		toggleExpanded(index) {
-			if (this.epic_expanded[index] == true) {
-				console.log('its true');
-				this.epic_expanded[index] = false;
-			} else if (this.epic_expanded[index] == false) {
-				console.log('its false');
-				this.epic_expanded[index] = true;
-			}
-			this.$forceUpdate();
-		},
-		async addIssuesToActiveSprint(epic) {
-			if (this.active_sprint != null) {
-				let ei = this.epics.content.findIndex(
-					(obj) => parseInt(obj.id) == parseInt(epic.id)
-				);
-
-				let es = this.epic_issues[ei];
-
-				es.content.forEach(async (e) => {
-					var found;
-					//search backlog
-					found = this.issues.content.find(
-						(obj) => parseInt(obj.code) == parseInt(e.code)
-					);
-					//found in backlog
-					if (found != undefined) {
-						await this.active_sprint.addIssues([found]);
-						await this.sprint_issues[0].refresh();
-						await this.issues.refresh();
-					}
-
-					//search in sprints
-					for (
-						let index = 1;
-						index < this.sprints.content.length;
-						index++
+			this.epics[i].issues.forEach((epic_issue) => {
+				//check backlog
+				for (let j = 0; j < this.backlogs[0].issues.length; j++) {
+					if (
+						this.backlogs[0].issues[j].id == epic_issue.id &&
+						this.backlogs[0].issues[j].sprintId != active_sprint_id
 					) {
-						let curr_spr_issues = this.sprint_issues[index];
-						found = curr_spr_issues.content.find(
-							(obj) => parseInt(obj.code) == parseInt(e.code)
-						);
+						let data = this.backlogs[0].issues.splice(j, 1);
+						data = data.pop();
+						data.sprintId = this.sprints[0].id;
+						this.sprints[0].issues.push(data);
+					}
+				}
 
-						//found in curr sprint
-						if (found != undefined) {
-							await this.active_sprint.addIssues([found]);
-							await curr_spr_issues.refresh();
-							await this.sprint_issues[0].refresh();
+				//check other sprints
+				if (this.sprints.length > 1) {
+					for (let j = 1; j < this.sprints.length; j++) {
+						for (
+							let k = 0;
+							k < this.sprints[j].issues.length;
+							k++
+						) {
+							if (
+								this.sprints[j].issues[k].id == epic_issue.id &&
+								this.sprints[j].issues[k].sprintId !=
+									active_sprint_id
+							) {
+								let data = this.sprints[j].issues.splice(k, 1);
+								data = data.pop();
+								data.sprintId = this.sprints[0].id;
+								this.sprints[0].issues.push(data);
+							}
 						}
 					}
+
 				});
 				this.$forceUpdate();
 			}
@@ -465,8 +449,8 @@ export default {
 					path: `/projects/${this.$route.params.idProject}/epic/${id}`,
 				})
 				.catch(() => {});
-		},
 
+		},
 		redirectEpicCreate() {
 			this.$router
 				.push({
@@ -502,6 +486,7 @@ export default {
 			}
 		},
 	},
+
 	async created() {
 		try {
 			this.loaded = false;
@@ -569,6 +554,7 @@ export default {
 			alert(error);
 		}
 	},
+
 };
 </script>
 

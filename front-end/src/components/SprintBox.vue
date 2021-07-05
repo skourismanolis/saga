@@ -1,54 +1,14 @@
 <template>
 	<div class="sprint-container">
 		<div class="d-flex flex-row top justify-content-between">
-			<div class="d-flex flex-row align-items-baseline">
-				<span
-					v-if="editTitle == false"
-					class="sprint-title"
-					@dblclick="toggleEditTitle()"
-				>
-					{{ sprint.title }}
-				</span>
-				<b-form-input
-					v-else
-					class="title-input"
-					type="text"
-					v-model="sprint.title"
-					required
-					@focusout="
-						toggleEditTitle();
-						$emit('sprint-edited', sprint.id);
-					"
-				></b-form-input>
+			<div>
+				<span id="sprint-title"> {{ sprint.name }} </span>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
 			<div class="d-flex align-items-baseline flex-row">
-				<b-form-datepicker
-					class="sprint-date"
-					size="sm"
-					v-if="active"
-					v-model="sprint.start"
-					:date-format-options="{
-						year: 'numeric',
-						month: 'numeric',
-						day: 'numeric',
-					}"
-					disabled
-				></b-form-datepicker>
-				<span v-if="active" class="sprint-title"> - </span>
-				<b-form-datepicker
-					class="sprint-date"
-					size="sm"
-					v-model="sprint.deadline"
-					@input="$emit('sprint-edited', sprint.id)"
-					:date-format-options="{
-						year: 'numeric',
-						month: 'numeric',
-						day: 'numeric',
-					}"
-				></b-form-datepicker>
+				<span class="sprint-date"> {{ sprint.dateTime }} </span>
 				<button
-					v-if="active"
+					v-if="sprint.active == true"
 					type="button"
 					class="
 						btn btn-primary
@@ -57,13 +17,14 @@
 						align-items-center
 						button-container
 					"
-					@click="$emit('deactivate-sprint')"
 				>
 					Τερματισμός Sprint
 					<i class="bi bi-check-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="other_active"
+					v-else-if="
+						sprint.active == false && sprint.exists_active == true
+					"
 					type="button"
 					class="
 						btn btn-primary
@@ -78,7 +39,9 @@
 					<i class="bi bi-play-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="no_active"
+					v-else-if="
+						sprint.active == false && sprint.exists_active == false
+					"
 					type="button"
 					class="
 						btn btn-primary
@@ -87,7 +50,6 @@
 						align-items-center
 						button-container
 					"
-					@click="$emit('activate-sprint', sprint.id)"
 				>
 					Εκκίνηση Sprint
 					<i class="bi bi-play-circle button-icon"></i>
@@ -96,7 +58,7 @@
 		</div>
 		<slot></slot>
 		<div
-			v-if="issuesNum == 0"
+			v-if="sprint.issues.length == 0"
 			class="empty-msg d-flex justify-content-center"
 		>
 			<span> Δεν υπάρχουν issues! </span>
@@ -107,24 +69,17 @@
 <script>
 export default {
 	props: {
-		active: Boolean,
-		other_active: Boolean,
-		no_active: Boolean,
 		sprint: Object,
-		issuesNum: Number,
 	},
-	data() {
-		return {
-			editTitle: false,
-		};
-	},
-	methods: {
-		toggleEditTitle() {
-			if (this.editTitle == false) {
-				this.editTitle = true;
-			} else {
-				this.editTitle = false;
+	computed: {
+		issuesNum() {
+			if (this.sprint.issues != undefined && this.sprint.issues != null) {
+				return this.sprint.issues.length;
 			}
+			return 0;
+		},
+		dateTime() {
+			return 'Tue 23 Mar - Wed 36 Mar';
 		},
 	},
 };
@@ -141,23 +96,10 @@ export default {
 	margin-bottom: 12px;
 }
 
-.sprint-title {
+#sprint-title {
 	font-size: 24px;
 	font-weight: bold;
 	color: white;
-	max-width: 286px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.title-input {
-	/* background: none; */
-	height: 36px;
-	border: 0;
-	padding: 6px;
-	font-size: 24px;
-	font-weight: bold;
 }
 
 #issues-num {
@@ -182,7 +124,9 @@ export default {
 }
 
 .sprint-date {
-	width: 120px;
-	margin: 0px 8px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	margin-right: 12px;
 }
 </style>
