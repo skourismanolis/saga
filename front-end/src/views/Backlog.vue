@@ -364,17 +364,12 @@ export default {
 			}
 		},
 
-		createSprint() {
-			// USE API CLIENT HERE INSTEAD OF THIS
-			this.sprints.push({
-				id: 9,
-				name: 'Νέο Sprint',
-				start_date: new Date(),
-				end_date: new Date(),
-				active: false,
-				exists_active: true,
-				issues: [],
+		async createSprint() {
+			await this.project.createSprint({
+				title: 'Νέο sprint',
+				deadline: new Date(),
 			});
+			location.reload();
 		},
 
 		filterByEpic() {
