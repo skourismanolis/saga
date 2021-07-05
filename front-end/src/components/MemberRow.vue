@@ -24,7 +24,8 @@
 			></a>
 			<a
 				v-if="member.id != $store.state.user.idUser"
-				@click="$emit('delete', member)"			>
+				@click="$emit('delete', member)"
+			>
 				<i class="icon bi bi-x-circle ml12 mr12 icon"></i>
 			</a>
 		</div>
