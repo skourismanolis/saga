@@ -117,9 +117,26 @@
 						<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
 						<p class="details-text">TeamList(0)</p>
 						<label class="details-label">LABEL</label>
-						<p class="details-text" id="p-tag">
-							{{ issue.label }}
-						</p>
+
+						<div
+							@dblclick="toggleEditable()"
+							@focusout="toggleEditable()"
+							class="issue-label"
+						>
+							<p class="details-text" id="p-tag" v-if="!editable">
+								{{ issue.label }}
+							</p>
+							<b-form-select
+								v-else
+								type=""
+								size="sm"
+								class="mt-1"
+								v-model="issue.label"
+								:options="Labels"
+								required
+							>
+							</b-form-select>
+						</div>
 					</div>
 				</b-modal>
 			</div>
@@ -134,6 +151,7 @@ export default {
 		return {
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
 			Types: ['Task', 'Bug', 'Story'],
+			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
 			issue: {
 				id: '#ED3452',
 				type: 'Task',
