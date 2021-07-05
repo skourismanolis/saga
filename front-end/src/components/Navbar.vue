@@ -27,7 +27,9 @@
 								id="user_image"
 							/>
 						</template>
-						<b-dropdown-item class="my-account"
+						<b-dropdown-item
+							class="my-account"
+							@click="redirectProfile"
 							><i class="bi bi-person mr-1"></i>Ο Λογαριασμός
 							μου</b-dropdown-item
 						>
@@ -85,6 +87,15 @@ export default {
 					to,
 				};
 			});
+		},
+	},
+	methods: {
+		redirectProfile() {
+			if (this.isLoggedIn) {
+				this.$router.push({
+					path: `/profile`,
+				});
+			}
 		},
 	},
 };
