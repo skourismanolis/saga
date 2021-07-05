@@ -26,21 +26,10 @@
 		</div>
 		<span class="issue-element">{{ issue.title }}</span>
 
-		<div
-			v-if="issue.deadline != null"
-			id="issue-date"
-			class="
-				d-flex
-				flex-row
-				align-items-center
-				justify-content-center
-				ml-auto
-			"
-		>
+		<IssueDate v-if="issue.deadline != null">
 			{{ issue.deadline.toDateString() }}
-		</div>
+		</IssueDate>
 		<div v-else class="ml-auto" />
-
 
 		<div
 			id="issue-points"
