@@ -80,6 +80,7 @@
 						align-items-center
 						button-container
 					"
+					@click="$emit('activate-sprint', sprint.id)"
 				>
 					Εκκίνηση Sprint
 					<i class="bi bi-play-circle button-icon"></i>

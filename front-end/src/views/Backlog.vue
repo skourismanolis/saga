@@ -152,6 +152,7 @@
 						:id="sprint.id"
 						:issuesNum="sprint_issues[index].content.length"
 						class="drag-inner-list sprint-box"
+						@activate-sprint="activateSprint"
 					>
 						<IssueRow
 							v-for="issue in sprint_issues[index].content"
@@ -232,6 +233,15 @@ export default {
 		},
 	},
 	methods: {
+		async activateSprint(value) {
+			console.log(value);
+			let sprint = this.sprints.content.find(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+			await this.project.setActiveSprint(sprint);
+			await this.sprints.refresh();
+		},
+
 		epicPoints(index) {
 			let points = 0;
 			this.epic_issues[index].content.forEach((issue) => {
