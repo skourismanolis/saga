@@ -8,8 +8,6 @@ const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
 
 let client;
 
-const ISSUEID = 'asdas';
-
 const MOCKEPIC = {
 	idEpic: 3,
 	title: 'mansd',
