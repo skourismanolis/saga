@@ -101,7 +101,7 @@ async function get_column_id(req, res) {
 			return;
 		}
 
-		res.send(column);
+		res.send(column[0]);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);
