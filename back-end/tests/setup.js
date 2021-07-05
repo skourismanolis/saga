@@ -49,8 +49,8 @@ module.exports = async function setup() {
 		'ALTER TABLE user AUTO_INCREMENT = 1',
 
 		//starting values, order matters
-		'INSERT INTO project (idProject, title, picture, activeSprint) VALUES (1,"asdasd", null, null)',
-		'INSERT INTO project (idProject, title, picture, activeSprint) VALUES (2,"project2", null, null)',
+		'INSERT INTO project (idProject, title, picture, activeSprint, issue_number) VALUES (1,"asdasd", null, null, 0)',
+		'INSERT INTO project (idProject, title, picture, activeSprint, issue_number) VALUES (2,"project2", null, null, 0)',
 		'ALTER TABLE project AUTO_INCREMENT = 3',
 		'INSERT INTO label (idLabel,idProject,name,color) VALUES (1,1,"Frontend","#123456")',
 		'INSERT INTO label (idLabel,idProject,name,color) VALUES (2,1,"CLI","#000000")',

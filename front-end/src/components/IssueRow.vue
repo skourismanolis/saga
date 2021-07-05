@@ -28,7 +28,6 @@
 		<IssueDate>
 			{{ issue.deadline.toDateString() }}
 		</IssueDate>
-
 		<div
 			id="issue-points"
 			class="d-flex flex-row align-items-center justify-content-center"
