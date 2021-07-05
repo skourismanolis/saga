@@ -227,10 +227,6 @@ export default {
 				onDrop: this.drop,
 			};
 		},
-
-		dropZones() {
-			return [].concat(this.renderedBacklog, this.renderedSprints);
-		},
 	},
 	methods: {
 		async activateSprint(value) {
