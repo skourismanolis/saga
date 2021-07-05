@@ -95,7 +95,12 @@ module.exports = class Project extends Base {
 	 */
 	async getSprints({ finished }) {
 		let query = '';
-		if (finished != null) query = `?finished=${finished}`;
+
+		if (finished != null) {
+			if (finished) query = `?finished=1`;
+			else query = `?finished=0`;
+		}
+
 		let list = new PaginatedList(this.client, {
 			url: `/projects/${this._idProject}/sprints${query}`,
 			dataTransformer: (sprints) =>
