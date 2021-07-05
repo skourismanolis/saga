@@ -1,5 +1,3 @@
-const dayjs = require('dayjs');
-
 const SagaClient = require('@dira/api-client');
 const Issue = require('@dira/api-client/src/classes/Issue');
 const Project = require('@dira/api-client/src/classes/Project');
@@ -94,8 +92,7 @@ describe('Issue', () => {
 			issue.axios = mockAxios;
 			await expect(issue.getProject()).resolves.toBeInstanceOf(Project);
 			issue.axios = client.axios;
-		}
-		else if (__TEST_MODE__ === 'REST') {
+		} else if (__TEST_MODE__ === 'REST') {
 			await expect(issue.getProject()).resolves.toBeInstanceOf(Project);
 		}
 	});
@@ -145,8 +142,7 @@ describe('Issue', () => {
 			let c = await issue.getColumn();
 			expect(c).toBeInstanceOf(Column);
 			issue.axios = client.axios;
-		}
-		else if (__TEST_MODE__ === 'REST') {
+		} else if (__TEST_MODE__ === 'REST') {
 			issue._idColumn = 2;
 			let c = await issue.getColumn();
 			expect(c).toBeInstanceOf(Column);
