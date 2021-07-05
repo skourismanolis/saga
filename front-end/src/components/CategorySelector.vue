@@ -1,61 +1,51 @@
 <template>
-	<b-container>
-		<div
-			class="btn-group"
-			data-toggle="button"
-			style="flex-direction: column; width: 200px"
-		>
-			<div
-				v-for="opt in options"
-				:key="opt.text"
-				style="border-radius: 0"
-			>
-				<label
-					class="btn list-item"
-					:class="{ selected: opt.text === selected }"
-					:style="getTagStyle(options.indexOf(opt))"
-				>
-					<input
-						v-model="selected"
-						type="radio"
-						name="options"
-						id="options-group-1"
-						autocomplete="off"
-						:value="opt.text"
-						style="appearance: none"
-					/>
-					{{ opt.text }}
-				</label>
-			</div>
+	<div data-toggle="button" style="flex-direction: column; width: 200px">
+		<div v-for="label in labels" :key="label.text" style="border-radius: 0">
 			<label
-				class="btn"
-				style="
-					border-radius: 0px;
-					border-left: 12px solid grey;
-					padding-left: 5px;
-				"
-				@click="addTag"
+				class="btn list-item d-flex align-items-center rounded-sm"
+				:class="{ selected: label.text === selected }"
 			>
-				+
+				<span
+					class="color-box mr-2 rounded-sm"
+					:style="'background-color:' + label.color"
+				></span>
+				<b-btn
+					variant="link"
+					:value="label.text"
+					style="appearance: none"
+					@click="$emit('input', label)"
+				/>
+				{{ label.text }}
 			</label>
 		</div>
-	</b-container>
+		<label class="btn rounded-sm" style="padding-left: 5px" @click="addTag">
+			+ Νέο Label</label
+		>
+	</div>
 </template>
 
 <script>
 export default {
-	//prop #SOMECOLOR print
+	props: {
+		labels: {
+			type: Array,
+			required: true,
+		},
+		value: {
+			type: [Object, null],
+		},
+	},
 	data() {
 		return {
 			colors: ['orange', 'darkred', 'purple', 'black', 'darkblue'],
 			selected: 'null',
-			options: [
-				{ text: 'Front-end', value: 'first', color: 'yellow' },
-				{ text: 'Back-end', value: 'second', color: 'red' },
-				{ text: 'Design', value: 'third', color: 'purple' },
-				{ text: 'API Client', value: 'fourth', color: 'black' },
-				{ text: 'Kalimba', value: 'fifth', color: 'blue' },
-			],
+			// labels: [
+			// 	{ text: 'Front-end', value: 'first', color: 'yellow' },
+			// 	{ text: 'Back-end', value: 'second', color: 'red' },
+			// 	{ text: 'Design', value: 'third', color: 'purple' },
+			// 	{ text: 'API Client', value: 'fourth', color: 'black' },
+			// 	{ text: 'Kalimba', value: 'fifth', color: 'blue' },
+			// ],
 			new: { text: '', value: '', color: '' },
 		};
 	},
@@ -83,6 +73,11 @@ export default {
 </script>
 
 <style scoped>
+.color-box {
+	display: inline-block;
+	width: 35px;
+	height: 35px;
+}
 .selected {
 	background: lavender;
 	/* border-color:  */
@@ -102,7 +97,6 @@ label.btn {
 	vertical-align: middle;
 	cursor: pointer;
 	font-weight: 500;
-	font-size: 1.25rem;
 	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
 		border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 	padding-left: 0px;
@@ -116,9 +110,5 @@ label.btn {
 }
 label.btn:hover {
 	color: rgb(255, 255, 255);
-}
-
-.btn-group {
-	margin: 12px;
 }
 </style>
