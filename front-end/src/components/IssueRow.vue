@@ -38,7 +38,7 @@
 		>
 			{{ '+' + (assignees.length - 1) }}
 		</div>
-		<span class="issue-element">{{ issue.name }}</span>
+		<span class="issue-element">{{ issue.title }}</span>
 		<div
 			id="issue-date"
 			class="
