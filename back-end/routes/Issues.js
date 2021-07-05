@@ -1,6 +1,5 @@
 const db = require('../db').db;
 const joi = require('joi');
-const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
 const dayjs = require('dayjs');
 const c = require('../constants');
