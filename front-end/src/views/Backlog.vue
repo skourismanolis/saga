@@ -522,27 +522,15 @@ export default {
 				this.epic_expanded.push(false);
 			}
 
-			//getting sprint data
-			this.active_sprint = await this.project.getActiveSprint();
-			this.sprints = await this.project.getSprints();
-
-			for (let i = 0; i < this.sprints.content.length; i++) {
-				//issue fetching
-				let tempIssues = await this.project.searchIssues({
-					inSprint: this.sprints.content[i],
-				});
-				// let tempIssues = await this.sprints.content[i].getIssues();
-				this.sprint_issues.push(tempIssues);
-			}
-
 			//getting backlog data
 			this.issues = await this.project.searchIssues({
 				inSprint: null,
 			});
+			console.log('here');
 
 			//getting sprint data
 			this.active_sprint = await this.project.getActiveSprint();
-			this.sprints = await this.project.getSprints();
+			this.sprints = await this.project.getSprints({});
 
 			for (let i = 0; i < this.sprints.content.length; i++) {
 				//issue fetching
