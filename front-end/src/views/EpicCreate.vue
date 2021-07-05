@@ -1,5 +1,8 @@
 <template>
-	<div class="d-flex justify-content-center">
+	<div v-if="project == null">
+		<b-spinner />
+	</div>
+	<div v-else class="d-flex justify-content-center">
 		<form class="d-flex flex-column justify-content-start container">
 			<div class="d-flex flex-row align-items-center container-element">
 				<i class="bi bi-hourglass epic-icon"></i>
@@ -37,50 +40,34 @@
 				<span>{{ totalPoints }}</span>
 			</div>
 			<div class="drag-container" v-drag-and-drop:options="options">
-				<vue-draggable-group
-					v-for="epic_issue in epic_issues"
-					v-model="epic_issue.issues"
-					:groups="dropZones"
-					itemsKey="issues"
-					:key="epic_issue.id"
-					:data-id="epic_issue.id"
+				<EpicIssueBox
+					class="drag-inner-list box container-element"
+					:issues="epic_issues"
+					ref="epicBox"
 				>
-					<EpicIssueBox
-						class="drag-inner-list box container-element"
-						:issues="epic_issues[0].issues"
-					>
-						<IssueRow
-							v-for="issue in epic_issue.issues"
-							:key="issue.id"
-							:data-id="issue.id"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</EpicIssueBox>
-				</vue-draggable-group>
+					<IssueRow
+						v-for="issue in epic_issues"
+						:key="issue.id"
+						:id="issue.id"
+						:issue="issue"
+						class="drag-item issue-row"
+					/>
+				</EpicIssueBox>
 
-				<vue-draggable-group
-					v-for="backlog in backlogs"
-					v-model="backlog.issues"
-					:groups="dropZones"
-					itemsKey="issues"
-					:key="backlog.id"
-					:data-id="backlog.id"
+				<BacklogBox
+					:totalIssues="filteredBacklog.length"
+					:activeButton="false"
+					class="drag-inner-list box container-element"
+					ref="backlogBox"
 				>
-					<BacklogBox
-						:backlog="backlog"
-						:activeButton="false"
-						class="drag-inner-list box container-element"
-					>
-						<IssueRow
-							v-for="issue in backlog.issues"
-							:key="issue.id"
-							:data-id="issue.id"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</BacklogBox>
-				</vue-draggable-group>
+					<IssueRow
+						v-for="(issue, idx) in filteredBacklog"
+						:key="idx"
+						:id="issue.id"
+						:issue="issue"
+						class="drag-item issue-row"
+					/>
+				</BacklogBox>
 			</div>
 			<button
 				type="submit"
@@ -106,51 +93,9 @@ export default {
 	},
 	data() {
 		return {
-			backlogs: [
-				{
-					id: -1,
-					issues: [
-						{
-							id: 5,
-							epicId: null,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: null,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
-			epic_issues: [
-				{
-					id: -2,
-					issues: [],
-				},
-			],
+			project: null,
+			backlog: null,
+			epic_issues: [],
 		};
 	},
 	computed: {
@@ -158,15 +103,16 @@ export default {
 			return {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
-				// onDrop: this.drop,
+				onDrop: this.drop,
 			};
 		},
+
 		totalPoints() {
-			if (this.epic_issues[0].issues.length > 0) {
+			if (this.epic_issues.length > 0) {
 				let points = 0;
 
-				for (let i in this.epic_issues[0].issues) {
-					points += this.epic_issues[0].issues[i].points;
+				for (let i in this.epic_issues) {
+					if (i.points != null) points += i.points;
 				}
 				return points;
 			}
@@ -175,8 +121,42 @@ export default {
 		dropZones() {
 			return [].concat(this.backlogs, this.epic_issues);
 		},
+		filteredBacklog() {
+			if (this.backlog == null) return [];
+			let backlogItems = [...this.backlog.content];
+			return backlogItems.filter((i) => {
+				for (let ei of this.epic_issues) {
+					if (ei.code === i.code) return false;
+				}
+				return true;
+			});
+		},
 	},
-	methods: {},
+	methods: {
+		drop(e) {
+			if (this.$refs.epicBox.$el === e.droptarget)
+				this.epic_issues.push(
+					this.filteredBacklog.find((i) => i.code === e.items[0].id)
+				);
+			else if (this.$refs.backlogBox.$el === e.droptarget) {
+				let issue = this.epic_issues.find(
+					(i) => i.code === e.items[0].id
+				);
+				let idx = this.epic_issues.indexOf(issue);
+				this.epic_issues.splice(idx, 1);
+			}
+		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+			this.backlog = await this.project.searchIssues({ inEpic: null });
+		} catch (error) {
+			alert(error);
+		}
+	},
 };
 </script>
 
