@@ -224,7 +224,7 @@ module.exports = class Issue extends Base {
 
 		let newIssue = {
 			title: title != null ? title : this.title,
-			idColumn: idColumn != null ? idColumn : this._idColumn,
+			idColumn: idColumn !== undefined ? idColumn : this._idColumn,
 			idLabel: labelValue,
 			category: category != null ? category : this.category,
 			points: points !== undefined ? points : this.points,
