@@ -66,6 +66,7 @@
 				<EpicIssueBox
 					class="drag-inner-list box container-element"
 					:issues="epicIssues.content"
+					ref="epicBox"
 				>
 					<IssueRow
 						v-for="issue in epicIssues.content"
@@ -80,6 +81,7 @@
 					:total-issues="backlog.content.length"
 					:activeButton="false"
 					class="drag-inner-list box container-element"
+					ref="backlogBox"
 				>
 					<IssueRow
 						v-for="issue in backlog.content"
@@ -137,11 +139,27 @@ export default {
 			return {
 				dropzoneSelector: '.drag-inner-list',
 				draggableSelector: '.drag-item',
-				// onDrop: this.drop,
+				onDrop: this.drop,
 			};
 		},
 	},
 	methods: {
+		async drop(e) {
+			if (this.$refs.epicBox.$el === e.droptarget) {
+				let issue = this.backlog.content.find(
+					(i) => i.code === e.items[0].id
+				);
+				await this.epic.addIssues([issue]);
+			} else if (this.$refs.backlogBox.$el === e.droptarget) {
+				let issue = this.epicIssues.content.find(
+					(i) => i.code === e.items[0].id
+				);
+				await this.epic.removeIssues([issue]);
+			}
+			await this.epicIssues.refresh();
+			await this.backlog.refresh();
+			this.$forceUpdate();
+		},
 		async toggleEditTitle() {
 			if (this.editTitle == true) {
 				if (this.title.length === 0)
