@@ -238,14 +238,9 @@ export default {
 		},
 		async drop(event) {
 			try {
-				console.log(event);
 				let item_id = event.items[0].id;
 				let owner_id = event.owner.id;
 				let target_id = event.droptarget.id;
-
-				console.log('item ' + item_id);
-				console.log('owner ' + owner_id);
-				console.log('target ' + target_id);
 
 				var item;
 				var owner;
@@ -282,17 +277,20 @@ export default {
 					target = this.sprints.content.find(
 						(obj) => parseInt(obj.id) == parseInt(target_id)
 					);
-					await target.addIssues([item]);
 
+					await target.addIssues([item]);
 					await this.sprint_issues[target_index].refresh();
 				} else {
-					owner.removeIssues([item]);
+					await owner.removeIssues([item]);
 					await this.issues.refresh();
 				}
 
 				if (owner_id != '') {
 					await this.sprint_issues[owner_index].refresh();
+				} else {
+					await this.issues.refresh();
 				}
+				this.$forceUpdate();
 			} catch (error) {
 				alert(error);
 			}
