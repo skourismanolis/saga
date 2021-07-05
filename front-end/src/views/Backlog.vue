@@ -121,6 +121,7 @@
 						class="filter-box filter-element"
 						v-model="selected_epic"
 						:options="epicTitles"
+						@change="filterByEpic"
 					></b-form-select>
 					<b-form-select
 						class="filter-box"
@@ -299,6 +300,37 @@ export default {
 		},
 	},
 	methods: {
+		async filterByEpic() {
+			if (this.selected_epic != null) {
+				let epic = this.epics.content.find(
+					(obj) => obj.id == this.selected_epic
+				);
+				this.issues = await this.project.searchIssues({
+					inSprint: null,
+					inEpic: epic,
+				});
+				await this.issues.refresh();
+
+				for (let i = 0; i < this.sprint_issues.length; i++) {
+					this.sprint_issues[i] = await this.project.searchIssues({
+						inSprint: this.sprints.content[i],
+						inEpic: epic,
+					});
+					await this.sprint_issues[i].refresh();
+				}
+			} else {
+				// location.reload();
+				this.initBacklogData();
+				// await this.issues.refresh();
+
+				this.initSprintData();
+				// for (let i = 0; i < this.sprints.content.length; i++) {
+				// 	// await this.sprint_issues[i].refresh();
+				// }
+			}
+			this.$forceUpdate();
+		},
+
 		async createSprint() {
 			await this.project.createSprint({
 				title: 'Νέο sprint',
@@ -471,13 +503,6 @@ export default {
 			}
 		},
 
-		filterByEpic() {
-			for (let i = 0; i < this.dropZones.length; i++) {
-				this.dropZones[i].issues.sort(
-					(a, b) => parseInt(a.epicId) - parseInt(b.epicId)
-				);
-			}
-		},
 		filterByLabel() {
 			for (let i = 0; i < this.dropZones.length; i++) {
 				this.dropZones[i].issues.sort(
@@ -503,7 +528,21 @@ export default {
 				.catch(() => {});
 		},
 
-		async initEpicData() {
+		// async refreshIssues() {
+		// 	let params = {};
+		// if (this.selected_epic != null) {
+		//     params.labels = [this.selectedLabel];
+		// }
+		// this.project.searchIssues({ column: c, ...params });
+		// },
+	},
+	async created() {
+		try {
+			this.loaded = false;
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+
 			//getting epic data
 			this.epics = await this.project.getEpics();
 			this.epic_issues = [];
@@ -516,23 +555,35 @@ export default {
 				//expanded init
 				this.epic_expanded.push(false);
 			}
-		},
 
-		async initBacklogData() {
-			//getting backlog data
-			this.issues = await this.project.searchIssues({
-				inSprint: null,
-			});
-		},
-
-		async initSprintData() {
 			//getting sprint data
 			this.active_sprint = await this.project.getActiveSprint();
 			this.sprints = await this.project.getSprints();
 
 			for (let i = 0; i < this.sprints.content.length; i++) {
 				//issue fetching
-				let tempIssues = await this.sprints.content[i].getIssues();
+				let tempIssues = await this.project.searchIssues({
+					inSprint: this.sprints.content[i],
+				});
+				// let tempIssues = await this.sprints.content[i].getIssues();
+				this.sprint_issues.push(tempIssues);
+			}
+
+			//getting backlog data
+			this.issues = await this.project.searchIssues({
+				inSprint: null,
+			});
+
+			//getting sprint data
+			this.active_sprint = await this.project.getActiveSprint();
+			this.sprints = await this.project.getSprints();
+
+			for (let i = 0; i < this.sprints.content.length; i++) {
+				//issue fetching
+				let tempIssues = await this.project.searchIssues({
+					inSprint: this.sprints.content[i],
+				});
+				// let tempIssues = await this.sprints.content[i].getIssues();
 				this.sprint_issues.push(tempIssues);
 			}
 
@@ -555,16 +606,6 @@ export default {
 						this.sprints.content[0],
 					];
 			}
-		},
-	},
-	async created() {
-		try {
-			this.project = await this.$client.getProject({
-				idProject: this.$route.params.idProject,
-			});
-			this.initEpicData();
-			this.initBacklogData();
-			this.initSprintData();
 
 			//filter data
 			this.labels = await this.project.getLabels();
