@@ -1,25 +1,35 @@
 <template>
 	<div data-toggle="button" style="flex-direction: column; width: 200px">
 		<div v-for="label in labels" :key="label.text" style="border-radius: 0">
-			<label
-				class="btn list-item d-flex align-items-center rounded-sm"
-				:class="{ selected: label.text === selected }"
+			<a
+				class="list-item d-flex align-items-center rounded-sm"
+				:class="{ selected: value === label }"
+				@click="emitInput(label)"
 			>
 				<span
 					class="color-box mr-2 rounded-sm"
 					:style="'background-color:' + label.color"
 				></span>
-				<b-btn
-					variant="link"
-					:value="label.text"
-					style="appearance: none"
-					@click="$emit('input', label)"
-				/>
-				{{ label.text }}
-			</label>
+				{{ label.name }}
+			</a>
 		</div>
-		<label class="btn rounded-sm" style="padding-left: 5px" @click="addTag">
-			+ Νέο Label</label
+		<a
+			class="list-item d-flex align-items-center rounded-sm"
+			@click="addTag"
+		>
+			<span
+				class="
+					color-box
+					mr-2
+					rounded-sm
+					border
+					d-inline-flex
+					justify-content-center
+					align-items-center
+				"
+				>+</span
+			>
+			Νέο Label</a
 		>
 	</div>
 </template>
@@ -58,6 +68,10 @@ export default {
     }*/
 	},
 	methods: {
+		emitInput(label) {
+			if (label === this.value) this.$emit('input', null);
+			else this.$emit('input', label);
+		},
 		getTagStyle(index) {
 			return (
 				//" background-color:" +
@@ -73,6 +87,15 @@ export default {
 </script>
 
 <style scoped>
+a {
+	color: initial;
+	cursor: pointer;
+}
+
+a:hover {
+	color: initial;
+	text-decoration: none;
+}
 .color-box {
 	display: inline-block;
 	width: 35px;
@@ -84,9 +107,7 @@ export default {
 }
 
 .list-item {
-	border-right: 0px;
-	border-left: 0px;
-	border-radius: 0px;
+	margin-top: 5px;
 }
 label.btn {
 	display: inline-block;

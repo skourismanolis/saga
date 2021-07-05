@@ -56,6 +56,11 @@
 						Νέο Issue
 					</a>
 				</div>
+				<CategorySelector
+					class="mt-2"
+					:labels="labels"
+					v-model="selectedLabel"
+				/>
 			</div>
 		</div>
 		<b-modal id="viewIssue"><IssueCreate /> </b-modal>
@@ -66,6 +71,7 @@
 import IssueCard from '@/components/IssueCard.vue';
 import TeamList from '@/components/TeamList.vue';
 import IssueCreate from '@/components/IssueCreate.vue';
+import CategorySelector from '@/components/CategorySelector.vue';
 
 export default {
 	name: 'Board',
@@ -73,14 +79,17 @@ export default {
 		IssueCard,
 		TeamList,
 		IssueCreate,
+		CategorySelector,
 	},
 	data() {
 		return {
 			loaded: false,
 			project: null,
 			members: null,
+			labels: null,
 			columnIds: [],
 			columnIssues: [],
+			selectedLabel: null,
 		};
 	},
 	computed: {
@@ -117,6 +126,7 @@ export default {
 				idProject: this.$route.params.idProject,
 			});
 			this.members = await this.project.getMembers();
+			this.labels = await this.project.getLabels();
 			await this.refreshAllIssues();
 			this.loaded = true;
 		} catch (error) {
