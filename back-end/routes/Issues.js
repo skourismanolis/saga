@@ -1,6 +1,5 @@
 const db = require('../db').db;
 const joi = require('joi');
-const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
 const dayjs = require('dayjs');
 const c = require('../constants');
@@ -14,7 +13,6 @@ async function issues_create(req, res) {
 		return;
 	}
 	let conn;
-	let code = uuidv4();
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -29,6 +27,15 @@ async function issues_create(req, res) {
 				throw c.INVALID_TRANSACTION;
 			}
 		}
+		let [project] = await db.pool.query(
+			'SELECT issue_number FROM project WHERE idProject = ?',
+			[req.params.idProject]
+		);
+		let num1 = req.params.idProject;
+		let num2 = project[0].issue_number + 1;
+		let together = String(num1) + String(num2);
+		let asNum = parseInt(together);
+		let code = Buffer.from([asNum]).toString('hex').toUpperCase();
 
 		await conn.query(
 			'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
@@ -43,6 +50,10 @@ async function issues_create(req, res) {
 				body.description,
 				body.idLabel,
 			]
+		);
+		await conn.query(
+			'UPDATE project SET issue_number = ? WHERE idProject = ?',
+			[num2, req.params.idProject]
 		);
 		if (body.assignees != null && body.assignees.length > 0) {
 			const [members] = await conn.query(
@@ -89,16 +100,16 @@ async function issues_get(req, res) {
 			}
 		}
 		if (req.query.column !== undefined) {
-			if (req.query.column === null) {
-				query_string += ' AND idColumn IS ?';
+			if (req.query.column === 'null' || req.query.column === null) {
+				query_string += ' AND idColumn IS NULL';
 			} else {
 				if (isNaN(req.query.column)) {
 					res.sendStatus(400);
 					return;
 				}
 				query_string += ' AND idColumn = ?';
+				query_params.push(req.query.column);
 			}
-			query_params.push(req.query.column);
 		}
 		if (req.query.inEpic !== undefined) {
 			if (req.query.inEpic === 'null' || req.query.inEpic === null) {
@@ -122,9 +133,7 @@ async function issues_get(req, res) {
 			query_params.push(req.query.assignee);
 		}
 		if (req.query.label != null) {
-			let label = req.query.label
-				.substr(1, req.query.label.length - 2)
-				.split(',');
+			let label = req.query.label.replace(/[[\]]/g, '').split(',');
 			query_string += ' AND idLabel IN(?)';
 			query_params.push(label);
 		}
