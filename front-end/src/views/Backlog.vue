@@ -46,9 +46,13 @@
 						>
 							<i class="bi bi-plus-lg"></i>
 						</button>
-						<i id="epic-icon" class="bi bi-hourglass"></i>
-						<span id="epic-name">{{ epic.title }}</span>
-
+						<span
+							class="d-flex align-items-center"
+							@click="redirectEpicView(epic.id)"
+						>
+							<i id="epic-icon" class="bi bi-hourglass"></i>
+							<span id="epic-name">{{ epic.title }}</span>
+						</span>
 						<div
 							id="epic-date"
 							class="
@@ -437,20 +441,20 @@ export default {
 			}
 		},
 
+		redirectEpicView(id) {
+			this.$router
+				.push({
+					path: `/projects/${this.$route.params.idProject}/epic/${id}`,
+				})
+				.catch(() => {});
+		},
+
 		redirectEpicCreate() {
 			this.$router
 				.push({
 					path: `/projects/${this.$route.params.idProject}/epic-create`,
 				})
 				.catch(() => {});
-		},
-
-		updateSprint() {
-			console.log('update sprint');
-		},
-
-		updateBacklog() {
-			console.log('update backlog');
 		},
 	},
 	async created() {
