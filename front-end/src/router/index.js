@@ -11,6 +11,7 @@ import EpicView from '../views/EpicView.vue';
 import ProjectSettings from '../views/ProjectSettings.vue';
 import Projects from '../views/Projects.vue';
 import Invite from '@/views/Invite.vue';
+import Board from '@/views/Board.vue';
 
 Vue.use(VueRouter);
 
@@ -64,6 +65,11 @@ const routes = [
 		path: '/projects/:idProject/backlog',
 		name: 'Backlog',
 		component: Backlog,
+	},
+	{
+		path: '/projects/:idProject/board',
+		name: 'Board',
+		component: Board,
 	},
 	{
 		path: '/projects/:idProject/epic-create',

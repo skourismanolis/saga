@@ -1,0 +1,91 @@
+<template>
+	<div v-if="!loaded"><b-spinner /></div>
+	<div v-else>
+		<div class="d-flex p-4">
+			<div class="column rounded-sm todo">
+				<h3>TODO</h3>
+			</div>
+			<div class="column rounded-sm in-progress">
+				<h3>IN PROGRESS</h3>
+			</div>
+			<div class="column rounded-sm done"><h3>IN PROGRESS</h3></div>
+			<div>
+				<a class="hand">
+					<span class="bg-gray px-2 py-1 rounded-sm">
+						<b-icon icon="search" class="text-white" />
+					</span>
+					Αναζήτηση
+				</a>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	name: 'Board',
+	data() {
+		return {
+			loaded: false,
+			project: null,
+			members: null,
+			columnIssues: [],
+		};
+	},
+	methods: {
+		async refreshAllIssues() {
+			let columns = await this.project.getColumns();
+			this.columnIssues = await Promise.all([
+				columns.map((c) => this.project.searchIssues({ column: c })),
+				this.project.searchIssues({ column: null }),
+			]);
+		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+			this.members = await this.project.getMembers();
+			await this.refreshAllIssues();
+			this.loaded = true;
+		} catch (error) {
+			alert(error);
+		}
+	},
+};
+</script>
+
+<style scoped>
+a {
+	color: initial !important;
+	text-decoration: none !important;
+}
+.hand {
+	cursor: pointer;
+}
+.bg-gray {
+	background-color: #aaa;
+}
+.todo {
+	background-color: #fcd57f;
+}
+
+.in-progress {
+	background-color: #efb0b7;
+}
+
+.done {
+	background-color: #7b7393;
+}
+.column {
+	width: 350px;
+	padding-top: 32px;
+	padding-bottom: 16px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-left: 12px;
+	margin-right: 12px;
+	color: white;
+}
+</style>
