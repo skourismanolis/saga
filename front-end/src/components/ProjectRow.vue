@@ -17,7 +17,10 @@
 				v-b-tooltip.hover="admin.name + ' ' + admin.surname"
 			>
 				<img
-					:src="admin.picture || DEFAULT_PICTURE"
+					:src="
+						'http://localhost:3000/profilePics/' + admin.picture ||
+						DEFAULT_PICTURE
+					"
 					width="24px"
 					height="24px"
 					class="rounded-circle align-self-center mr8"
@@ -44,7 +47,10 @@
 				v-b-tooltip.hover="member.name + ' ' + member.surname"
 			>
 				<img
-					:src="member || picture"
+					:src="
+						'http://localhost:3000/profilePics/' + member.picture ||
+						DEFAULT_PICTURE
+					"
 					width="24px"
 					height="24px"
 					class="rounded-circle align-self-center mr8"
