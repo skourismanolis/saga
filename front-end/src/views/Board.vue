@@ -41,7 +41,7 @@
 			</div>
 			<div>
 				<div>
-					<a class="hand">
+					<a class="hand" v-b-modal.searchIssues>
 						<span class="bg-gray px-2 py-1 rounded-sm">
 							<b-icon icon="search" class="text-white" />
 						</span>
@@ -77,6 +77,20 @@
 				<b-input v-model="currentLabel.color" />
 			</label>
 		</b-modal>
+		<b-modal id="searchIssues" size="lg" centerd>
+			<label>
+				Αναζήτηση
+				<b-input v-model="search.text" />
+			</label>
+			<b-btn @click="searchIssues"> Αναζήτηση </b-btn>
+			<div v-if="search.issues != null">
+				<IssueCard
+					class="my-2"
+					v-for="issue in search.issues.content"
+					:key="issue.code"
+				/>
+			</div>
+		</b-modal>
 	</div>
 </template>
 
@@ -101,6 +115,10 @@ export default {
 				name: '',
 				color: '',
 			},
+			search: {
+				text: '',
+				issues: null,
+			},
 			loaded: false,
 			project: null,
 			members: null,
@@ -120,6 +138,15 @@ export default {
 		},
 	},
 	methods: {
+		async searchIssues() {
+			try {
+				this.search.issues = await this.project.searchIssues({
+					search: this.search.text,
+				});
+			} catch (error) {
+				alert(error);
+			}
+		},
 		async addLabel() {
 			this.$bvModal.show('editLabel');
 		},
