@@ -26,15 +26,16 @@
 				<b-form-datepicker
 					class="sprint-date"
 					size="sm"
+					v-if="active"
 					v-model="sprint.start"
-					@input="$emit('sprint-edited', sprint.id)"
 					:date-format-options="{
 						year: 'numeric',
 						month: 'numeric',
 						day: 'numeric',
 					}"
+					disabled
 				></b-form-datepicker>
-				<span v-if="editTitle == false" class="sprint-title"> - </span>
+				<span v-if="active" class="sprint-title"> - </span>
 				<b-form-datepicker
 					class="sprint-date"
 					size="sm"
