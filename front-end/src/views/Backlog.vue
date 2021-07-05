@@ -237,54 +237,63 @@ export default {
 			return points;
 		},
 		async drop(event) {
-			console.log(event);
-			let item_id = event.items[0].id;
-			let owner_id = event.owner.id;
-			let target_id = event.droptarget.id;
+			try {
+				console.log(event);
+				let item_id = event.items[0].id;
+				let owner_id = event.owner.id;
+				let target_id = event.droptarget.id;
 
-			console.log('item ' + item_id);
-			console.log('owner ' + owner_id);
-			console.log('target ' + target_id);
+				console.log('item ' + item_id);
+				console.log('owner ' + owner_id);
+				console.log('target ' + target_id);
 
-			var item;
-			//if owner is not the backlog
-			if (owner_id != '') {
-				//find owner index in sprints
-				let owner_index = this.sprints.content.findIndex(
-					(obj) => parseInt(obj.id) == parseInt(owner_id)
-				);
+				var item;
+				var owner;
+				var target;
+				var owner_index;
+				var target_index;
+				//if owner is not the backlog
+				if (owner_id != '') {
+					//find owner index in sprints
+					owner_index = this.sprints.content.findIndex(
+						(obj) => parseInt(obj.id) == parseInt(owner_id)
+					);
 
-				// find item
-				let item_index = this.sprint_issues[
-					owner_index
-				].content.findIndex(
-					(obj) => parseInt(obj.code) == parseInt(item_id)
-				);
+					owner = this.sprints.content.find(
+						(obj) => parseInt(obj.id) == parseInt(owner_id)
+					);
 
-				item = this.sprint_issues[owner_index].content.splice(
-					item_index,
-					1
-				);
-				item = item.pop();
-			} else {
-				let item_index = this.issues.content.findIndex(
-					(obj) => parseInt(obj.code) == parseInt(item_id)
-				);
+					// find item
+					item = this.sprint_issues[owner_index].content.find(
+						(obj) => parseInt(obj.code) == parseInt(item_id)
+					);
+				} else {
+					item = this.issues.content.find(
+						(obj) => parseInt(obj.code) == parseInt(item_id)
+					);
+					owner = this.issues;
+				}
+				// check target
+				if (target_id != '') {
+					target_index = this.sprints.content.findIndex(
+						(obj) => parseInt(obj.id) == parseInt(target_id)
+					);
 
-				item = this.issues.content.splice(item_index, 1);
-				item = item.pop();
-			}
+					target = this.sprints.content.find(
+						(obj) => parseInt(obj.id) == parseInt(target_id)
+					);
+					await target.addIssues([item]);
 
-			// check target
-			if (target_id != '') {
-				let target_Index = this.sprints.content.findIndex(
-					(obj) => parseInt(obj.id) == parseInt(target_id)
-				);
-				item._idSprint = parseInt(target_id);
-				this.sprint_issues[target_Index].content.push(item);
-			} else {
-				item._idSprint = null;
-				this.issues.content.push(item);
+					await this.sprint_issues[owner_index].refresh();
+					await this.sprint_issues[target_index].refresh();
+				} else {
+					owner.removeIssues([item]);
+					await this.issues.refresh();
+				}
+
+				this.$forceUpdate();
+			} catch (error) {
+				alert(error);
 			}
 		},
 
