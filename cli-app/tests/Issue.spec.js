@@ -49,7 +49,7 @@ describe('basic issue interactions', () => {
 
 	it('updates an issue', async () => {
 		let { content } = await project.searchIssues({});
-		let result = await cli(
+		await cli(
 			[
 				'-a',
 				user.accountName,
@@ -87,7 +87,7 @@ describe('basic issue interactions', () => {
 
 	it('delete an issue', async () => {
 		let { content } = await project.searchIssues({});
-		let result = await cli(
+		await cli(
 			[
 				'-a',
 				user.accountName,
