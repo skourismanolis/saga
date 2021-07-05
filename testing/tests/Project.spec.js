@@ -305,7 +305,8 @@ describe('issue search', () => {
 		issues.content.map((i) => expect(i).toBeInstanceOf(Issue));
 		let labelIds = labels.map((l) => l.id);
 		labelIds.push(null);
-		issues.content.map((i) => expect(labelIds).toContain(i._idLabel));
+		if (__TEST_MODE__ === 'REST')
+			issues.content.map((i) => expect(labelIds).toContain(i._idLabel));
 	});
 
 	test('assignee', async () => {
