@@ -19,13 +19,17 @@ const Issue = require('./src/Issue');
 program.version('1.0.0');
 
 program
-	.option('-a, --account <name>', 'account name to store login details to', 'Saga')
-	.hook('preAction', async (thisCommand) => {
+	.option(
+		'-a, --account <name>',
+		'account name to store login details to',
+		'Saga'
+	)
+	.hook('preAction', async () => {
 		client.accountName = program.opts().account;
 		await keytar.getPassword('Saga', client.accountName).then((result) => {
 			if (result) client.setToken(result);
 		});
-	})
+	});
 
 //user
 program.addCommand(User.login);
