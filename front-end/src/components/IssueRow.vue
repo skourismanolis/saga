@@ -19,15 +19,15 @@
 		<span id="issue-id" class="issue-element">{{ '#' + issue.id }}</span>
 		<img
 			id="issue-assignee-icon"
-			v-if="issue.assignees.length > 0"
-			:src="issue.assignees[0]"
+			v-if="assignees.length > 0"
+			:src="assignees[0].picture || DEFAULT_PICTURE"
 			width="24px"
 			height="24px"
 			class="rounded-circle align-self-center issue-element"
 		/>
 		<div
 			id="issue-assignees-num"
-			v-if="issue.assignees.length > 1"
+			v-if="assignees.length > 1"
 			class="
 				issue-element
 				d-flex
@@ -36,7 +36,7 @@
 				justify-content-center
 			"
 		>
-			{{ '+' + (issue.assignees.length - 1) }}
+			{{ '+' + (assignees.length - 1) }}
 		</div>
 		<span class="issue-element">{{ issue.name }}</span>
 		<div
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 import IssuePriority from './IssuePriority.vue';
 export default {
 	components: {
@@ -70,12 +72,25 @@ export default {
 	props: {
 		issue: Object,
 	},
+	data() {
+		return { assignees: [] };
+	},
 	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
 		labelColor() {
 			return {
 				'--bg-color': this.issue.color,
 			};
 		},
+	},
+	async created() {
+		try {
+			this.assignees = await this.issue.getAssignees();
+		} catch (error) {
+			alert(error);
+		}
 	},
 };
 </script>

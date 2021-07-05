@@ -195,7 +195,6 @@ export default {
 	},
 	data() {
 		return {
-			// epicsList: [],
 			epics: [
 				{
 					id: 1,
@@ -481,7 +480,6 @@ export default {
 			let item = target.issues.find((obj) => obj.id == item_id);
 			item.sprintId = parseInt(target_id);
 		},
-
 		toggleExpanded(i) {
 			if (this.epics[i].expanded == false) {
 				this.epics[i].expanded = true;
@@ -529,11 +527,11 @@ export default {
 				}
 			});
 		},
-
 		redirectEpicCreate() {
-			// let query = { activePlan: value };
 			this.$router
-				.push({ path: '/epic-create' /*, query: query*/ })
+				.push({
+					path: `/projects/${this.$route.params.idProject}/epic-create`,
+				})
 				.catch(() => {});
 		},
 	},
