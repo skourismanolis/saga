@@ -157,9 +157,11 @@ jobs:
             - name: install modules
               run: yarn
               working-directory: ./cli-app
-            - name: run backend server
-              run: yarn test-serve
-              working-directory: ./back-end/tests
+            - name: run backend
+              run: |
+                  NODE_ENV=test node ./server.js &
+                  yarn run test
+              working-directory: ./back-end
             - name: run tests
               run: |
                   yarn test
