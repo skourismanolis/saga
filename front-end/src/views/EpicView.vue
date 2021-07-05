@@ -27,17 +27,17 @@
 				<div class="d-flex flex-column date-col-container">
 					<span class="label-text">ΗΜΕΡΟΜΗΝΙΑ ΕΝΑΡΞΗΣ</span>
 					<b-form-datepicker
-						id="datepicker"
 						class="mb-2"
 						v-model="start"
+						@input="updateStart"
 					></b-form-datepicker>
 				</div>
 				<div class="d-flex flex-column date-col-container">
 					<span class="label-text">ΗΜΕΡΟΜΗΝΙΑ ΛΗΞΗΣ</span>
 					<b-form-datepicker
-						id="datepicker"
 						class="mb-2"
 						v-model="deadline"
+						@input="updateDeadline"
 					></b-form-datepicker>
 				</div>
 			</div>
@@ -159,6 +159,14 @@ export default {
 			} else {
 				this.editDesc = true;
 			}
+		},
+
+		async updateStart() {
+			await this.epic.update({ start: this.start });
+		},
+
+		async updateDeadline() {
+			await this.epic.update({ deadline: this.deadline });
 		},
 	},
 	async created() {
