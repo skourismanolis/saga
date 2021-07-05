@@ -1,5 +1,8 @@
 <template>
-	<div class="d-flex justify-content-center">
+	<div v-if="!loaded">
+		<b-spinner />
+	</div>
+	<div v-else class="d-flex justify-content-center">
 		<form class="d-flex flex-column justify-content-start container">
 			<div class="d-flex flex-row align-items-baseline container-element">
 				<i class="bi bi-hourglass epic-icon"></i>
@@ -8,14 +11,14 @@
 					class="epic-title-input"
 					@dblclick="toggleEditTitle()"
 				>
-					{{ epics[0].name }}
+					{{ title }}
 				</span>
 				<div class="d-flex flex-row align-items-baseline" v-else>
 					<input
 						type="text"
 						class="form-control epic-title-input"
 						placeholder="Εισάγετε τίτλο..."
-						v-model="epics[0].name"
+						v-model="title"
 						@focusout="toggleEditTitle()"
 					/>
 				</div>
@@ -26,7 +29,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
-						v-model="epics[0].start_date"
+						v-model="start"
 					></b-form-datepicker>
 				</div>
 				<div class="d-flex flex-column date-col-container">
@@ -34,7 +37,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
-						v-model="epics[0].end_date"
+						v-model="deadline"
 					></b-form-datepicker>
 				</div>
 			</div>
@@ -44,13 +47,13 @@
 					v-if="editDesc == false"
 					class="label-text"
 					@dblclick="toggleEditDesc()"
-					>{{ epics[0].description }}</span
+					>{{ description }}</span
 				>
 				<div v-else>
 					<textarea
 						class="form-control"
 						placeholder="Εισάγετε περιγραφή..."
-						v-model="epics[0].description"
+						v-model="description"
 						@focusout="toggleEditDesc()"
 					></textarea>
 				</div>
@@ -60,58 +63,33 @@
 				<span>{{ totalPoints }}</span>
 			</div>
 			<div class="drag-container" v-drag-and-drop:options="options">
-				<vue-draggable-group
-					v-for="epic in epics"
-					v-model="epic.issues"
-					:groups="dropZones"
-					itemsKey="issues"
-					:key="epic.id"
-					:data-id="epic.id"
+				<EpicIssueBox
+					class="drag-inner-list box container-element"
+					:issues="epicIssues.content"
 				>
-					<EpicIssueBox
-						class="drag-inner-list box container-element"
-						:issues="epics[0].issues"
-					>
-						<IssueRow
-							v-for="issue in epic.issues"
-							:key="issue.id"
-							:data-id="issue.id"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</EpicIssueBox>
-				</vue-draggable-group>
+					<IssueRow
+						v-for="issue in epicIssues.content"
+						:key="issue.id"
+						:id="issue.id"
+						:issue="issue"
+						class="drag-item issue-row"
+					/>
+				</EpicIssueBox>
 
-				<vue-draggable-group
-					v-for="backlog in backlogs"
-					v-model="backlog.issues"
-					:groups="dropZones"
-					itemsKey="issues"
-					:key="backlog.id"
-					:data-id="backlog.id"
+				<BacklogBox
+					:total-issues="backlog.content.length"
+					:activeButton="false"
+					class="drag-inner-list box container-element"
 				>
-					<BacklogBox
-						:backlog="backlog"
-						:activeButton="false"
-						class="drag-inner-list box container-element"
-					>
-						<IssueRow
-							v-for="issue in backlog.issues"
-							:key="issue.id"
-							:data-id="issue.id"
-							:issue="issue"
-							class="drag-item issue-row"
-						/>
-					</BacklogBox>
-				</vue-draggable-group>
+					<IssueRow
+						v-for="issue in backlog.content"
+						:key="issue.id"
+						:id="issue.id"
+						:issue="issue"
+						class="drag-item issue-row"
+					/>
+				</BacklogBox>
 			</div>
-
-			<button
-				type="submit"
-				class="btn btn-primary align-self-end edit-button"
-			>
-				Αποθήκευση
-			</button>
 		</form>
 	</div>
 </template>
@@ -129,75 +107,31 @@ export default {
 	},
 	data() {
 		return {
+			title: '',
+			start: null,
+			deadline: null,
+			description: '',
+
+			loaded: false,
 			editTitle: false,
 			editDesc: false,
-
-			backlogs: [
-				{
-					id: -1,
-					issues: [
-						{
-							id: 5,
-							epicId: null,
-							sprintId: -1,
-							color: '#EE0000',
-							type: 'task',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Neutral',
-						},
-						{
-							id: 6,
-							epicId: null,
-							sprintId: -1,
-							color: '#047C97',
-							type: 'story',
-							assignees: [
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-								require('../assets/profile pics/default-profile-pic.png'),
-							],
-							name: 'Example Issue',
-							date: '23 Μαρ',
-							points: 2,
-							priority: 'Low',
-						},
-					],
-				},
-			],
-			epics: [
-				{
-					id: 1,
-					name: 'Example Epic',
-					start_date: new Date(1995, 1, 17),
-					end_date: new Date(1995, 11, 17),
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eros magna, finibus sit amet tellus quis, consequat tempus ligula. Fusce ante diam, facilisis sed dui quis, tristique fermentum purus. Proin iaculis mauris vel maximus vestibulum. Curabitur ut sem vitae mauris interdum sagittis sit amet eu enim. Phasellus a condimentum est. Proin diam nisl, gravida id pulvinar vel, tempor eleifend nunc. Nulla porttitor nunc ut ultricies fermentum. ',
-					issues: [],
-				},
-			],
+			project: null,
+			backlog: null,
+			epic: null,
+			epicIssues: null,
 		};
 	},
 	computed: {
 		totalPoints() {
-			if (this.epics[0].issues.length > 0) {
+			if (this.epicIssues.content.length > 0) {
 				let points = 0;
 
-				for (let i in this.epics[0].issues) {
-					points += this.epics[0].issues[i].points;
+				for (let i in this.epicIssues.content) {
+					if (i.points != null) points += i.points;
 				}
 				return points;
 			}
 			return 0;
-		},
-		dropZones() {
-			return [].concat(this.backlogs, this.epics);
 		},
 		options() {
 			return {
@@ -208,20 +142,46 @@ export default {
 		},
 	},
 	methods: {
-		toggleEditTitle() {
-			if (this.editTitle == false) {
-				this.editTitle = true;
-			} else {
+		async toggleEditTitle() {
+			if (this.editTitle == true) {
+				if (this.title.length === 0)
+					return alert('Ενα Epic πρεπει να έχει τίτλο');
+				await this.epic.update({ title: this.title });
 				this.editTitle = false;
-			}
-		},
-		toggleEditDesc() {
-			if (this.editDesc == false) {
-				this.editDesc = true;
 			} else {
-				this.editDesc = false;
+				this.editTitle = true;
 			}
 		},
+		async toggleEditDesc() {
+			if (this.editDesc == true) {
+				await this.epic.update({ description: this.description });
+				this.editDesc = false;
+			} else {
+				this.editDesc = true;
+			}
+		},
+	},
+	async created() {
+		try {
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
+			this.epic = await this.project.getEpic(this.$route.params.idEpic);
+
+			[this.backlog, this.epicIssues] = await Promise.all([
+				this.project.searchIssues({ inEpic: null }),
+				this.epic.getIssues(),
+			]);
+
+			this.title = this.epic.title;
+			this.start = this.epic.start;
+			this.deadline = this.epic.deadline;
+			this.description = this.epic.description;
+			await this.$nextTick();
+			this.loaded = true;
+		} catch (error) {
+			alert(error);
+		}
 	},
 };
 </script>
