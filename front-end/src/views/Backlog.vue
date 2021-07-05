@@ -105,8 +105,15 @@
 		</div>
 		<div class="d-flex flex-column" id="right">
 			<span id="sprints-label">Sprints</span>
-			<div class="d-flex flex-row align-items-baseline">
-				<div class="d-flex flex-row" id="filter-row-container">
+			<div
+				class="
+					d-flex
+					flex-row
+					align-items-baseline
+					justify-content-between
+				"
+			>
+				<div class="d-flex flex-row">
 					<span id="filter-text" class="filter-element"
 						>Φίλτραρε issues με:</span
 					>
@@ -124,7 +131,7 @@
 				<button
 					id="create-sprint-button"
 					type="button"
-					class="btn btn-primary d-flex align-items-center mx-auto"
+					class="btn btn-primary d-flex align-items-center"
 					@click="createSprint()"
 				>
 					Δημιουργία Sprint
@@ -444,6 +451,7 @@ export default {
 		redirectEpicView(id) {
 			this.$router
 				.push({
+					//this is sleepless code it probably sucks
 					path: `/projects/${this.$route.params.idProject}/epic/${id}`,
 				})
 				.catch(() => {});
@@ -613,7 +621,6 @@ export default {
 	margin-left: 36px;
 	margin-right: 36px;
 	width: 865px;
-	position: relative;
 }
 
 #sprints-label {
@@ -634,11 +641,6 @@ export default {
 #create-sprint-button {
 	height: 36px;
 	margin-bottom: 24px;
-}
-
-#filter-row-container {
-	position: absolute;
-	left: 0;
 }
 
 .backlog-box {
