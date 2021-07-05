@@ -61,10 +61,21 @@
 					:labels="labels"
 					v-model="selectedLabel"
 					@input="refreshAllIssues"
+					@addLabel="addLabel"
 				/>
 			</div>
 		</div>
 		<b-modal id="viewIssue"><IssueCreate /> </b-modal>
+		<b-modal id="editLabel" @ok="saveLabel">
+			<label>
+				Όνομα
+				<b-input v-model="currentLabel.name" />
+			</label>
+			<label>
+				Χρώμα
+				<b-input v-model="currentLabel.color" />
+			</label>
+		</b-modal>
 	</div>
 </template>
 
@@ -84,6 +95,11 @@ export default {
 	},
 	data() {
 		return {
+			currentLabel: {
+				label: null,
+				name: '',
+				color: '',
+			},
 			loaded: false,
 			project: null,
 			members: null,
@@ -103,6 +119,43 @@ export default {
 		},
 	},
 	methods: {
+		async addLabel() {
+			this.$bvModal.show('editLabel');
+		},
+		async editLabel(label) {
+			this.currentLabel.label = label;
+			this.currentLabel.name = label.name;
+			this.currentLabel.color = label.color;
+		},
+		async saveLabel(evt) {
+			if (this.currentLabel.color.match(/^#[a-fA-f0-9]{6}$/) == null) {
+				evt.preventDefault();
+				return alert(
+					'Παρακαλώ βάλετε εναν σωστό κωδικό χρώματως. Π.χ. #ABCD12'
+				);
+			}
+			try {
+				let newLabel = {
+					name: this.currentLabel.name,
+					color: this.currentLabel.color,
+				};
+				if (this.currentLabel.label === null) {
+					//new label
+					await this.project.createLabel(newLabel);
+				} else {
+					this.currentLabel.label.update(newLabel);
+				}
+				this.resetEditLabel();
+				await this.refreshLabels();
+			} catch (error) {
+				console.error(error);
+			}
+		},
+		resetEditLabel() {
+			this.currentLabel.name = '';
+			this.currentLabel.label = null;
+			this.currentLabel.color = '';
+		},
 		async drop(e) {
 			try {
 				let issue = await this.project.getIssue(e.items[0].id);
@@ -126,6 +179,9 @@ export default {
 				this.project.searchIssues({ column: null, ...params }),
 			]);
 		},
+		async refreshLabels() {
+			this.labels = await this.project.getLabels();
+		},
 	},
 	async created() {
 		try {
@@ -133,7 +189,7 @@ export default {
 				idProject: this.$route.params.idProject,
 			});
 			this.members = await this.project.getMembers();
-			this.labels = await this.project.getLabels();
+			await this.refreshLabels();
 			await this.refreshAllIssues();
 			this.loaded = true;
 		} catch (error) {

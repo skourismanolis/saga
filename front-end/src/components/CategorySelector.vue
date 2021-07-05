@@ -15,7 +15,7 @@
 		</div>
 		<a
 			class="list-item d-flex align-items-center rounded-sm"
-			@click="addTag"
+			@click="$emit('addLabel')"
 		>
 			<span
 				class="
