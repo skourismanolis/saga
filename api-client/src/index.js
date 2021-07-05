@@ -215,7 +215,10 @@ module.exports = class SagaClient {
 	}
 
 	async deleteProject({ project }) {
-		await this.axios.delete(`/projects/${project.id}`);
+		await this.axios({
+			method: 'DELETE',
+			url: `/projects/${project.id}`,
+		});
 	}
 
 	async applyToken({ token }) {
