@@ -95,7 +95,12 @@ module.exports = class Project extends Base {
 	 */
 	async getSprints({ finished }) {
 		let query = '';
-		if (finished != null) query = `?finished=${finished}`;
+
+		if (finished != null) {
+			if (finished) query = `?finished=1`;
+			else query = `?finished=0`;
+		}
+
 		let list = new PaginatedList(this.client, {
 			url: `/projects/${this._idProject}/sprints${query}`,
 			dataTransformer: (sprints) =>
@@ -226,7 +231,7 @@ module.exports = class Project extends Base {
 
 		if (labels != null) {
 			if (!(labels instanceof Array)) throw 'Labels must be an array';
-			query.labels = labels.map((l) => l.id);
+			query.label = labels.map((l) => l.id);
 		}
 
 		if (assignee != null) {

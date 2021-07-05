@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `saga`.`project` (
   `picture` VARCHAR(45) NULL,
   `title` VARCHAR(255) NULL,
   `activeSprint` INT UNSIGNED NULL DEFAULT NULL,
+  `issue_number` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`idProject`),
   CONSTRAINT `fk_project_sprint1`
     FOREIGN KEY (`activeSprint`)
