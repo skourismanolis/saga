@@ -95,7 +95,11 @@ module.exports = class IssueContainer extends Base {
 	 */
 	async removeIssues(issues) {
 		let issueIds = issues.map((i) => i.id);
-		await this.axios.delete(`${this._itemUrl}/issues`, issueIds);
+		await this.axios({
+			method: 'DELETE',
+			url: `${this._itemUrl}/issues`,
+			data: issueIds,
+		});
 	}
 };
 
