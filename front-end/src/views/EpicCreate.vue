@@ -3,13 +3,17 @@
 		<b-spinner />
 	</div>
 	<div v-else class="d-flex justify-content-center">
-		<form class="d-flex flex-column justify-content-start container">
+		<form
+			class="d-flex flex-column justify-content-start container"
+			@submit.prevent="createEpic"
+		>
 			<div class="d-flex flex-row align-items-center container-element">
 				<i class="bi bi-hourglass epic-icon"></i>
-				<input
-					type="text"
-					class="form-control epic-title-input"
+				<b-input
+					class="epic-title-input"
+					v-model="title"
 					placeholder="Εισάγετε τίτλο..."
+					required
 				/>
 			</div>
 			<div class="d-flex flex-row container-element">
@@ -18,6 +22,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
+						v-model="start"
 					></b-form-datepicker>
 				</div>
 				<div class="d-flex flex-column date-col-container">
@@ -25,6 +30,7 @@
 					<b-form-datepicker
 						id="datepicker"
 						class="mb-2"
+						v-model="deadline"
 					></b-form-datepicker>
 				</div>
 			</div>
@@ -33,6 +39,7 @@
 				<textarea
 					class="form-control"
 					placeholder="Εισάγετε περιγραφή..."
+					v-model="description"
 				></textarea>
 			</div>
 			<div class="d-flex flex-column container-element">
@@ -72,7 +79,6 @@
 			<button
 				type="submit"
 				class="btn btn-primary align-self-end submit-button"
-				@click="true"
 			>
 				Δημιουργία Epic
 			</button>
@@ -93,6 +99,10 @@ export default {
 	},
 	data() {
 		return {
+			title: '',
+			start: null,
+			deadline: null,
+			description: '',
 			project: null,
 			backlog: null,
 			epic_issues: [],
@@ -144,6 +154,22 @@ export default {
 				);
 				let idx = this.epic_issues.indexOf(issue);
 				this.epic_issues.splice(idx, 1);
+			}
+		},
+		async createEpic() {
+			try {
+				let epic = await this.project.createEpic({
+					title: this.title,
+					start: this.start,
+					deadline: this.deadline,
+					description: this.description,
+				});
+				await epic.addIssues(this.epic_issues);
+				this.$router.push(
+					`/projects/${this.project.id}/epic/${epic.id}`
+				);
+			} catch (error) {
+				alert(error);
 			}
 		},
 	},
