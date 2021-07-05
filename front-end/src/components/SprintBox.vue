@@ -15,7 +15,10 @@
 					type="text"
 					v-model="sprint.title"
 					required
-					@focusout="toggleEditTitle()"
+					@focusout="
+						toggleEditTitle();
+						$emit('sprint-edited', sprint.id);
+					"
 				></b-form-input>
 				<span id="issues-num">{{ issuesNum }}</span>
 			</div>
@@ -24,6 +27,7 @@
 					class="sprint-date"
 					size="sm"
 					v-model="sprint.start"
+					@input="$emit('sprint-edited', sprint.id)"
 					:date-format-options="{
 						year: 'numeric',
 						month: 'numeric',
@@ -35,6 +39,7 @@
 					class="sprint-date"
 					size="sm"
 					v-model="sprint.deadline"
+					@input="$emit('sprint-edited', sprint.id)"
 					:date-format-options="{
 						year: 'numeric',
 						month: 'numeric',

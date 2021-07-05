@@ -161,6 +161,7 @@
 						class="drag-inner-list sprint-box"
 						@activate-sprint="activateSprint"
 						@deactivate-sprint="dectivateSprint"
+						@sprint-edited="editSprint"
 					>
 						<IssueRow
 							v-for="issue in sprint_issues[index].content"
@@ -249,6 +250,10 @@ export default {
 		},
 	},
 	methods: {
+		async editSprint() {
+			console.log('here');
+		},
+
 		async dectivateSprint() {
 			await this.project.setActiveSprint(null);
 			this.active_sprint = await this.project.getActiveSprint();
