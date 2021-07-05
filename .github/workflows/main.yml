@@ -159,7 +159,7 @@ jobs:
               working-directory: ./cli-app
             - name: run backend server
               run: yarn test-serve
-              working-directory: ./back-end\tests
+              working-directory: ./back-end/tests
             - name: run tests
               run: |
                   yarn test
