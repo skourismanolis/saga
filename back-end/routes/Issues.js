@@ -89,16 +89,16 @@ async function issues_get(req, res) {
 			}
 		}
 		if (req.query.column !== undefined) {
-			if (req.query.column === null) {
-				query_string += ' AND idColumn IS ?';
+			if (req.query.column === 'null' || req.query.column === null) {
+				query_string += ' AND idColumn IS NULL';
 			} else {
 				if (isNaN(req.query.column)) {
 					res.sendStatus(400);
 					return;
 				}
 				query_string += ' AND idColumn = ?';
+				query_params.push(req.query.column);
 			}
-			query_params.push(req.query.column);
 		}
 		if (req.query.inEpic !== undefined) {
 			if (req.query.inEpic === 'null' || req.query.inEpic === null) {
