@@ -27,13 +27,13 @@
 								id="user_image"
 							/>
 						</template>
-						<b-dropdown-item>First Action</b-dropdown-item>
-						<b-dropdown-item>Second Action</b-dropdown-item>
-						<b-dropdown-item>Third Action</b-dropdown-item>
-						<b-dropdown-divider></b-dropdown-divider>
-						<b-dropdown-item active>Active action</b-dropdown-item>
-						<b-dropdown-item disabled
-							>Disabled action</b-dropdown-item
+						<b-dropdown-item class="my-account"
+							><i class="bi bi-person mr-1"></i>Ο Λογαριασμός
+							μου</b-dropdown-item
+						>
+						<b-dropdown-item class="log-out"
+							><i class="bi bi-box-arrow-in-right mr-1"></i
+							>Αποσύνδεση</b-dropdown-item
 						>
 					</b-dropdown>
 				</div>
@@ -126,5 +126,10 @@ a {
 }
 .dropdown-menu {
 	min-width: 10rem;
+}
+
+.my-account {
+	background-color: #eee9ff;
+	color: #564787;
 }
 </style>
