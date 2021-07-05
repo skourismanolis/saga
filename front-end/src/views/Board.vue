@@ -15,6 +15,15 @@
 					:id="issue.code"
 					:issue="issue"
 				/>
+				<div class="d-flex justify-content-center mt-2">
+					<b-pagination
+						v-if="columnIssues[0].content.length > 0"
+						@input="columnIssues[0].setPage($event - 1)"
+						:value="columnIssues[0].currentPage + 1"
+						:perPage="columnIssues[0].perPage"
+						:total-rows="columnIssues[0].total"
+					/>
+				</div>
 			</div>
 			<div
 				class="column rounded-sm in-progress drag-inner-list"
@@ -28,6 +37,15 @@
 					:id="issue.code"
 					:issue="issue"
 				/>
+				<div class="d-flex justify-content-center mt-2">
+					<b-pagination
+						v-if="columnIssues[1].content.length > 0"
+						@input="columnIssues[1].setPage($event - 1)"
+						:value="columnIssues[1].currentPage + 1"
+						:perPage="columnIssues[1].perPage"
+						:total-rows="columnIssues[1].total"
+					/>
+				</div>
 			</div>
 			<div
 				class="column rounded-sm done drag-inner-list"
@@ -41,6 +59,15 @@
 					:id="issue.code"
 					:issue="issue"
 				/>
+				<div class="d-flex justify-content-center mt-2">
+					<b-pagination
+						v-if="columnIssues[2].content.length > 0"
+						@input="columnIssues[2].setPage($event - 1)"
+						:value="columnIssues[2].currentPage + 1"
+						:perPage="columnIssues[2].perPage"
+						:total-rows="columnIssues[2].total"
+					/>
+				</div>
 			</div>
 			<div>
 				<div>

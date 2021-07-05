@@ -193,7 +193,9 @@ async function issues_get(req, res) {
 			});
 		});
 		// search via string filter
-		res.status(200).header('X-Pagination-Total', result_pag).send(result);
+		res.status(200)
+			.header('X-Pagination-Total', result_pag.length)
+			.send(result);
 	} catch (error) {
 		if (conn != null) conn.rollback();
 

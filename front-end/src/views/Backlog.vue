@@ -77,7 +77,11 @@
 							{{ epicPoints(index) }}
 						</div>
 						<span id="epic-issues-num">
-							{{ epic_issues[index].content.length }}
+							{{
+								epic_issues[index] != null
+									? epic_issues[index].content.length
+									: 0
+							}}
 						</span>
 						<i
 							v-if="epic_expanded[index] == false"
@@ -92,7 +96,12 @@
 							@click="toggleExpanded(index)"
 						></i>
 					</div>
-					<div v-if="epic_expanded[index] == true">
+					<div
+						v-if="
+							epic_issues[index] != null &&
+							epic_expanded[index] == true
+						"
+					>
 						<IssueRow
 							v-for="(issue, index) in epic_issues[index].content"
 							:key="index"
@@ -100,6 +109,15 @@
 						>
 						</IssueRow>
 					</div>
+				</div>
+				<div class="d-flex justify-content-center mt-2">
+					<b-pagination
+						v-if="epics.content.length > 0"
+						@input="epicsSetPage"
+						:value="epics.currentPage + 1"
+						:perPage="epics.perPage"
+						:total-rows="epics.total"
+					/>
 				</div>
 			</div>
 		</div>
@@ -183,6 +201,17 @@
 							:issue="issue"
 							class="drag-item issue-row"
 						/>
+						<div class="d-flex justify-content-center mt-2">
+							<b-pagination
+								v-if="sprint_issues[index].content.length > 0"
+								@input="
+									sprint_issues[index].setPage($event - 1)
+								"
+								:value="sprint_issues[index].currentPage + 1"
+								:perPage="sprint_issues[index].perPage"
+								:total-rows="sprint_issues[index].total"
+							/>
+						</div>
 					</SprintBox>
 				</div>
 
@@ -201,6 +230,15 @@
 						:issue="issue"
 						class="drag-item issue-row"
 					/>
+					<div class="d-flex justify-content-center mt-2">
+						<b-pagination
+							v-if="issues.content.length > 0"
+							@input="issues.setPage($event - 1)"
+							:value="issues.currentPage + 1"
+							:perPage="issues.perPage"
+							:total-rows="issues.total"
+						/>
+					</div>
 				</BacklogBox>
 			</div>
 		</div>
@@ -286,6 +324,10 @@ export default {
 		},
 	},
 	methods: {
+		async epicsSetPage(page) {
+			await this.epics.setPage(page - 1);
+			await this.refreshEpicIssues();
+		},
 		async createSprint() {
 			await this.project.createSprint({
 				title: 'Νέο sprint',
@@ -338,6 +380,7 @@ export default {
 		},
 
 		epicPoints(index) {
+			if (this.epic_issues[index] == null) return 0;
 			let points = 0;
 			this.epic_issues[index].content.forEach((issue) => {
 				points += issue.points;
@@ -501,16 +544,7 @@ export default {
 				this.$forceUpdate();
 			}
 		},
-	},
-	async created() {
-		try {
-			this.loaded = false;
-			this.project = await this.$client.getProject({
-				idProject: this.$route.params.idProject,
-			});
-
-			//getting epic data
-			this.epics = await this.project.getEpics();
+		async refreshEpicIssues() {
 			this.epic_issues = [];
 
 			for (let i = 0; i < this.epics.content.length; i++) {
@@ -521,11 +555,22 @@ export default {
 				//expanded init
 				this.epic_expanded.push(false);
 			}
+		},
+	},
+	async created() {
+		try {
+			this.loaded = false;
+			this.project = await this.$client.getProject({
+				idProject: this.$route.params.idProject,
+			});
 
 			//getting backlog data
 			this.issues = await this.project.searchIssues({
 				inSprint: null,
 			});
+			//getting epic data
+			this.epics = await this.project.getEpics();
+			await this.refreshEpicIssues();
 			console.log('here');
 
 			//getting sprint data
