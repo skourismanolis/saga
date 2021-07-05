@@ -340,8 +340,6 @@ async function delete_remove_issues(req, res) {
 			[req.params.idEpic, req.params.idProject, req.body]
 		);
 
-		console.log(results);
-
 		if (results.affectedRows != req.body.length) {
 			if (conn != null) conn.rollback();
 			res.sendStatus(404);
