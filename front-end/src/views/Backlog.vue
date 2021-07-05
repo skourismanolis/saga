@@ -113,19 +113,20 @@
 					justify-content-between
 				"
 			>
-				<div class="d-flex flex-row">
+				<div class="d-flex flex-row align-items-baseline">
 					<span id="filter-text" class="filter-element"
 						>Φίλτραρε issues με:</span
 					>
-					<a
-						type="button"
-						class="link filter-element"
-						@click="filterByEpic()"
-						>Epic</a
-					>
-					<a type="button" class="link" @click="filterByLabel()"
-						>Label</a
-					>
+					<b-form-select
+						class="filter-box filter-element"
+						v-model="selected_epic"
+						:options="epicTitles"
+					></b-form-select>
+					<b-form-select
+						class="filter-box"
+						v-model="selected_label"
+						:options="labelTitles"
+					></b-form-select>
 				</div>
 
 				<button
@@ -235,9 +236,46 @@ export default {
 
 			//backlog data
 			issues: {},
+
+			//filter data
+			selected_epic: null,
+			selected_label: null,
+			labels: {},
 		};
 	},
 	computed: {
+		epicTitles() {
+			let epic_titles = [
+				{
+					value: null,
+					text: 'Επιλέξτε epic',
+				},
+			];
+			this.epics.content.forEach((element) => {
+				epic_titles.push({
+					value: element.id,
+					text: element.title,
+				});
+			});
+			return epic_titles;
+		},
+
+		labelTitles() {
+			let label_titles = [
+				{
+					value: null,
+					text: 'Επιλέξτε label',
+				},
+			];
+			this.labels.forEach((element) => {
+				label_titles.push({
+					value: element.id,
+					text: element.name,
+				});
+			});
+			return label_titles;
+		},
+
 		options() {
 			return {
 				dropzoneSelector: '.drag-inner-list',
@@ -519,6 +557,9 @@ export default {
 					];
 			}
 
+			//filter data
+			this.labels = await this.project.getLabels();
+
 			this.loaded = true;
 		} catch (error) {
 			alert(error);
@@ -635,6 +676,7 @@ export default {
 }
 
 #filter-text {
+	width: 145px;
 	font-size: 16px;
 }
 
@@ -665,5 +707,9 @@ export default {
 	padding: 0;
 	background-color: #c4c4c4;
 	border: 0;
+}
+
+.filter-box {
+	width: 150px;
 }
 </style>
