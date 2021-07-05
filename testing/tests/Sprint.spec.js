@@ -51,8 +51,7 @@ describe('main functions', () => {
 			sprint.axios = mockAxios;
 			await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
 			sprint.axios = client.axios;
-		}
-		else if (__TEST_MODE__ === 'CLIENT') {
+		} else if (__TEST_MODE__ === 'REST') {
 			await expect(sprint.getProject()).resolves.toBeInstanceOf(Project);
 		}
 	});
@@ -112,8 +111,7 @@ describe('main functions', () => {
 			sprint.axios = mockAxios;
 			project = await sprint.getProject();
 			sprint.axios = client.axios;
-		}
-		else if (__TEST_MODE__ === 'REST') {
+		} else if (__TEST_MODE__ === 'REST') {
 			project = await sprint.getProject();
 		}
 
@@ -121,9 +119,7 @@ describe('main functions', () => {
 		let issue1 = await project.getIssue('issue1');
 		let issue2 = await project.getIssue('issue2');
 
-		await expect(
-			sprint.addIssues([issue1, issue2])
-		).resolves.not.toThrow();
+		await expect(sprint.addIssues([issue1, issue2])).resolves.not.toThrow();
 	});
 
 	test('remove issues', async () => {
