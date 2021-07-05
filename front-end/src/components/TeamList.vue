@@ -4,6 +4,7 @@
 			<b-avatar
 				v-for="member in printMembers"
 				:key="member"
+				:text="member.username"
 				v-b-popover.hover.top="member.username"
 			>
 			</b-avatar>
@@ -16,13 +17,13 @@
 export default {
 	props: {
 		members: Array,
-		show: Number,
+		max: Number,
 	},
 	computed: {
 		printMembers() {
-			if (this.show == 0) return this.members; //not having === won't cause a problem here
+			if (this.max == 0) return this.members; //not having === won't cause a problem here
 
-			return this.members.slice(0, this.show);
+			return this.members.slice(0, this.max);
 		},
 	},
 };
