@@ -156,7 +156,6 @@ jobs:
             - uses: c-hive/gha-yarn-cache@v1
             - name: install modules
               run: yarn
-              working-directory: ./cli-app
             - name: start server backend
               run: |
                   NODE_ENV=test node ./server.js &
