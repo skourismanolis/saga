@@ -138,9 +138,6 @@ export default {
 		DEFAULT_PICTURE() {
 			return DEFAULT_PICTURE;
 		},
-		generatedLink() {
-			return 'htttps://invite.com/w=AagYAFa76%A';
-		},
 	},
 	methods: {
 		async savePicture() {
