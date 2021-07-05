@@ -23,7 +23,7 @@
 						<template #button-content>
 							<b-icon icon="chevron-left"></b-icon>
 							<img
-								src="https://1.gravatar.com/avatar/be8819126bd50fa16210bc5dd249beb2?s=360"
+								:src="profile.picture || DEFAULT_PICTURE"
 								id="user_image"
 							/>
 						</template>
@@ -64,9 +64,21 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 export default {
 	name: 'NavBar',
+	data() {
+		return {
+			profile: {},
+		};
+	},
 	computed: {
+		computed: {
+			DEFAULT_PICTURE() {
+				return DEFAULT_PICTURE;
+			},
+		},
 		isLoggedIn() {
 			return this.$store.state.isLoggedIn;
 		},
@@ -110,6 +122,11 @@ export default {
 			this.$store.commit('setUser', null);
 			localStorage.removeItem('token');
 		},
+	},
+	async created() {
+		if (this.isLoggedIn != null) {
+			this.profile = await this.$client.getProfile();
+		}
 	},
 };
 </script>
