@@ -274,6 +274,10 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		await conn.query('DELETE FROM member WHERE idProject = ?', [
 			req.params.idProject,
 		]);
+		await conn.query(
+			'UPDATE project SET activeSprint = NULL WHERE idProject = ?',
+			[req.params.idProject]
+		);
 		await conn.query('DELETE FROM sprint WHERE idProject = ?', [
 			req.params.idProject,
 		]);
@@ -285,6 +289,7 @@ app.delete('/:idProject', Project_auth(['Admin']), async (req, res) => {
 		res.sendStatus(200);
 	} catch (error) {
 		if (conn != null) conn.rollback();
+		console.error(error);
 		res.sendStatus(500);
 	} finally {
 		if (conn != null) conn.release();
@@ -301,7 +306,8 @@ app.get('/:idProject/invite', Project_auth(['Admin']), async (req, res) => {
 			process.env.EMAIL_SECRET
 		);
 
-		const url = `http://localhost:8080/token/${emailToken}`;
+		const url =
+			req.protocol + '://' + req.get('host') + `/token/${emailToken}`;
 		res.status(200).send({ inviteLink: url });
 	} catch (error) {
 		console.error(error);

@@ -354,9 +354,10 @@ export default {
 		},
 
 		redirectEpicCreate() {
-			// let query = { activePlan: value };
 			this.$router
-				.push({ path: '/epic-create' /*, query: query*/ })
+				.push({
+					path: `/projects/${this.$route.params.idProject}/epic-create`,
+				})
 				.catch(() => {});
 		},
 

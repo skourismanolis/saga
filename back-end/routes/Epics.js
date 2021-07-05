@@ -76,17 +76,20 @@ async function epics_post(req, res) {
 			throw c.INVALID_TRANSACTION;
 		}
 
-		await conn.query('INSERT INTO epic VALUES (?,?,?,?,?,?)', [
-			0,
-			req.params.idProject,
-			req.body.title,
-			start,
-			deadline,
-			req.body.description,
-		]);
+		let [results] = await conn.query(
+			'INSERT INTO epic VALUES (?,?,?,?,?,?)',
+			[
+				0,
+				req.params.idProject,
+				req.body.title,
+				start,
+				deadline,
+				req.body.description,
+			]
+		);
 
 		await conn.commit();
-		res.sendStatus(200);
+		res.send({ idEpic: results.insertId });
 	} catch (error) {
 		if (conn != null) conn.rollback();
 
@@ -111,7 +114,7 @@ async function get_epic_id(req, res) {
 			return res.sendStatus(404);
 		}
 
-		res.send(epic);
+		res.send(epic[0]);
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);

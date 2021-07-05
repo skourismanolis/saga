@@ -16,9 +16,10 @@ module.exports = class Project extends Base {
 		super(client);
 		this._idProject = idProject;
 		this.title = title;
-		this._activeSprintId = activeSprint;
-		this.picture = picture;
-		this._members = members;
+		this._activeSprintId = activeSprint !== undefined ? activeSprint : null;
+		this.picture = picture !== undefined ? picture : null;
+		this._members =
+			members == undefined || members.length === 0 ? null : members;
 	}
 
 	get id() {
@@ -56,18 +57,34 @@ module.exports = class Project extends Base {
 	async getActiveSprint() {
 		if (this._activeSprintId == null) return null;
 		let { data } = await this.axios.get(
-			`/projects/${this._idProject}/sprints/${this._activeSprintId}`
+			`/projects/${this._idProject}/active`
 		);
+		if (data == null) {
+			await this.refresh();
+			return null;
+		}
 		return new Sprint(this.client, data, this._idProject);
 	}
 
 	async setActiveSprint(sprint) {
-		if (sprint !== null && sprint.id == null) throw 'Invalid spirnt';
-		await this.axios.put(`/projects/${this._idProject}`, {
-			title: this.title,
-			activeSprint: sprint === null ? null : sprint.id,
+		if (sprint !== null && sprint.id == null) throw 'Invalid sprint';
+		await this.axios.put(`/projects/${this._idProject}/active`, {
+			id: sprint === null ? null : sprint.id,
 		});
 		await this.refresh();
+	}
+
+	/**
+	 * Get a specific sprint from the api
+	 * @param {Number} idSprint
+	 * @returns {Object} Sprint
+	 */
+	async getSprint(idSprint) {
+		let { data: sprint } = await this.axios.get(
+			`/projects/${this._idProject}/sprints/${idSprint}`
+		);
+
+		return new Sprint(this.client, sprint, this._idProject);
 	}
 
 	/**
@@ -82,19 +99,6 @@ module.exports = class Project extends Base {
 		});
 		await list.refresh();
 		return list;
-	}
-
-	/**
-	 * Get a specific sprint from the api
-	 * @param {Number} idSprint
-	 * @returns {Object} Sprint
-	 */
-	async getSprint(idSprint) {
-		let { data: sprint } = await this.axios.get(
-			`/projects/${this._idProject}/sprints/${idSprint}`
-		);
-
-		return new Sprint(this.client, sprint, this._idProject);
 	}
 
 	/**
@@ -411,8 +415,10 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to remove
 	 */
 	async deleteMember({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members`,
+			data: { idUser: member.id },
 		});
 	}
 
@@ -433,11 +439,12 @@ module.exports = class Project extends Base {
 	 * @param {Object} options.member the member to demote
 	 */
 	async demoteAdmin({ member }) {
-		await this.axios.delete(`projects/${this._idProject}/members/admin`, {
-			idUser: member.id,
+		await this.axios({
+			method: 'DELETE',
+			url: `projects/${this._idProject}/members/admin`,
+			data: { idUser: member.id },
 		});
 	}
-
 	/**
 	 * Return Issue using the issue's code
 	 * @param {String} code

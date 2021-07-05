@@ -154,7 +154,7 @@ module.exports = class Issue extends Base {
 		);
 
 		let assignees = members.filter(
-			(m) => this._assigneeIds.indexOf(m.id) !== -1
+			(m) => this._assigneeIds.indexOf(m.idUser) !== -1
 		);
 
 		return assignees.map(

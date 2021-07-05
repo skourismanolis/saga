@@ -18,10 +18,6 @@ async function issues_create(req, res) {
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
-		const [members] = await conn.query(
-			'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
-			[req.params.idProject, req.body.assignees]
-		);
 
 		if (req.body.idLabel != null) {
 			let [label] = await conn.query(
@@ -48,7 +44,11 @@ async function issues_create(req, res) {
 				body.idLabel,
 			]
 		);
-		if (body.assignees != null) {
+		if (body.assignees != null && body.assignees.length > 0) {
+			const [members] = await conn.query(
+				'SELECT idUser FROM member WHERE idProject = ? and idUser IN(?)',
+				[req.params.idProject, body.assignees]
+			);
 			if (members.length != body.assignees.length) {
 				res.sendStatus(404);
 				throw c.INVALID_TRANSACTION;
@@ -101,16 +101,16 @@ async function issues_get(req, res) {
 			query_params.push(req.query.column);
 		}
 		if (req.query.inEpic !== undefined) {
-			if (req.query.inEpic === null) {
-				query_string += ' AND idEpic IS ?';
+			if (req.query.inEpic === 'null' || req.query.inEpic === null) {
+				query_string += ' AND idEpic IS NULL';
 			} else {
 				if (isNaN(req.query.inEpic)) {
 					res.sendStatus(400);
 					return;
 				}
 				query_string += ' AND idEpic = ?';
+				query_params.push(req.query.inEpic);
 			}
-			query_params.push(req.query.inEpic);
 		}
 		if (req.query.assignee != null) {
 			if (isNaN(req.query.assignee)) {
