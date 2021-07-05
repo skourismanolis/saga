@@ -91,11 +91,9 @@ export default {
 	},
 	methods: {
 		redirectProfile() {
-			if (this.isLoggedIn) {
-				this.$router.push({
-					path: `/profile`,
-				});
-			}
+			this.$router.push({
+				path: `/profile`,
+			});
 		},
 	},
 };

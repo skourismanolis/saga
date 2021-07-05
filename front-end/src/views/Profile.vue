@@ -31,7 +31,7 @@
 					<div class="d-flex flex-row align-self-center">
 						<i class="bi bi-gear link-icon"></i>
 						<router-link
-							to="/profile_settings"
+							to="/profile-edit"
 							class="align-self-center"
 						>
 							Ρυθμίσεις
