@@ -121,7 +121,7 @@
 						class="filter-box filter-element"
 						v-model="selected_epic"
 						:options="epicTitles"
-						@change="filterByEpic"
+						@change="refreshIssues"
 					></b-form-select>
 					<b-form-select
 						class="filter-box"
@@ -254,7 +254,7 @@ export default {
 			];
 			this.epics.content.forEach((element) => {
 				epic_titles.push({
-					value: element.id,
+					value: element,
 					text: element.title,
 				});
 			});
@@ -270,7 +270,7 @@ export default {
 			];
 			this.labels.forEach((element) => {
 				label_titles.push({
-					value: element.id,
+					value: element,
 					text: element.name,
 				});
 			});
@@ -284,53 +284,8 @@ export default {
 				onDrop: this.drop,
 			};
 		},
-
-		sortedSprints() {
-			if (this.active_sprint != null) {
-				let sprint_index = this.sprints.content.findIndex(
-					(obj) =>
-						parseInt(obj.id) == parseInt(this.activateSprint.id)
-				);
-
-				// //move active sprint to top of list and all parallel lists
-				this.move(this.sprints.content, sprint_index, 0);
-				this.move(this.sprint_issues, sprint_index, 0);
-			}
-			return this.sprints;
-		},
 	},
 	methods: {
-		async filterByEpic() {
-			if (this.selected_epic != null) {
-				let epic = this.epics.content.find(
-					(obj) => obj.id == this.selected_epic
-				);
-				this.issues = await this.project.searchIssues({
-					inSprint: null,
-					inEpic: epic,
-				});
-				await this.issues.refresh();
-
-				for (let i = 0; i < this.sprint_issues.length; i++) {
-					this.sprint_issues[i] = await this.project.searchIssues({
-						inSprint: this.sprints.content[i],
-						inEpic: epic,
-					});
-					await this.sprint_issues[i].refresh();
-				}
-			} else {
-				// location.reload();
-				this.initBacklogData();
-				// await this.issues.refresh();
-
-				this.initSprintData();
-				// for (let i = 0; i < this.sprints.content.length; i++) {
-				// 	// await this.sprint_issues[i].refresh();
-				// }
-			}
-			this.$forceUpdate();
-		},
-
 		async createSprint() {
 			await this.project.createSprint({
 				title: 'Νέο sprint',
@@ -503,14 +458,6 @@ export default {
 			}
 		},
 
-		filterByLabel() {
-			for (let i = 0; i < this.dropZones.length; i++) {
-				this.dropZones[i].issues.sort(
-					(a, b) => (a.type > b.type) - (a.type < b.type)
-				);
-			}
-		},
-
 		redirectEpicView(id) {
 			this.$router
 				.push({
@@ -528,13 +475,32 @@ export default {
 				.catch(() => {});
 		},
 
-		// async refreshIssues() {
-		// 	let params = {};
-		// if (this.selected_epic != null) {
-		//     params.labels = [this.selectedLabel];
-		// }
-		// this.project.searchIssues({ column: c, ...params });
-		// },
+		async refreshIssues() {
+			let params = {};
+			if (this.selected_label != null) {
+				params.labels = [this.selected_label];
+			}
+			if (this.selected_epic != null) {
+				params.inEpic = this.selected_epic;
+			}
+
+			//update backlog
+			this.issues = await this.project.searchIssues({
+				inSprint: null,
+				...params,
+			});
+			this.issues.refresh();
+
+			//update sprints
+			for (let i = 0; i < this.sprints.content.length; i++) {
+				this.sprint_issues[i] = await this.project.searchIssues({
+					inSprint: this.sprints.content[i],
+					...params,
+				});
+				this.sprint_issues[i].refresh();
+				this.$forceUpdate();
+			}
+		},
 	},
 	async created() {
 		try {
