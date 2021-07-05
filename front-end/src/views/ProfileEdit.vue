@@ -13,11 +13,22 @@
 				/>
 				<div class="form-group" id="choose-file-container">
 					<label for="profile-pic">Αλλαγή εικόνας προφίλ</label>
-					<input
-						type="file"
-						class="form-control-file"
-						id="profile-pic"
-					/>
+					<b-input-group class="file-input-text">
+						<b-form-file
+							accept="image/jpeg, image/png"
+							v-model="selectedPicture"
+							class="file-button form-control-file"
+							id="profile-pic"
+						/>
+						<b-input-group-append>
+							<b-btn
+								variant="primary"
+								@click="savePicture"
+								:disabled="selectedPicture == null"
+								><i class="bi bi-check-lg"></i
+							></b-btn>
+						</b-input-group-append>
+					</b-input-group>
 				</div>
 			</div>
 			<div class="form-group text-input">
@@ -102,6 +113,7 @@ export default {
 	},
 	data() {
 		return {
+			selectedPicture: null,
 			password: '',
 			profile: {},
 			user: {},
@@ -116,6 +128,18 @@ export default {
 	methods: {
 		changePlan(value) {
 			this.user.plan = value;
+		},
+
+		async savePicture() {
+			try {
+				await this.$client.setUserPicture({
+					picture: this.selectedPicture,
+				});
+				location.reload();
+			} catch (error) {
+				console.error(error);
+				alert(error);
+			}
 		},
 
 		async editProfile() {
@@ -208,5 +232,11 @@ form {
 
 #rate-plans {
 	margin-bottom: 101px;
+}
+
+.file-input-text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 </style>
