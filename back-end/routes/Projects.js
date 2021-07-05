@@ -149,8 +149,8 @@ app.post('/', async (req, res) => {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
 		let [project] = await conn.query(
-			'INSERT INTO project (title) VALUES (?)',
-			[req.body.title]
+			'INSERT INTO project (title,issue_number) VALUES (?,?)',
+			[req.body.title, 0]
 		);
 		await conn.query(
 			'INSERT INTO `column`  (idProject, name, `order`) VALUES (?,?,?)',

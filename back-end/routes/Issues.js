@@ -1,6 +1,5 @@
 const db = require('../db').db;
 const joi = require('joi');
-const { v4: uuidv4 } = require('uuid');
 const schemas = require('../schemas/schemas_export');
 const dayjs = require('dayjs');
 const c = require('../constants');
@@ -14,7 +13,6 @@ async function issues_create(req, res) {
 		return;
 	}
 	let conn;
-	let code = uuidv4();
 	try {
 		conn = await db.pool.getConnection();
 		await conn.beginTransaction();
@@ -29,6 +27,15 @@ async function issues_create(req, res) {
 				throw c.INVALID_TRANSACTION;
 			}
 		}
+		let [project] = await db.pool.query(
+			'SELECT issue_number FROM project WHERE idProject = ?',
+			[req.params.idProject]
+		);
+		let num1 = req.params.idProject;
+		let num2 = project[0].issue_number + 1;
+		let together = String(num1) + String(num2);
+		let asNum = parseInt(together);
+		let code = Buffer.from([asNum]).toString('hex').toUpperCase();
 
 		await conn.query(
 			'INSERT INTO issue (code, idProject, title, category, points, priority, deadline, description, idLabel) VALUES (?,?,?,?,?,?,?,?,?)',
@@ -43,6 +50,10 @@ async function issues_create(req, res) {
 				body.description,
 				body.idLabel,
 			]
+		);
+		await conn.query(
+			'UPDATE project SET issue_number = ? WHERE idProject = ?',
+			[num2, req.params.idProject]
 		);
 		if (body.assignees != null && body.assignees.length > 0) {
 			const [members] = await conn.query(
