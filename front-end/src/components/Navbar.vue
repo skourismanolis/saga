@@ -98,13 +98,17 @@ export default {
 		async logout() {
 			try {
 				await this.$client.logout();
-				this.$router.push({
-					path: `/`,
-				});
+				this.unloadUser();
+				location.reload();
 			} catch (error) {
 				console.error(error);
 				alert(error);
 			}
+		},
+		unloadUser() {
+			this.$store.commit('setIsLoggedIn', false);
+			this.$store.commit('setUser', null);
+			localStorage.removeItem('token');
 		},
 	},
 };
