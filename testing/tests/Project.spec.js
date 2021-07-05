@@ -280,7 +280,7 @@ describe('issue search', () => {
 
 	test('inSprint', async () => {
 		if (__TEST_MODE__ === 'CLIENT') disableMock();
-		let sprints = await project.getSprints();
+		let sprints = await project.getSprints({});
 		if (__TEST_MODE__ === 'CLIENT') enableMock();
 
 		let issues = await project.searchIssues({
@@ -376,7 +376,7 @@ describe('sprints', () => {
 	test('active sprint', async () => {
 		let spr = await project.getActiveSprint();
 		expect(spr).toBeNull();
-		let { content } = await project.getSprints();
+		let { content } = await project.getSprints({});
 		spr = content[0];
 		if (__TEST_MODE__ === 'CLIENT') {
 			let mockAxios = {
@@ -391,25 +391,25 @@ describe('sprints', () => {
 		if (__TEST_MODE__ === 'CLIENT') project.axios = client.axios;
 		spr = await project.getActiveSprint();
 		expect(spr).toBeInstanceOf(Sprint);
-		({ content } = await project.getSprints());
+		({ content } = await project.getSprints({}));
 		if (__TEST_MODE__ === 'REST') expect(content).toContainEqual(spr);
 	});
 
 	it('returns a list of sprints', async () => {
-		let sprints = await project.getSprints();
+		let sprints = await project.getSprints({});
 		expect(sprints).toBeInstanceOf(PaginatedList);
 		sprints.content.forEach((s) => expect(s).toBeInstanceOf(Sprint));
 	});
 
 	it('returns a specific sprint', async () => {
-		let sprints = await project.getSprints();
+		let sprints = await project.getSprints({});
 		await expect(
 			project.getSprint(sprints.content[0].id)
 		).resolves.toBeInstanceOf(Sprint);
 	});
 
 	it('deletes a sprint', async () => {
-		let sprints = await project.getSprints();
+		let sprints = await project.getSprints({});
 		await expect(
 			project.deleteSprint(sprints.content[0])
 		).resolves.not.toThrow();
