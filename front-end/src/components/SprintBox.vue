@@ -42,7 +42,7 @@
 					}"
 				></b-form-datepicker>
 				<button
-					v-if="active == true"
+					v-if="active"
 					type="button"
 					class="
 						btn btn-primary
@@ -56,7 +56,7 @@
 					<i class="bi bi-check-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="active == false && exists_active == true"
+					v-else-if="other_active"
 					type="button"
 					class="
 						btn btn-primary
@@ -71,7 +71,7 @@
 					<i class="bi bi-play-circle button-icon"></i>
 				</button>
 				<button
-					v-else-if="active == false && exists_active == false"
+					v-else-if="no_active"
 					type="button"
 					class="
 						btn btn-primary
@@ -100,8 +100,9 @@
 <script>
 export default {
 	props: {
-		exists_active: Boolean,
 		active: Boolean,
+		other_active: Boolean,
+		no_active: Boolean,
 		sprint: Object,
 		issuesNum: Number,
 	},

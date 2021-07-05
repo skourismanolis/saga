@@ -147,8 +147,15 @@
 				>
 					<SprintBox
 						:sprint="sprint"
-						:exists_active="active_sprint != null"
-						:active="sprint_active[index]"
+						:active="
+							active_sprint != null &&
+							active_sprint.id == sprint.id
+						"
+						:other_active="
+							active_sprint != null &&
+							active_sprint.id != sprint.id
+						"
+						:no_active="active_sprint == null"
 						:id="sprint.id"
 						:issuesNum="sprint_issues[index].content.length"
 						class="drag-inner-list sprint-box"
@@ -210,10 +217,8 @@ export default {
 
 			//sprint data
 			active_sprint: {},
-			active_sprint_issues: [],
 			sprints: {},
 			sprint_issues: [],
-			sprint_active: [],
 
 			//backlog data
 			issues: {},
@@ -227,6 +232,20 @@ export default {
 				onDrop: this.drop,
 			};
 		},
+
+		sortedSprints() {
+			if (this.active_sprint != null) {
+				let sprint_index = this.sprints.content.findIndex(
+					(obj) =>
+						parseInt(obj.id) == parseInt(this.activateSprint.id)
+				);
+
+				// //move active sprint to top of list and all parallel lists
+				this.move(this.sprints.content, sprint_index, 0);
+				this.move(this.sprint_issues, sprint_index, 0);
+			}
+			return this.sprints;
+		},
 	},
 	methods: {
 		async activateSprint(value) {
@@ -234,8 +253,25 @@ export default {
 			let sprint = this.sprints.content.find(
 				(obj) => parseInt(obj.id) == parseInt(value)
 			);
+
 			await this.project.setActiveSprint(sprint);
+			this.active_sprint = await this.project.getActiveSprint();
 			await this.sprints.refresh();
+
+			let sprint_index = this.sprints.content.findIndex(
+				(obj) => parseInt(obj.id) == parseInt(value)
+			);
+			//move issues array
+			[this.sprint_issues[0], this.sprint_issues[sprint_index]] = [
+				this.sprint_issues[sprint_index],
+				this.sprint_issues[0],
+			];
+			//move sprint
+			[this.sprints.content[0], this.sprints.content[sprint_index]] = [
+				this.sprints.content[sprint_index],
+				this.sprints.content[0],
+			];
+			this.$forceUpdate();
 		},
 
 		epicPoints(index) {
@@ -397,9 +433,26 @@ export default {
 				//issue fetching
 				let tempIssues = await this.sprints.content[i].getIssues();
 				this.sprint_issues.push(tempIssues);
+			}
 
-				//active init
-				this.sprint_active.push(false);
+			//move active sprint to first pos
+			if (this.active_sprint != null) {
+				let sprint_index = this.sprints.content.findIndex(
+					(obj) => parseInt(obj.id) == parseInt(this.active_sprint.id)
+				);
+
+				//move issues array
+				[this.sprint_issues[0], this.sprint_issues[sprint_index]] = [
+					this.sprint_issues[sprint_index],
+					this.sprint_issues[0],
+				];
+
+				//move sprints
+				[this.sprints.content[0], this.sprints.content[sprint_index]] =
+					[
+						this.sprints.content[sprint_index],
+						this.sprints.content[0],
+					];
 			}
 
 			this.loaded = true;
