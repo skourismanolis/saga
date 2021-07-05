@@ -1,17 +1,13 @@
 <template>
-	<div>
-		<b-avatar-group size="36px" id="team">
-			<span>
-				<b-avatar
-					v-for="(member, idx) in printMembers"
-					:key="idx"
-					:text="getFullName(member)"
-					:src="member.picture || DEFAULT_PICTURE"
-					v-b-popover.hover.top="getFullName(member)"
-				/>
-			</span>
-		</b-avatar-group>
-	</div>
+	<b-avatar-group :size="size" id="team">
+		<b-avatar
+			v-for="(member, idx) in printMembers"
+			:key="idx"
+			:text="getFullName(member)"
+			:src="member.picture || DEFAULT_PICTURE"
+			v-b-popover.hover.top="getFullName(member)"
+		/>
+	</b-avatar-group>
 </template>
 
 <script>
@@ -22,6 +18,10 @@ export default {
 	props: {
 		members: Array,
 		max: Number,
+		size: {
+			type: String,
+			default: '52px',
+		},
 	},
 	computed: {
 		DEFAULT_PICTURE() {

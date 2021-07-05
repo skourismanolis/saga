@@ -13,6 +13,7 @@
 					v-for="issue in columnIssues[0].content"
 					:key="issue.code"
 					:id="issue.code"
+					:issue="issue"
 				/>
 			</div>
 			<div
@@ -25,6 +26,7 @@
 					v-for="issue in columnIssues[1].content"
 					:key="issue.code"
 					:id="issue.code"
+					:issue="issue"
 				/>
 			</div>
 			<div
@@ -37,6 +39,7 @@
 					v-for="issue in columnIssues[2].content"
 					:key="issue.code"
 					:id="issue.code"
+					:issue="issue"
 				/>
 			</div>
 			<div>
@@ -87,6 +90,7 @@
 				<IssueCard
 					class="my-2"
 					v-for="issue in search.issues.content"
+					:issue="issue"
 					:key="issue.code"
 				/>
 			</div>
