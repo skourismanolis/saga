@@ -2,6 +2,8 @@
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
 		<ProjectNavbar v-if="projectNavbarFlag" />
+		<Team />
+		<Modal />
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -13,12 +15,16 @@
 import Footer from './components/Footer';
 import Navbar from './components/navbar_off';
 import ProjectNavbar from './components/ProjectNavbar.vue';
+import Modal from './components/Issue.vue';
+import Team from './components/TeamList.vue';
 
 export default {
 	components: {
 		Footer,
 		Navbar,
 		ProjectNavbar,
+		Modal,
+		Team,
 	},
 	data() {
 		return {};

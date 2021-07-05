@@ -2,23 +2,17 @@
 	<b-container id="create-issue-body">
 		<h4><strong>Create an issue</strong></h4>
 		<form @submit.prevent="CreateIssue">
-			<b-row class="my-1">
-				<b-col sm="3">
-					<label for="input-title"
-						>Title<br />({{ getTitleLength }}/30)</label
-					>
-				</b-col>
-				<b-col sm="9">
-					<b-form-input
-						id="input-title"
-						v-model="issue.title"
-						placeholder="Enter title"
-						required
-						trim
-					>
-					</b-form-input>
-				</b-col>
-			</b-row>
+			<b-col sm="3">
+				<label for="input-title">TITLE</label>
+			</b-col>
+			<b-col sm="4">
+				<input
+					contenteditable="true"
+					v-model="issue.title"
+					style="outline: none"
+				/>
+			</b-col>
+
 			<b-row class="my-1">
 				<b-col sm="3">
 					<label for="textarea-limit"
@@ -71,7 +65,7 @@ export default {
 			Categories: ['Task', 'Epic', 'Story'],
 			issue: {
 				category: '',
-				title: '',
+				title: 'doomdoom',
 				description: '',
 			},
 		};
@@ -94,49 +88,9 @@ export default {
 </script>
 
 <style scoped>
-label {
-	margin-right: 0px;
-	font-weight: 540;
-	color: rgb(151, 151, 151);
-	text-align: right;
-}
-
-div.col-sm-3 {
-	width: 10%;
-	text-align: end;
-	padding-top: 0.25%;
-}
-select#category-selector {
-	flex: 1%;
-	margin-left: 3%;
-	margin-right: 1%;
-	padding: 0.375rem 0.75rem;
-	font-size: 1rem;
-	line-height: 1.5;
-	background-color: #fff;
-	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-h4 {
-	color: rgb(255, 172, 17);
-	letter-spacing: 0.5px;
-	margin: 12px;
-	margin-bottom: 18px;
-	font-weight: 540;
-	display: flex;
-	justify-content: center;
-}
-div.row.my-1 {
-	display: flex;
-	align-items: center;
-}
-#label0 {
-	margin-left: 200px;
-}
-#create-issue-body {
-	background-color: lavender;
-	width: 75%;
-	padding-right: 8%;
-	padding-top: 2px;
+input:focus,
+textarea:focus,
+select:focus {
+	outline: none;
 }
 </style>
