@@ -378,9 +378,26 @@ export default {
 			}
 			this.$forceUpdate();
 		},
-		addIssuesToActiveSprint(epic) {
+		async addIssuesToActiveSprint(epic) {
 			if (this.active_sprint != null) {
-				console.log(epic);
+				let ei = this.epics.content.findIndex(
+					(obj) => parseInt(obj.id) == parseInt(epic.id)
+				);
+
+				let es = this.epic_issues[ei];
+
+				es.content.forEach(async (e) => {
+					//search backlog
+					let found = this.issues.content.find(
+						(obj) => parseInt(obj.code) == parseInt(e.code)
+					);
+					//found in backlog
+					if (found != undefined) {
+						await this.active_sprint.addIssues([found]);
+						this.sprint_issues[0].refresh();
+						this.issues.refresh();
+					}
+				});
 			}
 		},
 
