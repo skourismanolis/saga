@@ -7,7 +7,7 @@
 		static
 	>
 		<div class="header">
-			<div v-if="creating" class="details-label">
+			<div class="details-label">
 				{{ issue.id }}
 			</div>
 			<div class="header-bottom">
@@ -83,8 +83,8 @@
 					@focusout="toggleEditable()"
 				>
 				</b-form-textarea>
-				<label v-if="creating" class="details-label">ΣΧΟΛΙΑ</label>
-				<div v-if="creating" class="d-flex align-items-center mt-2">
+				<label class="details-label">ΣΧΟΛΙΑ</label>
+				<div class="d-flex align-items-center mt-2">
 					<img :src="DEFAULT_PICTURE" class="user-image" />
 					<b-form-textarea
 						v-model="newComment"
@@ -264,6 +264,7 @@ export default {
 	},
 	props: {
 		modalId: {
+			issue: Object,
 			type: String,
 			required: false,
 		},
@@ -278,32 +279,17 @@ export default {
 			Types: ['Task', 'Bug', 'Story'],
 			assigneeSearchText: '',
 			projectMembers: ['a', 'b', 'c'],
-			issue: {
-				id: null,
-				title: 'Νέος τίτλος',
-				category: 'Task',
-				points: 0,
-				priority: 'Neutral',
-				description: 'Κάντε διπλό κλικ για να αλλάξετε τις τιμές!',
-				label: '',
-				assignees: [],
-				deadline: null,
-				column: 'TO-DO',
-				sprint: null,
-			},
 			editable: false,
 
 			newComment: null,
-			comments: [
-				{
-					picture: DEFAULT_PICTURE,
-					text: 'Lorem Ipsum.',
-				},
-				{
-					picture: DEFAULT_PICTURE,
-					text: 'Lorem Ipsum.',
-				},
-			],
+
+			project: null,
+			sprint: null,
+			epic: null,
+			label: null,
+			column: null,
+			comments: null,
+			assignees: null,
 		};
 	},
 	computed: {
@@ -366,8 +352,20 @@ export default {
 			}
 		},
 	},
+
 	async created() {
-		await this.loadSelectValues();
+		try {
+			await this.loadSelectValues();
+			this.project = await this.issue.getProject();
+			this.sprint = await this.issue.getSprint();
+			this.epic = await this.issue.getEpic();
+			this.label = await this.issue.getLabel();
+			this.column = await this.issue.getColumn();
+			this.comments = await this.issue.getAssignees();
+			this.assignees = await this.issue.getComments();
+		} catch (error) {
+			alert(error);
+		}
 	},
 };
 </script>
