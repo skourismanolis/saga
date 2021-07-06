@@ -303,7 +303,6 @@ div.row.my-1 {
 .details-label {
 	font-size: smaller;
 	font-weight: bold;
-	letter-spacing: 0.3em;
 	margin-bottom: 0;
 	color: rgb(151, 151, 151);
 }
