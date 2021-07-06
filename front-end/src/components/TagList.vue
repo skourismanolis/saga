@@ -6,7 +6,7 @@
 				:key="idx"
 				@contextmenu.prevent="$emit('remove', assignee)"
 			>
-				<b-avatar :text="assignee" />
+				<b-avatar :text="assignee.name + ' ' + assignee.surname" />
 			</a>
 			<a>
 				<b-dropdown
@@ -23,7 +23,7 @@
 						:key="idx"
 						@click="$emit('add', member)"
 					>
-						{{ member }}
+						{{ member.name }} {{ member.surname }}
 					</b-dropdown-item>
 				</b-dropdown>
 			</a>

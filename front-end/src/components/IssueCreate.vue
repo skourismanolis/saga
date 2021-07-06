@@ -348,13 +348,19 @@ export default {
 				this.project = await this.$client.getProject({
 					idProject: projectId,
 				});
-				[this.sprints, this.epics, this.labels, this.columns] =
-					await Promise.all([
-						this.project.getSprints({}),
-						this.project.getEpics(),
-						this.project.getLabels(),
-						this.project.getColumns(),
-					]);
+				[
+					this.sprints,
+					this.epics,
+					this.labels,
+					this.columns,
+					this.projectMembers,
+				] = await Promise.all([
+					this.project.getSprints({}),
+					this.project.getEpics(),
+					this.project.getLabels(),
+					this.project.getColumns(),
+					this.project.getMembers(),
+				]);
 			} catch (error) {
 				alert(error);
 			}
