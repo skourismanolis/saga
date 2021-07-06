@@ -1,11 +1,13 @@
 <template>
 	<div
+
 		class="
 			priority-container
 			d-flex
 			justify-content-center
 			align-items-center
 		"
+
 		v-bind:class="{
 			high: priority == 'Very High' || priority == 'High',
 			neutral: priority == 'Neutral',
@@ -32,6 +34,7 @@ export default {
 .priority-container {
 	font-size: 16px;
 
+
 	width: 24px;
 	height: 24px;
 
@@ -40,15 +43,19 @@ export default {
 	border-radius: 50px;
 }
 
+
 .high {
 	background-color: #f8dde0;
 	color: #db5461;
 }
 
+
+
 .neutral {
 	background-color: #fedc97;
 	color: #bb8c2d;
 }
+
 
 .low {
 	background-color: #aafd8d;

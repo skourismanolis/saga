@@ -333,7 +333,8 @@ export default {
 				title: 'Νέο sprint',
 				deadline: new Date(),
 			});
-			location.reload();
+			await this.sprints.refresh();
+			this.refreshIssues();
 		},
 
 		async editSprint(value) {

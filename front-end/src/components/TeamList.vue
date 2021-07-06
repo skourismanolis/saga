@@ -4,7 +4,7 @@
 			v-for="(member, idx) in printMembers"
 			:key="idx"
 			:text="getFullName(member)"
-			:src="member.picture || DEFAULT_PICTURE"
+			:src="picOrDefault(member)"
 			v-b-popover.hover.top="getFullName(member)"
 		/>
 	</b-avatar-group>
@@ -34,6 +34,14 @@ export default {
 		},
 	},
 	methods: {
+		picOrDefault(object) {
+			if (object.picture != null) {
+				return 'http://localhost:3000/profilePics/' + object.picture;
+			} else {
+				return DEFAULT_PICTURE;
+			}
+		},
+
 		getFullName(member) {
 			return member.name + ' ' + member.surname;
 		},

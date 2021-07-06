@@ -23,17 +23,19 @@
 						<template #button-content>
 							<b-icon icon="chevron-left"></b-icon>
 							<img
-								src="https://1.gravatar.com/avatar/be8819126bd50fa16210bc5dd249beb2?s=360"
+								:src="profile.picture || DEFAULT_PICTURE"
 								id="user_image"
 							/>
 						</template>
-						<b-dropdown-item>First Action</b-dropdown-item>
-						<b-dropdown-item>Second Action</b-dropdown-item>
-						<b-dropdown-item>Third Action</b-dropdown-item>
-						<b-dropdown-divider></b-dropdown-divider>
-						<b-dropdown-item active>Active action</b-dropdown-item>
-						<b-dropdown-item disabled
-							>Disabled action</b-dropdown-item
+						<b-dropdown-item
+							class="my-account"
+							@click="redirectProfile"
+							><i class="bi bi-person mr-1"></i>Ο Λογαριασμός
+							μου</b-dropdown-item
+						>
+						<b-dropdown-item class="log-out" @click="logout"
+							><i class="bi bi-box-arrow-in-right mr-1"></i
+							>Αποσύνδεση</b-dropdown-item
 						>
 					</b-dropdown>
 				</div>
@@ -62,9 +64,21 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 export default {
 	name: 'NavBar',
+	data() {
+		return {
+			profile: {},
+		};
+	},
 	computed: {
+		computed: {
+			DEFAULT_PICTURE() {
+				return DEFAULT_PICTURE;
+			},
+		},
 		isLoggedIn() {
 			return this.$store.state.isLoggedIn;
 		},
@@ -86,6 +100,33 @@ export default {
 				};
 			});
 		},
+	},
+	methods: {
+		redirectProfile() {
+			this.$router.push({
+				path: `/profile`,
+			});
+		},
+		async logout() {
+			try {
+				await this.$client.logout();
+				this.unloadUser();
+				location.reload();
+			} catch (error) {
+				console.error(error);
+				alert(error);
+			}
+		},
+		unloadUser() {
+			this.$store.commit('setIsLoggedIn', false);
+			this.$store.commit('setUser', null);
+			localStorage.removeItem('token');
+		},
+	},
+	async created() {
+		if (this.isLoggedIn != null) {
+			this.profile = await this.$client.getProfile();
+		}
 	},
 };
 </script>
@@ -128,5 +169,10 @@ a {
 }
 .dropdown-menu {
 	min-width: 10rem;
+}
+
+.my-account {
+	background-color: #eee9ff;
+	color: #564787;
 }
 </style>

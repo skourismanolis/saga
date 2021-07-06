@@ -125,19 +125,6 @@ issue
 		}
 	});
 
-// issue
-// 	.command('get')
-// 	.description('update this user profile')
-// 	.action(async () => {
-// 		try {
-// 			let data = await client.getProfile();
-// 			console.log(data);
-// 		} catch (error) {
-// 			if (error.response) console.error(error.response.data);
-// 			else console.error(error);
-// 		}
-// 	});
-
 module.exports = {
 	issue,
 };
