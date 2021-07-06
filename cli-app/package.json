@@ -4,18 +4,24 @@
   "description": "Dira cli",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint . --fix"
   },
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "commander": "^7.2.0"
+    "commander": "^8.0.0",
+    "keytar": "^7.7.0"
   },
   "devDependencies": {
+    "cors": "^2.8.5",
     "eslint": "^7.24.0",
+    "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-prettier": "^3.4.0",
-    "jest": "^26.6.3",
+    "express": "^4.17.1",
+    "jest": "^27.0.6",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
     "prettier": "^2.2.1"
   }
 }

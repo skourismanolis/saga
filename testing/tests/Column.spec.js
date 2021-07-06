@@ -1,19 +1,25 @@
-const SagaClient = require('../index');
-const Column = require('./Column');
-const Project = require('./Project');
+const SagaClient = require('@dira/api-client');
+const Column = require('@dira/api-client/src/classes/Column');
+const Project = require('@dira/api-client/src/classes/Project');
 
 let client;
 let column;
-const MOCKCOLUMN = { idColumn: 2, name: 'Lorem', order: 3 };
+const MOCKCOLUMN = { idColumn: 5, name: 'Lorem', order: 3 };
 
 const MOCKPROJECT = {
-	idProject: 2,
+	idProject: 1,
 	title: 'asdasd',
 	picture: null,
 };
 
-beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+beforeAll(async () => {
+	client = new SagaClient({ url: __APIURL__ });
+	if (__TEST_MODE__ === 'REST') {
+		await client.login({
+			email: 'random_user@test.com',
+			password: 'test_member',
+		});
+	}
 });
 
 test('constructs', () => {
@@ -40,10 +46,12 @@ test('refresh', async () => {
 });
 
 test('get project', async () => {
-	let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
-	column.axios = mockAxios;
+	if (__TEST_MODE__ === 'CLIENT') {
+		let mockAxios = { get: jest.fn(async () => ({ data: [MOCKPROJECT] })) };
+		column.axios = mockAxios;
+	}
 	await expect(column.getProject()).resolves.toBeInstanceOf(Project);
-	column.axios = client.axios;
+	if (__TEST_MODE__ === 'CLIENT') column.axios = client.axios;
 });
 
 test('update', async () => {

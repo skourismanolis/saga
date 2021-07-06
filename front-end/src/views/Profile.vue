@@ -4,7 +4,7 @@
 			class="flex-column d-flex justify-content-center align-items-start"
 		>
 			<img
-				:src="profilePic"
+				:src="profile.picture || DEFAULT_PICTURE"
 				width="130px"
 				height="130px"
 				class="rounded-circle align-self-center"
@@ -12,13 +12,13 @@
 
 			<div id="profile-container" class="flex-column d-flex">
 				<span id="username" class="text-break">
-					{{ userInfo.username }}
+					{{ profile.username }}
 				</span>
 
 				<span id="section"> Επικοινωνία: </span>
 				<div class="flex-row text-center" id="email-container">
 					<i class="bi bi-envelope"></i>
-					<span id="email"> {{ userInfo.email }} </span>
+					<span id="email"> {{ profile.email }} </span>
 				</div>
 
 				<div id="link-container" class="flex-column d-flex">
@@ -31,7 +31,7 @@
 					<div class="d-flex flex-row align-self-center">
 						<i class="bi bi-gear link-icon"></i>
 						<router-link
-							to="/profile_settings"
+							to="/profile-edit"
 							class="align-self-center"
 						>
 							Ρυθμίσεις
@@ -44,23 +44,21 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 export default {
 	data() {
 		return {
-			userInfo: {
-				username: 'Όνομα Χρήστη',
-				// username: 'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',
-				email: 'example@provider.domain',
-			},
+			profile: {},
 		};
 	},
 	computed: {
-		profilePic: function () {
-			let filename = 'default-profile-pic.png';
-			// if (this.user && this.user.ProfilePicPath)
-			// 	filename = this.user.ProfilePicPath;
-			return require(`../assets/profile pics/${filename}`);
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
 		},
+	},
+	async created() {
+		this.profile = await this.$client.getProfile();
 	},
 };
 </script>

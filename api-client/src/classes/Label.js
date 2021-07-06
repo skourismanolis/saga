@@ -45,11 +45,11 @@ module.exports = class Label extends Base {
 	 * @param {string} labelConf.color the color of the label as a hex value including the starting #, ie: `#A525B6`
 	 */
 	async update({ name, color }) {
+		await this.refresh();
 		let newLabel = {
 			name: name || this.name,
 			color: color || this.color,
 		};
-
 		await this.axios.put(
 			`/projects/${this._idProject}/labels/${this._idLabel}`,
 			newLabel

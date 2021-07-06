@@ -1,5 +1,5 @@
-const PaginatedList = require('./PaginatedList');
-const SagaClient = require('../index');
+const PaginatedList = require('@dira/api-client/src/classes/PaginatedList');
+const SagaClient = require('@dira/api-client');
 
 let client;
 let list;
@@ -34,7 +34,7 @@ function testMockCallHeaderOffset(offset) {
 }
 
 beforeAll(() => {
-	client = new SagaClient({ url: __MOCKURL__ });
+	client = new SagaClient({ url: __APIURL__ });
 	client.axios = mockAxios;
 });
 
