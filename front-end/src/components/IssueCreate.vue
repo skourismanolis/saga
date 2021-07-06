@@ -89,7 +89,17 @@
 					<b-form-textarea
 						v-model="newComment"
 						placeholder="Γράψτε ένα σχόλιο..."
-						rows="1"
+					></b-form-textarea>
+				</div>
+				<div
+					v-for="comment in comments"
+					:key="comment.id"
+					class="d-flex align-items-center mt-2"
+				>
+					<img :src="comment.picture" class="user-image" />
+					<b-form-textarea
+						v-model="comment.text"
+						disabled
 					></b-form-textarea>
 				</div>
 			</div>
@@ -200,6 +210,16 @@ export default {
 			editable: false,
 
 			newComment: null,
+			comments: [
+				{
+					picture: DEFAULT_PICTURE,
+					text: 'Lorem Ipsum.',
+				},
+				{
+					picture: DEFAULT_PICTURE,
+					text: 'Lorem Ipsum.',
+				},
+			],
 		};
 	},
 	computed: {
