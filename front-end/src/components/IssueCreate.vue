@@ -149,7 +149,12 @@
 				</div>
 			</div>
 			<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
-			<p class="details-text">TeamList(0)</p>
+			<TagList
+				:current="issue.assignees"
+				:members="projectMembers"
+				@add="assigneeAdd"
+				@remove="assigneeRemove"
+			/>
 			<label class="details-label">LABEL</label>
 
 			<div
@@ -179,9 +184,12 @@
 const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
 
 import Priority from './IssuePriority.vue';
+import TagList from './TagList.vue';
+
 export default {
 	components: {
 		Priority,
+		TagList,
 	},
 	props: {
 		modalId: {
@@ -195,6 +203,8 @@ export default {
 			Types: ['Task', 'Bug', 'Story'],
 			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
 			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
+			assigneeSearchText: '',
+			projectMembers: ['a', 'b', 'c'],
 			issue: {
 				id: '#ED3452',
 				type: 'Task',
@@ -206,6 +216,7 @@ export default {
 				deadline: new Date(),
 				points: 120,
 				column: 'IN PROGRESS',
+				assignees: [],
 			},
 			editable: false,
 
@@ -229,6 +240,16 @@ export default {
 	},
 
 	methods: {
+		assigneeAdd(assignee) {
+			this.issue.assignees.push(assignee);
+		},
+
+		assigneeRemove(assignee) {
+			this.issue.assignees.splice(
+				this.issue.assignees.indexOf(assignee),
+				1
+			);
+		},
 		toggleEditable: function () {
 			this.editable = this.editable == false ? true : false;
 		},
