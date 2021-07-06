@@ -1,0 +1,50 @@
+version: "3.3"
+
+services:
+  saga:
+    build: .
+    image: saga/tests
+    # stdin_open: true # docker run -i
+    # tty: true # docker run -t
+    # entrypoint: /bin/bash
+    environment:
+      DB_HOST: db
+      DB_TEST_HOST: db_test
+      ON_DOCKER: 1
+    depends_on:
+      - db
+      - db_test
+  db:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "saga1234"
+    volumes:
+      - ./back-end/database:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+  db_test:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "saga1234"
+    volumes:
+      - ./back-end/database:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+  server:
+    build: ./back-end
+    image: saga/server
+    environment:
+      DB_HOST: db
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  app:
+    build: ./front-end
+    image: saga/app
+    ports:
+      - "8080:8080"
