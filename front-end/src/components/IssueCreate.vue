@@ -127,7 +127,7 @@
 					</label>
 				</div>
 				<div @dblclick="toggleEditable()" @focusout="toggleEditable()">
-					<label class="issue-elem-select">
+					<!-- <label class="issue-elem-select">
 						<label
 							v-if="editable == false"
 							class="text-white rounded-xl"
@@ -151,7 +151,7 @@
 								{{ column.name }}
 							</b-form-select-option>
 						</b-form-select>
-					</label>
+					</label> -->
 				</div>
 			</div>
 			<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
