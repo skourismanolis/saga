@@ -1,5 +1,6 @@
 <template>
 	<b-modal
+		v-if="this.issue != null"
 		:id="modalId"
 		size="lg"
 		header-class="py-4"
@@ -8,7 +9,7 @@
 	>
 		<div class="header">
 			<div class="details-label">
-				{{ issue.id }}
+				{{ issue != null ? issue.code : '' }}
 			</div>
 			<div class="header-bottom">
 				<div
@@ -23,17 +24,17 @@
 						<i
 							id="issue-icon"
 							class="bi bi-bug issue-element"
-							v-if="issue.category == 'Bug'"
+							v-if="category == 'Bug'"
 						></i>
 						<i
 							id="issue-icon"
 							class="bi-book issue-element"
-							v-else-if="issue.category == 'Story'"
+							v-else-if="category == 'Story'"
 						></i>
 						<i
 							id="issue-icon"
 							class="bi bi-bullseye issue-element"
-							v-else-if="issue.category == 'Task'"
+							v-else-if="category == 'Task'"
 						></i>
 					</div>
 					<b-form-select
@@ -41,7 +42,7 @@
 						type=""
 						size="sm"
 						class="mt-3"
-						v-model="issue.category"
+						v-model="category"
 						:options="Types"
 						required
 					>
@@ -53,13 +54,13 @@
 						class="issue-title"
 						@dblclick="toggleEditable()"
 					>
-						{{ issue.title }}
+						{{ title }}
 					</h5>
 					<b-form-input
 						v-else
 						class="title-input"
 						type="text"
-						v-model="issue.title"
+						v-model="title"
 						required
 						@focusout="toggleEditable()"
 					></b-form-input>
@@ -72,13 +73,13 @@
 					class="details-text"
 					@dblclick="toggleEditable()"
 				>
-					{{ issue.description }}
+					{{ description }}
 				</p>
 				<b-form-textarea
 					v-else
 					class="description-input"
 					placeholder="Γράψτε μια περιγραφή..."
-					v-model="issue.description"
+					v-model="description"
 					required
 					@focusout="toggleEditable()"
 				>
@@ -92,7 +93,7 @@
 					></b-form-textarea>
 				</div>
 				<div
-					v-for="comment in comments"
+					v-for="comment in comments.content"
 					:key="comment.id"
 					class="d-flex align-items-center mt-2"
 				>
@@ -119,7 +120,7 @@
 							type=""
 							size="sm"
 							class="mt-1"
-							v-model="issue.priority"
+							v-model="priority"
 							:options="Priorities"
 							required
 						>
@@ -127,36 +128,36 @@
 					</label>
 				</div>
 				<div @dblclick="toggleEditable()" @focusout="toggleEditable()">
-					<!-- <label class="issue-elem-select">
+					<label class="issue-elem-select">
 						<label
 							v-if="editable == false"
 							class="text-white rounded-xl"
 							:style="getColumnStyle()"
 							style="padding: 9px; border-radius: 50px"
 						>
-							{{ issue.column != null ? issue.column.name : '' }}
+							{{ column != null ? column.name : '' }}
 						</label>
 						<b-form-select
 							v-else
 							size="sm"
 							class="mt-1"
-							v-model="issue.column"
+							v-model="column"
 							required
 						>
 							<b-form-select-option
-								v-for="(column, idx) in columns.content"
+								v-for="(column, idx) in columns"
 								:key="idx"
 								:value="column"
 							>
 								{{ column.name }}
 							</b-form-select-option>
 						</b-form-select>
-					</label> -->
+					</label>
 				</div>
 			</div>
 			<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
 			<TagList
-				:current="issue.assignees"
+				:current="assignees"
 				:members="projectMembers"
 				@add="assigneeAdd"
 				@remove="assigneeRemove"
@@ -171,17 +172,17 @@
 				<p
 					class="details-text"
 					id="p-tag"
-					v-if="!editable"
-					:style="'border-color: ' + issue.label.color"
+					v-if="!editable && label != null"
+					:style="'border-color: ' + label.color"
 				>
-					{{ issue.label.name }}
+					{{ label.name }}
 				</p>
 				<b-form-select
 					v-else
 					type=""
 					size="sm"
 					class="mt-1"
-					v-model="issue.label"
+					v-model="label"
 					required
 				>
 					<b-form-select-option
@@ -201,14 +202,14 @@
 				class="issue-label"
 			>
 				<p class="details-text" v-if="!editable">
-					{{ issue.sprint != null ? issue.sprint.title : '' }}
+					{{ sprint != null ? sprint.title : '' }}
 				</p>
 				<b-form-select
 					v-else
 					type=""
 					size="sm"
 					class="mt-1"
-					v-model="issue.sprint"
+					v-model="sprint"
 					required
 				>
 					<b-form-select-option
@@ -228,14 +229,14 @@
 				class="issue-label"
 			>
 				<p class="details-text" v-if="!editable">
-					{{ issue.epic != null ? issue.epic.title : '' }}
+					{{ epic != null ? epic.title : '' }}
 				</p>
 				<b-form-select
 					v-else
 					type=""
 					size="sm"
 					class="mt-1"
-					v-model="issue.epic"
+					v-model="epic"
 					required
 				>
 					<b-form-select-option
@@ -263,14 +264,16 @@ export default {
 		TagList,
 	},
 	props: {
+		issue: Object,
 		modalId: {
-			issue: Object,
 			type: String,
 			required: false,
 		},
 	},
 	data() {
 		return {
+			loaded: false,
+
 			sprints: ['Active 1', 'Active 2', 'Active 3'],
 			epics: ['Epic 1', 'Epic 2', 'Epic 3'],
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
@@ -281,6 +284,12 @@ export default {
 			projectMembers: ['a', 'b', 'c'],
 			editable: false,
 
+			id: null,
+			title: 'Νέος τίτλος',
+			category: 'Task',
+			priority: 'Neutral',
+			description: 'Κάνε διπλό κλικ στις τιμές για να τις αλλάξεις!',
+
 			newComment: null,
 
 			project: null,
@@ -288,14 +297,11 @@ export default {
 			epic: null,
 			label: null,
 			column: null,
-			comments: null,
-			assignees: null,
+			comments: [],
+			assignees: [],
 		};
 	},
 	computed: {
-		creating() {
-			return this.issue.id === null;
-		},
 		DEFAULT_PICTURE() {
 			return DEFAULT_PICTURE;
 		},
@@ -303,28 +309,31 @@ export default {
 
 	methods: {
 		assigneeAdd(assignee) {
-			this.issue.assignees.push(assignee);
+			console.log(assignee);
+
+			// this.issue.assignees.push(assignee);
 		},
 
 		assigneeRemove(assignee) {
-			this.issue.assignees.splice(
-				this.issue.assignees.indexOf(assignee),
-				1
-			);
+			console.log(assignee);
+			// this.issue.assignees.splice(
+			// 	this.issue.assignees.indexOf(assignee),
+			// 	1
+			// );
 		},
 		toggleEditable: function () {
 			this.editable = this.editable == false ? true : false;
 		},
 		getColumnStyle() {
-			if (this.issue.column == 'TO-DO') {
+			if (this.column == 'TO-DO') {
 				return 'background-color:#FFC95B';
 			}
 
-			if (this.issue.column == 'IN PROGRESS') {
+			if (this.column == 'IN PROGRESS') {
 				return 'background-color: #F3B1B8';
 			}
 
-			if (this.issue.column == 'DONE') {
+			if (this.column == 'DONE') {
 				return 'background-color:#7B7393';
 			}
 		},
@@ -356,13 +365,20 @@ export default {
 	async created() {
 		try {
 			await this.loadSelectValues();
-			this.project = await this.issue.getProject();
-			this.sprint = await this.issue.getSprint();
-			this.epic = await this.issue.getEpic();
-			this.label = await this.issue.getLabel();
-			this.column = await this.issue.getColumn();
-			this.comments = await this.issue.getAssignees();
-			this.assignees = await this.issue.getComments();
+			if (this.issue != null) {
+				this.title = this.issue.title;
+				this.category = this.issue.category;
+				this.priority = this.issue.priority;
+				this.description = this.issue.description;
+				this.comments = await this.issue.getComments();
+				this.label = await this.issue.getLabel();
+				this.assignees = await this.issue.getAssignees();
+				this.column = await this.issue.getColumn();
+				this.epic = await this.issue.getEpic();
+				this.sprint = await this.issue.getSprint();
+			}
+
+			this.loaded = true;
 		} catch (error) {
 			alert(error);
 		}
