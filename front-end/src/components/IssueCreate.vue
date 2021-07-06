@@ -83,6 +83,15 @@
 					@focusout="toggleEditable()"
 				>
 				</b-form-textarea>
+				<label class="details-label">ΣΧΟΛΙΑ</label>
+				<div class="d-flex align-items-center mt-2">
+					<img :src="DEFAULT_PICTURE" class="user-image" />
+					<b-form-textarea
+						v-model="newComment"
+						placeholder="Γράψτε ένα σχόλιο..."
+						rows="1"
+					></b-form-textarea>
+				</div>
 			</div>
 		</div>
 		<div class="right">
@@ -157,8 +166,13 @@
 </template>
 
 <script>
+const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
+
 import Priority from './IssuePriority.vue';
 export default {
+	components: {
+		Priority,
+	},
 	props: {
 		modalId: {
 			type: String,
@@ -184,12 +198,16 @@ export default {
 				column: 'IN PROGRESS',
 			},
 			editable: false,
+
+			newComment: null,
 		};
 	},
-
-	components: {
-		Priority,
+	computed: {
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
+		},
 	},
+
 	methods: {
 		toggleEditable: function () {
 			this.editable = this.editable == false ? true : false;
@@ -212,6 +230,13 @@ export default {
 </script>
 
 <style scoped>
+.user-image {
+	height: 30px;
+	width: auto;
+	border-radius: 50px;
+	margin-right: 16px;
+}
+
 h4 {
 	color: rgb(255, 172, 17);
 	letter-spacing: 0.5px;
