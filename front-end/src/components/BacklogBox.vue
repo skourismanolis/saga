@@ -15,6 +15,7 @@
 					align-items-center
 					button-container
 				"
+				@click="$emit('issue-create')"
 			>
 				Νέο Issue
 				<i class="bi bi-plus button-icon"></i>
