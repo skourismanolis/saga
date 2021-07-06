@@ -74,10 +74,8 @@ export default {
 		};
 	},
 	computed: {
-		computed: {
-			DEFAULT_PICTURE() {
-				return DEFAULT_PICTURE;
-			},
+		DEFAULT_PICTURE() {
+			return DEFAULT_PICTURE;
 		},
 		isLoggedIn() {
 			return this.$store.state.isLoggedIn;
