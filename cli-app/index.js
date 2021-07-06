@@ -15,6 +15,7 @@ module.exports = {
 
 const User = require('./src/User');
 const Issue = require('./src/Issue');
+const Project = require('./src/Project');
 
 program.version('1.0.0');
 
@@ -39,5 +40,8 @@ program.addCommand(User.user);
 
 //issues
 program.addCommand(Issue.issue);
+
+//projects
+program.addCommand(Project.project);
 
 program.parseAsync(process.argv);
