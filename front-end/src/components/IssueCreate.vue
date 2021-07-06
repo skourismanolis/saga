@@ -130,6 +130,7 @@
 										style="
 											padding: 9px;
 											border-radius: 50px;
+											font-weight: bold;
 										"
 									>
 										{{ issue.column }}
@@ -169,6 +170,48 @@
 							>
 							</b-form-select>
 						</div>
+						<label class="details-label">SPRINT</label>
+
+						<div
+							@dblclick="toggleEditable()"
+							@focusout="toggleEditable()"
+							class="issue-label"
+						>
+							<p class="details-text" v-if="!editable">
+								{{ issue.sprint }}
+							</p>
+							<b-form-select
+								v-else
+								type=""
+								size="sm"
+								class="mt-1"
+								v-model="issue.sprint"
+								:options="Sprints"
+								required
+							>
+							</b-form-select>
+						</div>
+
+						<label class="details-label">EPIC</label>
+						<div
+							@dblclick="toggleEditable()"
+							@focusout="toggleEditable()"
+							class="issue-label"
+						>
+							<p class="details-text" v-if="!editable">
+								{{ issue.epic }}
+							</p>
+							<b-form-select
+								v-else
+								type=""
+								size="sm"
+								class="mt-1"
+								v-model="issue.epic"
+								:options="Epics"
+								required
+							>
+							</b-form-select>
+						</div>
 					</div>
 				</b-modal>
 			</div>
@@ -181,6 +224,8 @@ import Priority from './IssuePriority.vue';
 export default {
 	data() {
 		return {
+			Sprints: ['Active 1', 'Active 2', 'Active 3'],
+			Epics: ['Epic 1', 'Epic 2', 'Epic 3'],
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
 			Types: ['Task', 'Bug', 'Story'],
 			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
@@ -196,6 +241,8 @@ export default {
 				deadline: new Date(),
 				points: 120,
 				column: 'IN PROGRESS',
+				sprint: 'Active 1',
+				epic: 'Epic 1',
 			},
 			editable: false,
 		};
