@@ -23,33 +23,21 @@ beforeAll(async () => {
 describe('basic project interactions', () => {
 	it('creates a Project', async () => {
 		let result = await cli(
-			[
-				'-a',
-				user.accountName,
-				'project',
-				'create',
-				'Project_Title',
-			],
+			['-a', user.accountName, 'project', 'create', 'Project_Title'],
 			'.'
 		);
-        const regex = /idProject = "([\S]*)"/g;
+		const regex = /idProject = "([\S]*)"/g;
 		let idProject = regex.exec(result.stdout)[1];
-        project = await client.getProject({idProject});
+		project = await client.getProject({ idProject });
 		expect(project.id).toBe(idProject);
 	});
 
 	it('get a Project by id', async () => {
 		let result = await cli(
-			[
-				'-a',
-				user.accountName,
-				'project',
-				'get',
-				project.id,
-			],
+			['-a', user.accountName, 'project', 'get', project.id],
 			'.'
 		);
-        const regex = /title: '([\S]*)'/g;
+		const regex = /title: '([\S]*)'/g;
 		let title = regex.exec(result.stdout)[1];
 		expect(project.title).toBe(title);
 	});
@@ -67,21 +55,17 @@ describe('basic project interactions', () => {
 			'.'
 		);
 		expect(result.code).toBe(0);
-		project = await client.getProject({idProject: project.id});
+		project = await client.getProject({ idProject: project.id });
 		expect(project.title).toBe('newTitle');
 	});
 
 	it('delete a Project', async () => {
 		await cli(
-			[
-				'-a',
-				user.accountName,
-				'project',
-				'delete',
-				project.id,
-			],
+			['-a', user.accountName, 'project', 'delete', project.id],
 			'.'
 		);
-		await expect(client.getProject({idProject: project.id})).rejects.toThrow();
+		await expect(
+			client.getProject({ idProject: project.id })
+		).rejects.toThrow();
 	});
 });
