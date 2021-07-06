@@ -7,7 +7,7 @@
 		static
 		@ok="save"
 	>
-		<div v-if="issue != null && loaded">
+		<div v-if="loaded">
 			<div class="header">
 				<div class="details-label">
 					{{ issue != null ? issue.code : '' }}
@@ -93,15 +93,17 @@
 							placeholder="Γράψτε ένα σχόλιο..."
 						></b-form-textarea>
 					</div>
-					<div
-						v-for="comment in comments.content"
-						:key="comment.id"
-						class="d-flex align-items-center mt-2"
-					>
-						<b-form-textarea
-							v-model="comment.content"
-							disabled
-						></b-form-textarea>
+					<div v-if="comments != null">
+						<div
+							v-for="comment in comments.content"
+							:key="comment.id"
+							class="d-flex align-items-center mt-2"
+						>
+							<b-form-textarea
+								v-model="comment.content"
+								disabled
+							></b-form-textarea>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -115,7 +117,7 @@
 							<Priority
 								v-if="editable == false"
 								class="issue-element"
-								:priority="issue.priority"
+								:priority="priority"
 								style="margin-top: 8px; margin-right: 6px"
 							/>
 							<b-form-select
@@ -333,7 +335,8 @@ export default {
 			epic: null,
 			label: null,
 			column: null,
-			comments: [],
+
+			comments: null,
 			assignees: [],
 		};
 	},
@@ -349,6 +352,20 @@ export default {
 		},
 	},
 	methods: {
+		reseDefault() {
+			this.id = null;
+			this.title = 'Νέος τίτλος';
+			this.category = 'Task';
+			this.priority = 'Neutral';
+			this.description =
+				'Κάνε διπλό κλικ στις τιμές για να τις αλλάξεις!';
+			this.points = 0;
+			this.deadline = new Date();
+
+			this.comments = null;
+			this.assignees = [];
+		},
+
 		assigneeAdd(assignee) {
 			this.issue.assignees.push(assignee);
 		},
@@ -359,8 +376,11 @@ export default {
 				1
 			);
 		},
-		toggleEditable: function () {
-			this.editable = this.editable == false ? true : false;
+		toggleEditable() {
+			if (this.editable && this.issue != null) {
+				this.save();
+			}
+			this.editable = !this.editable;
 		},
 		getColumnStyle() {
 			if (this.column == 'TO-DO') {
@@ -401,7 +421,7 @@ export default {
 
 		async save() {
 			try {
-				await this.project.createIssue({
+				let newIssue = {
 					title: this.title,
 					category: this.category,
 					points: this.points,
@@ -409,8 +429,12 @@ export default {
 					description: this.description,
 					deadline: this.deadline,
 					label: this.label,
-					assignees: this.assignees,
-				});
+					assignees:
+						this.assignees.length > 0 ? this.assignees : null,
+				};
+				if (this.issue == null)
+					await this.project.createIssue(newIssue);
+				else this.issue.update(newIssue);
 			} catch (error) {
 				alert(error);
 			}
@@ -431,9 +455,8 @@ export default {
 				this.column = await this.issue.getColumn();
 				this.epic = await this.issue.getEpic();
 				this.sprint = await this.issue.getSprint();
-
-				this.loaded = true;
-			}
+			} else this.reseDefault();
+			this.loaded = true;
 		},
 	},
 	async created() {

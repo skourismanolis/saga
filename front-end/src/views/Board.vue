@@ -92,7 +92,7 @@
 						</a>
 					</div>
 					<div class="mt-2">
-						<a class="hand" v-b-modal.viewIssue>
+						<a @click="openIssue(null)" class="hand">
 							<span class="bg-gray px-2 py-1 rounded-sm">
 								<b-icon icon="plus" class="text-white" />
 							</span>

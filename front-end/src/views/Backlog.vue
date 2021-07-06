@@ -220,6 +220,7 @@
 				<div id="line"><hr /></div>
 
 				<BacklogBox
+					@issueCreate="openIssue(null)"
 					:totalIssues="issues.content.length"
 					:activeButton="true"
 					:id="null"
