@@ -149,7 +149,12 @@
 				</div>
 			</div>
 			<label class="details-label">ΥΠΕΥΘΥΝΟΙ</label>
-			<p class="details-text">TeamList(0)</p>
+			<TagList
+				:current="issue.assignees"
+				:members="projectMembers"
+				@add="assigneeAdd"
+				@remove="assigneeRemove"
+			/>
 			<label class="details-label">LABEL</label>
 
 			<div
@@ -171,6 +176,48 @@
 				>
 				</b-form-select>
 			</div>
+			<label class="details-label">SPRINT</label>
+
+			<div
+				@dblclick="toggleEditable()"
+				@focusout="toggleEditable()"
+				class="issue-label"
+			>
+				<p class="details-text" v-if="!editable">
+					{{ issue.sprint }}
+				</p>
+				<b-form-select
+					v-else
+					type=""
+					size="sm"
+					class="mt-1"
+					v-model="issue.sprint"
+					:options="Sprints"
+					required
+				>
+				</b-form-select>
+			</div>
+
+			<label class="details-label">EPIC</label>
+			<div
+				@dblclick="toggleEditable()"
+				@focusout="toggleEditable()"
+				class="issue-label"
+			>
+				<p class="details-text" v-if="!editable">
+					{{ issue.epic }}
+				</p>
+				<b-form-select
+					v-else
+					type=""
+					size="sm"
+					class="mt-1"
+					v-model="issue.epic"
+					:options="Epics"
+					required
+				>
+				</b-form-select>
+			</div>
 		</div>
 	</b-modal>
 </template>
@@ -179,9 +226,12 @@
 const DEFAULT_PICTURE = require(`@/assets/profile pics/default-profile-pic.png`);
 
 import Priority from './IssuePriority.vue';
+import TagList from './TagList.vue';
+
 export default {
 	components: {
 		Priority,
+		TagList,
 	},
 	props: {
 		modalId: {
@@ -191,10 +241,14 @@ export default {
 	},
 	data() {
 		return {
+			Sprints: ['Active 1', 'Active 2', 'Active 3'],
+			Epics: ['Epic 1', 'Epic 2', 'Epic 3'],
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
 			Types: ['Task', 'Bug', 'Story'],
 			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
 			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
+			assigneeSearchText: '',
+			projectMembers: ['a', 'b', 'c'],
 			issue: {
 				id: null,
 				title: 'Νέος τίτλος',
@@ -232,6 +286,16 @@ export default {
 	},
 
 	methods: {
+		assigneeAdd(assignee) {
+			this.issue.assignees.push(assignee);
+		},
+
+		assigneeRemove(assignee) {
+			this.issue.assignees.splice(
+				this.issue.assignees.indexOf(assignee),
+				1
+			);
+		},
 		toggleEditable: function () {
 			this.editable = this.editable == false ? true : false;
 		},
@@ -286,7 +350,6 @@ div.row.my-1 {
 .details-label {
 	font-size: smaller;
 	font-weight: bold;
-	letter-spacing: 0.3em;
 	margin-bottom: 0;
 	color: rgb(151, 151, 151);
 }
