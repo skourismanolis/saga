@@ -7,7 +7,7 @@
 		static
 	>
 		<div class="header">
-			<div class="details-label">
+			<div v-if="creating" class="details-label">
 				{{ issue.id }}
 			</div>
 			<div class="header-bottom">
@@ -23,17 +23,17 @@
 						<i
 							id="issue-icon"
 							class="bi bi-bug issue-element"
-							v-if="issue.type == 'Bug'"
+							v-if="issue.category == 'Bug'"
 						></i>
 						<i
 							id="issue-icon"
 							class="bi-book issue-element"
-							v-else-if="issue.type == 'Story'"
+							v-else-if="issue.category == 'Story'"
 						></i>
 						<i
 							id="issue-icon"
 							class="bi bi-bullseye issue-element"
-							v-else-if="issue.type == 'Task'"
+							v-else-if="issue.category == 'Task'"
 						></i>
 					</div>
 					<b-form-select
@@ -41,7 +41,7 @@
 						type=""
 						size="sm"
 						class="mt-3"
-						v-model="issue.type"
+						v-model="issue.category"
 						:options="Types"
 						required
 					>
@@ -77,14 +77,14 @@
 				<b-form-textarea
 					v-else
 					class="description-input"
-					type="text"
+					placeholder="Γράψτε μια περιγραφή..."
 					v-model="issue.description"
 					required
 					@focusout="toggleEditable()"
 				>
 				</b-form-textarea>
-				<label class="details-label">ΣΧΟΛΙΑ</label>
-				<div class="d-flex align-items-center mt-2">
+				<label v-if="creating" class="details-label">ΣΧΟΛΙΑ</label>
+				<div v-if="creating" class="d-flex align-items-center mt-2">
 					<img :src="DEFAULT_PICTURE" class="user-image" />
 					<b-form-textarea
 						v-model="newComment"
@@ -196,16 +196,16 @@ export default {
 			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
 			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
 			issue: {
-				id: '#ED3452',
-				type: 'Task',
-				title: 'Doomdoom',
-				description:
-					'Lorem ipsum Kalimba KalimbaLorem ipsum Kalimba KalimbaLorem ipsum Kalimba Kalimba',
-				priority: 'Low',
-				label: 'Front-end',
-				deadline: new Date(),
-				points: 120,
-				column: 'IN PROGRESS',
+				id: null,
+				title: 'Νέος τίτλος',
+				category: 'Task',
+				points: 0,
+				priority: 'Neutral',
+				description: 'Κάντε διπλό κλικ για να αλλάξετε τις τιμές!',
+				label: '',
+				assignees: [],
+				deadline: null,
+				column: 'TO-DO',
 			},
 			editable: false,
 
@@ -223,6 +223,9 @@ export default {
 		};
 	},
 	computed: {
+		creating() {
+			return this.issue.id === null;
+		},
 		DEFAULT_PICTURE() {
 			return DEFAULT_PICTURE;
 		},
@@ -246,6 +249,7 @@ export default {
 			}
 		},
 	},
+	async created() {},
 };
 </script>
 
