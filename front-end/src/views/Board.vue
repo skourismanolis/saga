@@ -71,7 +71,6 @@
 						:id="issue.code"
 						:issue="issue"
 						@click="openIssue(issue)"
-						s
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -138,6 +137,7 @@
 						v-for="issue in search.issues.content"
 						:issue="issue"
 						:key="issue.code"
+						@click="openIssue(issue)"
 					/>
 				</div>
 			</b-modal>
@@ -193,7 +193,7 @@ export default {
 	methods: {
 		openIssue(issue) {
 			this.currentIssue = issue;
-			this.vbModal.show('viewIssue');
+			this.$bvModal.show('viewIssue');
 		},
 		clearSearch() {
 			this.search.issues = null;

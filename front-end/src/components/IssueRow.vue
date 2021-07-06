@@ -1,5 +1,8 @@
 <template>
-	<div class="d-flex flex-row align-items-center issue-entry">
+	<a
+		class="d-flex flex-row align-items-center issue-entry no-link-styling"
+		@click="$emit('click')"
+	>
 		<div id="issue-label" :style="labelColor" class="issue-element"></div>
 		<IssueCategory class="issue-element" :category="issue.category" />
 		<span id="issue-id" class="issue-element">{{ '#' + issue.code }}</span>
@@ -38,7 +41,7 @@
 			{{ issue.points }}
 		</div>
 		<IssuePriority class="issue-element" :priority="issue.priority" />
-	</div>
+	</a>
 </template>
 
 <script>
@@ -90,6 +93,12 @@ export default {
 </script>
 
 <style scoped>
+.no-link-styling {
+	color: initial;
+}
+.no-link-styling:hover {
+	text-decoration: none;
+}
 .issue-entry {
 	height: 40px;
 	background-color: white;

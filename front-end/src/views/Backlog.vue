@@ -106,6 +106,7 @@
 							v-for="(issue, index) in epic_issues[index].content"
 							:key="index"
 							:issue="issue"
+							@click="openIssue(issue)"
 						>
 						</IssueRow>
 					</div>
@@ -200,6 +201,7 @@
 							:id="issue.code"
 							:issue="issue"
 							class="drag-item issue-row"
+							@click="openIssue(issue)"
 						/>
 						<div class="d-flex justify-content-center mt-2">
 							<b-pagination
@@ -229,6 +231,7 @@
 						:id="issue.code"
 						:issue="issue"
 						class="drag-item issue-row"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -242,6 +245,7 @@
 				</BacklogBox>
 			</div>
 		</div>
+		<IssueCreate modalId="viewIssue" :issue="currentIssue" />
 	</div>
 </template>
 
@@ -249,15 +253,18 @@
 import IssueRow from '../components/IssueRow.vue';
 import BacklogBox from '../components/BacklogBox.vue';
 import SprintBox from '../components/SprintBox.vue';
+import IssueCreate from '../components/IssueCreate.vue';
 
 export default {
 	components: {
 		IssueRow,
 		BacklogBox,
 		SprintBox,
+		IssueCreate,
 	},
 	data() {
 		return {
+			currentIssue: null,
 			loaded: false,
 			renderComponent: true,
 
@@ -324,6 +331,10 @@ export default {
 		},
 	},
 	methods: {
+		openIssue(issue) {
+			this.currentIssue = issue;
+			this.$bvModal.show('viewIssue');
+		},
 		async epicsSetPage(page) {
 			await this.epics.setPage(page - 1);
 			await this.refreshEpicIssues();
