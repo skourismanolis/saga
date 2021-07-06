@@ -12,7 +12,7 @@ services:
             DB_TEST_HOST: db_test
             ON_DOCKER: 1
         depends_on:
-            # - db
+            - db
             - db_test
     db:
         image: mysql:latest
