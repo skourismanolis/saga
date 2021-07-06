@@ -4,6 +4,7 @@
 		footer-tag="footer"
 		class="rounded-sm card-width text-dark card-border"
 		:style="borderColorStyle"
+		@click="$emit('click')"
 	>
 		<b-card-text v-b-popover.hover.top="issue.title" class="d-flex">
 			<h6 class="flex=fill">{{ issue.title }}</h6>

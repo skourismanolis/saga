@@ -24,6 +24,7 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -46,6 +47,7 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -68,6 +70,8 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
+						s
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -106,7 +110,7 @@
 					/>
 				</div>
 			</div>
-			<IssueCreate modalId="viewIssue" />
+			<IssueCreate modalId="viewIssue" :issue="currentIssue" />
 			<b-modal id="editLabel" @ok="saveLabel" @cancel="resetEditLabel">
 				<label class="mr-2">
 					Όνομα
@@ -174,6 +178,7 @@ export default {
 			columnIds: [],
 			columnIssues: [],
 			selectedLabel: null,
+			currentIssue: null,
 		};
 	},
 	computed: {
@@ -186,6 +191,10 @@ export default {
 		},
 	},
 	methods: {
+		openIssue(issue) {
+			this.currentIssue = issue;
+			this.vbModal.show('viewIssue');
+		},
 		clearSearch() {
 			this.search.issues = null;
 			this.search.text = '';
