@@ -106,7 +106,7 @@
 					/>
 				</div>
 			</div>
-			<b-modal id="viewIssue"><IssueCreate /> </b-modal>
+			<IssueCreate modalId="viewIssue" />
 			<b-modal id="editLabel" @ok="saveLabel" @cancel="resetEditLabel">
 				<label class="mr-2">
 					Όνομα
