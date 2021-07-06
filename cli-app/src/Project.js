@@ -25,9 +25,6 @@ project
 	.description('create project')
 	.action(async (title) => {
 		try {
-			if (title == null) {
-				throw error;
-			}
 			let project = await client.createProject({ title });
 			console.log(
 				'Project created succesfully with idProject = "' +
