@@ -24,6 +24,7 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -46,6 +47,7 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -68,6 +70,7 @@
 						:key="issue.code"
 						:id="issue.code"
 						:issue="issue"
+						@click="openIssue(issue)"
 					/>
 					<div class="d-flex justify-content-center mt-2">
 						<b-pagination
@@ -89,7 +92,7 @@
 						</a>
 					</div>
 					<div class="mt-2">
-						<a class="hand" v-b-modal.viewIssue>
+						<a @click="openIssue(null)" class="hand">
 							<span class="bg-gray px-2 py-1 rounded-sm">
 								<b-icon icon="plus" class="text-white" />
 							</span>
@@ -106,7 +109,7 @@
 					/>
 				</div>
 			</div>
-			<b-modal id="viewIssue"><IssueCreate /> </b-modal>
+			<IssueCreate modalId="viewIssue" :issue="currentIssue" />
 			<b-modal id="editLabel" @ok="saveLabel" @cancel="resetEditLabel">
 				<label class="mr-2">
 					Όνομα
@@ -134,6 +137,7 @@
 						v-for="issue in search.issues.content"
 						:issue="issue"
 						:key="issue.code"
+						@click="openIssue(issue)"
 					/>
 				</div>
 			</b-modal>
@@ -174,6 +178,7 @@ export default {
 			columnIds: [],
 			columnIssues: [],
 			selectedLabel: null,
+			currentIssue: null,
 		};
 	},
 	computed: {
@@ -186,6 +191,10 @@ export default {
 		},
 	},
 	methods: {
+		openIssue(issue) {
+			this.currentIssue = issue;
+			this.$bvModal.show('viewIssue');
+		},
 		clearSearch() {
 			this.search.issues = null;
 			this.search.text = '';

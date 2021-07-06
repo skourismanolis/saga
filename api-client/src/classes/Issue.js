@@ -232,7 +232,10 @@ module.exports = class Issue extends Base {
 			description:
 				description !== undefined ? description : this.description,
 			deadline: deadline !== undefined ? deadline : this.deadline,
-			assignees: assignees !== undefined ? assignees : this._assigneeIds,
+			assignees:
+				assignees !== undefined
+					? assignees.map((i) => i.id)
+					: this._assigneeIds,
 		};
 
 		await this.axios.put(

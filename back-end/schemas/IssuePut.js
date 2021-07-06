@@ -12,8 +12,8 @@ const schema = Joi.object().keys({
 		.required(),
 	deadline: Joi.date().required().allow(null),
 	description: Joi.string()
-		.min(c.MIN_STRING)
-		.max(c.MAX_STRING)
+		.min(c.MIN_TEXT)
+		.max(c.MAX_TEXT)
 		.required()
 		.allow(null),
 	assignees: Joi.array().items(Joi.number().integer()).required().allow(null),

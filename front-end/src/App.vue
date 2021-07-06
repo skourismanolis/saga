@@ -2,7 +2,6 @@
 	<div id="app">
 		<Navbar v-if="navbarFlag" />
 		<ProjectNavbar v-if="projectNavbarFlag" />
-		<Issue />
 		<router-view />
 		<div class="footer-container">
 			<Footer />
@@ -14,14 +13,12 @@
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import ProjectNavbar from './components/ProjectNavbar.vue';
-import Issue from './components/IssueCreate.vue';
 
 export default {
 	components: {
 		Footer,
 		Navbar,
 		ProjectNavbar,
-		Issue,
 	},
 	computed: {
 		navbarFlag() {

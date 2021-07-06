@@ -9,6 +9,7 @@ async function issues_create(req, res) {
 	try {
 		body = joi.attempt(req.body, schemas.IssuePost);
 	} catch (error) {
+		console.error(error);
 		res.sendStatus(400);
 		return;
 	}
@@ -274,6 +275,7 @@ async function put_issue(req, res) {
 	try {
 		joi.attempt(req.body, schemas.IssuePut);
 	} catch (error) {
+		console.log(error);
 		return res.sendStatus(400);
 	}
 
