@@ -134,16 +134,22 @@
 							:style="getColumnStyle()"
 							style="padding: 9px; border-radius: 50px"
 						>
-							{{ issue.column }}
+							{{ issue.column != null ? issue.column.name : '' }}
 						</label>
 						<b-form-select
 							v-else
 							size="sm"
 							class="mt-1"
 							v-model="issue.column"
-							:options="Columns"
 							required
 						>
+							<b-form-select-option
+								v-for="(column, idx) in columns.content"
+								:key="idx"
+								:value="column"
+							>
+								{{ column.name }}
+							</b-form-select-option>
 						</b-form-select>
 					</label>
 				</div>
@@ -162,8 +168,13 @@
 				@focusout="toggleEditable()"
 				class="issue-label"
 			>
-				<p class="details-text" id="p-tag" v-if="!editable">
-					{{ issue.label }}
+				<p
+					class="details-text"
+					id="p-tag"
+					v-if="!editable"
+					:style="'border-color: ' + issue.label.color"
+				>
+					{{ issue.label.name }}
 				</p>
 				<b-form-select
 					v-else
@@ -171,9 +182,15 @@
 					size="sm"
 					class="mt-1"
 					v-model="issue.label"
-					:options="Labels"
 					required
 				>
+					<b-form-select-option
+						v-for="(label, idx) in labels"
+						:key="idx"
+						:value="label"
+					>
+						{{ label.name }}
+					</b-form-select-option>
 				</b-form-select>
 			</div>
 			<label class="details-label">SPRINT</label>
@@ -184,7 +201,7 @@
 				class="issue-label"
 			>
 				<p class="details-text" v-if="!editable">
-					{{ issue.sprint }}
+					{{ issue.sprint != null ? issue.sprint.title : '' }}
 				</p>
 				<b-form-select
 					v-else
@@ -192,9 +209,15 @@
 					size="sm"
 					class="mt-1"
 					v-model="issue.sprint"
-					:options="Sprints"
 					required
 				>
+					<b-form-select-option
+						v-for="(sprint, idx) in sprints.content"
+						:key="idx"
+						:value="sprint"
+					>
+						{{ sprint.title }}
+					</b-form-select-option>
 				</b-form-select>
 			</div>
 
@@ -205,7 +228,7 @@
 				class="issue-label"
 			>
 				<p class="details-text" v-if="!editable">
-					{{ issue.epic }}
+					{{ issue.epic != null ? issue.epic.title : '' }}
 				</p>
 				<b-form-select
 					v-else
@@ -213,9 +236,15 @@
 					size="sm"
 					class="mt-1"
 					v-model="issue.epic"
-					:options="Epics"
 					required
 				>
+					<b-form-select-option
+						v-for="(epic, idx) in epics.content"
+						:key="idx"
+						:value="epic"
+					>
+						{{ epic.title }}
+					</b-form-select-option>
 				</b-form-select>
 			</div>
 		</div>
@@ -241,12 +270,12 @@ export default {
 	},
 	data() {
 		return {
-			Sprints: ['Active 1', 'Active 2', 'Active 3'],
-			Epics: ['Epic 1', 'Epic 2', 'Epic 3'],
+			sprints: ['Active 1', 'Active 2', 'Active 3'],
+			epics: ['Epic 1', 'Epic 2', 'Epic 3'],
 			Priorities: ['Very High', 'High', 'Neutral', 'Low', 'Very Low'],
+			labels: ['Front-End', 'Back-end', 'Design'], //prop ?
+			columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
 			Types: ['Task', 'Bug', 'Story'],
-			Columns: ['TO-DO', 'IN PROGRESS', 'DONE'],
-			Labels: ['Front-End', 'Back-end', 'Design'], //prop ?
 			assigneeSearchText: '',
 			projectMembers: ['a', 'b', 'c'],
 			issue: {
@@ -260,6 +289,7 @@ export default {
 				assignees: [],
 				deadline: null,
 				column: 'TO-DO',
+				sprint: null,
 			},
 			editable: false,
 
@@ -312,8 +342,27 @@ export default {
 				return 'background-color:#7B7393';
 			}
 		},
+		async loadSelectValues() {
+			const projectId = this.$route.params.idProject;
+			try {
+				this.project = await this.$client.getProject({
+					idProject: projectId,
+				});
+				[this.sprints, this.epics, this.labels, this.columns] =
+					await Promise.all([
+						this.project.getSprints({}),
+						this.project.getEpics(),
+						this.project.getLabels(),
+						this.project.getColumns(),
+					]);
+			} catch (error) {
+				alert(error);
+			}
+		},
 	},
-	async created() {},
+	async created() {
+		await this.loadSelectValues();
+	},
 };
 </script>
 
